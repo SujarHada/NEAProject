@@ -1,0 +1,6 @@
+# Core framework
+Django==5.2.6
+
+# Django REST Framework and utilities
+djangorestframework>=3.15,<3.16
+django-filter>=24.3,<25
