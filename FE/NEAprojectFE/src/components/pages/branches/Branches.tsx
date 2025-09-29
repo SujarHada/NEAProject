@@ -1,7 +1,9 @@
+import { Outlet } from "react-router"
+
 const Branches = () => {
   return (
     <div>
-      This is the Branches Page
+      <Outlet />
     </div>
   )
 }

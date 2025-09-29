@@ -1,7 +1,8 @@
+import { Outlet } from "react-router"
 const Receiver = () => {
   return (
     <div>
-      This is the Receiver Page
+      <Outlet />
     </div>
   )
 }

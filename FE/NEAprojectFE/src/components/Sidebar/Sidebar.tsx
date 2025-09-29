@@ -8,13 +8,14 @@ import {
     FaNetworkWired,
     FaUserTie,
     FaUserCircle,
-    FaTimes,
     FaPlus,
     FaList,
     FaTrash,
     FaPen,
     FaAngleUp,
     FaAngleDown,
+    FaAngleRight,
+    FaAngleLeft,
 } from "react-icons/fa";
 
 type SidebarProps = {
@@ -110,11 +111,11 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 
     return (
         <div
-            className={` flex max-h-screen flex-col ${collapsed ? "w-16" : "w-55"
+            className={` flex max-h-screen flex-col ${collapsed ? "w-10" : "w-55"
                 } bg-gray-800 text-white min-h-screen `}
         >
             {/* Header */}
-            <div className=" flex items-center justify-between p-4">
+            <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"} p-4`} >
                 {!collapsed && (
                     <h2 className="font-bold text-lg whitespace-nowrap truncate">
                         DASHBOARD
@@ -122,18 +123,18 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
                 )}
                 <button
                     onClick={() => setCollapsed(!collapsed)}
-                    className="text-white hover:text-gray-300"
+                    className="text-white hover:text-gray-300 "
                 >
-                    <FaTimes />
+                    {collapsed ? <FaAngleRight /> : <FaAngleLeft />}
                 </button>
             </div>
 
             {/* Menu */}
-            <ul className="flex-1 space-y-1 max-h-screen overflow-y-scroll" style={{ scrollbarWidth:'none' }}>
+            <ul className="flex-1 space-y-1 max-h-screen overflow-y-scroll" style={{ scrollbarWidth: 'none' }}>
                 {menuItems.map((item) => (
                     <li key={item.id}>
                         <div
-                            className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-700 transition"
+                            className="flex items-center gap-3 p-3 justify-center cursor-pointer hover:bg-gray-700"
                             onClick={() =>
                                 item.children ? toggleMenu(item.id) : onSelect(item.id)
                             }
@@ -146,19 +147,19 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
                             )}
                             {!collapsed && item.children && (
                                 <span className="text-sm">
-                                    {openMenus[item.id] ? <FaAngleUp/>: <FaAngleDown/>}
+                                    {openMenus[item.id] ? <FaAngleUp /> : <FaAngleDown />}
                                 </span>
                             )}
                         </div>
 
                         {/* Submenu */}
                         {!collapsed && item.children && openMenus[item.id] && (
-                            <ul className="ml-8 space-y-1">
+                            <ul className="ml-8">
                                 {item.children.map((child) => (
                                     <li
                                         key={child.id}
                                         onClick={() => onSelect(child.id)}
-                                        className="flex items-center gap-3 p-2 cursor-pointer hover:bg-gray-700 text-sm"
+                                        className="flex items-center  gap-3 p-2 cursor-pointer hover:bg-gray-700 text-sm"
                                     >
                                         <span className="text-base">{child.icon}</span>
                                         <span className="truncate whitespace-nowrap overflow-hidden">

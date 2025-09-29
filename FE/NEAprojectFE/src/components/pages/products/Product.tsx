@@ -1,7 +1,9 @@
+import { Outlet } from "react-router"
+
 const Product = () => {
   return (
     <div>
-      This is the Product Page
+      <Outlet/>
     </div>
   )
 }

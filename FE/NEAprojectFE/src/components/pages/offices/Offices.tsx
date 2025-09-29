@@ -1,8 +1,8 @@
+import { Outlet } from "react-router"
 const Offices = () => {
   return (
     <div>
-      This is the Offices Page
-
+      <Outlet />
     </div>
   )
 }

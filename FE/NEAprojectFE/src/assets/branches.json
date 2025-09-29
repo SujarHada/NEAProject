@@ -1,0 +1,352 @@
+[
+  {
+    "branchId": 1,
+    "branchName": "Lakeside Branch 1",
+    "email": "branch1@example.com",
+    "phone": "9837031113",
+    "address": "702 Riverside Street"
+  },
+  {
+    "branchId": 2,
+    "branchName": "Sunnyvale Branch 2",
+    "email": "branch2@mail.com",
+    "phone": "9846531259",
+    "address": "560 Sunnyvale Street"
+  },
+  {
+    "branchId": 3,
+    "branchName": "Valley View Branch 3",
+    "email": "branch3@mail.com",
+    "phone": "9894855809",
+    "address": "977 North Point Street"
+  },
+  {
+    "branchId": 4,
+    "branchName": "Fairview Branch 4",
+    "email": "branch4@company.net",
+    "phone": "9816947691",
+    "address": "839 North Point Street"
+  },
+  {
+    "branchId": 5,
+    "branchName": "Sunnyvale Branch 5",
+    "email": "branch5@mail.com",
+    "phone": "9860467932",
+    "address": "828 Brookfield Street"
+  },
+  {
+    "branchId": 6,
+    "branchName": "Pinecrest Branch 6",
+    "email": "branch6@company.net",
+    "phone": "9809741767",
+    "address": "820 Ashford Street"
+  },
+  {
+    "branchId": 7,
+    "branchName": "Fairview Branch 7",
+    "email": "branch7@company.net",
+    "phone": "9879723936",
+    "address": "447 Hilltop Street"
+  },
+  {
+    "branchId": 8,
+    "branchName": "Meadowbrook Branch 8",
+    "email": "branch8@mail.com",
+    "phone": "9813351666",
+    "address": "897 Silver Lake Street"
+  },
+  {
+    "branchId": 9,
+    "branchName": "Birchwood Branch 9",
+    "email": "branch9@mail.com",
+    "phone": "9854676341",
+    "address": "618 Riverside Street"
+  },
+  {
+    "branchId": 10,
+    "branchName": "Fairview Branch 10",
+    "email": "branch10@company.net",
+    "phone": "9834554885",
+    "address": "416 Springfield Street"
+  },
+  {
+    "branchId": 11,
+    "branchName": "North Point Branch 11",
+    "email": "branch11@company.net",
+    "phone": "9824326654",
+    "address": "469 Clifton Street"
+  },
+  {
+    "branchId": 12,
+    "branchName": "Ashford Branch 12",
+    "email": "branch12@branch.org",
+    "phone": "9811520832",
+    "address": "869 Oakwood Street"
+  },
+  {
+    "branchId": 13,
+    "branchName": "Brighton Branch 13",
+    "email": "branch13@branch.org",
+    "phone": "9892273514",
+    "address": "347 Belmont Street"
+  },
+  {
+    "branchId": 14,
+    "branchName": "Belmont Branch 14",
+    "email": "branch14@company.net",
+    "phone": "9808790304",
+    "address": "763 Riverside Street"
+  },
+  {
+    "branchId": 15,
+    "branchName": "Central Branch 15",
+    "email": "branch15@company.net",
+    "phone": "9852035460",
+    "address": "393 Pinecrest Street"
+  },
+  {
+    "branchId": 16,
+    "branchName": "Maplewood Branch 16",
+    "email": "branch16@company.net",
+    "phone": "9815035643",
+    "address": "202 Cedar Grove Street"
+  },
+  {
+    "branchId": 17,
+    "branchName": "East Side Branch 17",
+    "email": "branch17@company.net",
+    "phone": "9806627915",
+    "address": "48 Maplewood Street"
+  },
+  {
+    "branchId": 18,
+    "branchName": "North Point Branch 18",
+    "email": "branch18@example.com",
+    "phone": "9831087362",
+    "address": "269 Lakeside Street"
+  },
+  {
+    "branchId": 19,
+    "branchName": "Elm Street Branch 19",
+    "email": "branch19@branch.org",
+    "phone": "9817856114",
+    "address": "913 Highland Street"
+  },
+  {
+    "branchId": 20,
+    "branchName": "Meadowbrook Branch 20",
+    "email": "branch20@company.net",
+    "phone": "9820053616",
+    "address": "270 South Ridge Street"
+  },
+  {
+    "branchId": 21,
+    "branchName": "Greenwood Branch 21",
+    "email": "branch21@branch.org",
+    "phone": "9880675271",
+    "address": "601 Lakeside Street"
+  },
+  {
+    "branchId": 22,
+    "branchName": "Riverside Branch 22",
+    "email": "branch22@branch.org",
+    "phone": "9824083132",
+    "address": "40 Willow Creek Street"
+  },
+  {
+    "branchId": 23,
+    "branchName": "Kingston Branch 23",
+    "email": "branch23@example.com",
+    "phone": "9842421096",
+    "address": "525 Valley View Street"
+  },
+  {
+    "branchId": 24,
+    "branchName": "Elm Street Branch 24",
+    "email": "branch24@example.com",
+    "phone": "9884024268",
+    "address": "755 Clifton Street"
+  },
+  {
+    "branchId": 25,
+    "branchName": "Central Branch 25",
+    "email": "branch25@example.com",
+    "phone": "9821179223",
+    "address": "117 South Ridge Street"
+  },
+  {
+    "branchId": 26,
+    "branchName": "Maplewood Branch 26",
+    "email": "branch26@branch.org",
+    "phone": "9848206038",
+    "address": "859 Springfield Street"
+  },
+  {
+    "branchId": 27,
+    "branchName": "Lakeside Branch 27",
+    "email": "branch27@mail.com",
+    "phone": "9873590489",
+    "address": "375 Sunnyvale Street"
+  },
+  {
+    "branchId": 28,
+    "branchName": "Kingston Branch 28",
+    "email": "branch28@branch.org",
+    "phone": "9827851236",
+    "address": "973 Highland Street"
+  },
+  {
+    "branchId": 29,
+    "branchName": "Fairview Branch 29",
+    "email": "branch29@mail.com",
+    "phone": "9895376028",
+    "address": "206 Brighton Street"
+  },
+  {
+    "branchId": 30,
+    "branchName": "Silver Lake Branch 30",
+    "email": "branch30@example.com",
+    "phone": "9884977186",
+    "address": "929 Belmont Street"
+  },
+  {
+    "branchId": 31,
+    "branchName": "Springfield Branch 31",
+    "email": "branch31@example.com",
+    "phone": "9843824408",
+    "address": "16 Brighton Street"
+  },
+  {
+    "branchId": 32,
+    "branchName": "Clifton Branch 32",
+    "email": "branch32@branch.org",
+    "phone": "9877028133",
+    "address": "25 North Point Street"
+  },
+  {
+    "branchId": 33,
+    "branchName": "Oakwood Branch 33",
+    "email": "branch33@company.net",
+    "phone": "9835098206",
+    "address": "159 Riverside Street"
+  },
+  {
+    "branchId": 34,
+    "branchName": "West End Branch 34",
+    "email": "branch34@example.com",
+    "phone": "9855069873",
+    "address": "193 Fairview Street"
+  },
+  {
+    "branchId": 35,
+    "branchName": "Hilltop Branch 35",
+    "email": "branch35@branch.org",
+    "phone": "9819004127",
+    "address": "358 Cedar Grove Street"
+  },
+  {
+    "branchId": 36,
+    "branchName": "Cedar Grove Branch 36",
+    "email": "branch36@example.com",
+    "phone": "9817016121",
+    "address": "433 Maplewood Street"
+  },
+  {
+    "branchId": 37,
+    "branchName": "Kingston Branch 37",
+    "email": "branch37@company.net",
+    "phone": "9801674553",
+    "address": "295 Cedar Grove Street"
+  },
+  {
+    "branchId": 38,
+    "branchName": "Meadowbrook Branch 38",
+    "email": "branch38@branch.org",
+    "phone": "9809029423",
+    "address": "863 Brookfield Street"
+  },
+  {
+    "branchId": 39,
+    "branchName": "Silver Lake Branch 39",
+    "email": "branch39@branch.org",
+    "phone": "9829152134",
+    "address": "854 Springfield Street"
+  },
+  {
+    "branchId": 40,
+    "branchName": "Oakwood Branch 40",
+    "email": "branch40@mail.com",
+    "phone": "9824116558",
+    "address": "217 Parkwood Street"
+  },
+  {
+    "branchId": 41,
+    "branchName": "East Side Branch 41",
+    "email": "branch41@mail.com",
+    "phone": "9854782847",
+    "address": "128 East Side Street"
+  },
+  {
+    "branchId": 42,
+    "branchName": "Parkwood Branch 42",
+    "email": "branch42@company.net",
+    "phone": "9857341141",
+    "address": "234 Brookfield Street"
+  },
+  {
+    "branchId": 43,
+    "branchName": "Brighton Branch 43",
+    "email": "branch43@company.net",
+    "phone": "9885276955",
+    "address": "307 Ashford Street"
+  },
+  {
+    "branchId": 44,
+    "branchName": "Silver Lake Branch 44",
+    "email": "branch44@mail.com",
+    "phone": "9851007447",
+    "address": "429 Valley View Street"
+  },
+  {
+    "branchId": 45,
+    "branchName": "Elm Street Branch 45",
+    "email": "branch45@branch.org",
+    "phone": "9816652837",
+    "address": "485 West End Street"
+  },
+  {
+    "branchId": 46,
+    "branchName": "West End Branch 46",
+    "email": "branch46@mail.com",
+    "phone": "9885190276",
+    "address": "578 Fairview Street"
+  },
+  {
+    "branchId": 47,
+    "branchName": "Clifton Branch 47",
+    "email": "branch47@company.net",
+    "phone": "9862495117",
+    "address": "668 Riverside Street"
+  },
+  {
+    "branchId": 48,
+    "branchName": "Pinecrest Branch 48",
+    "email": "branch48@company.net",
+    "phone": "9874251327",
+    "address": "792 Lakeside Street"
+  },
+  {
+    "branchId": 49,
+    "branchName": "Ashford Branch 49",
+    "email": "branch49@example.com",
+    "phone": "9888023578",
+    "address": "769 Central Street"
+  },
+  {
+    "branchId": 50,
+    "branchName": "Willow Creek Branch 50",
+    "email": "branch50@mail.com",
+    "phone": "9839048269",
+    "address": "23 Pinecrest Street"
+  }
+]

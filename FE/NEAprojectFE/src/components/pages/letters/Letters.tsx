@@ -1,7 +1,9 @@
+import { Outlet } from "react-router"
+
 const Letters = () => {
   return (
     <div>
-      This is the letters Page
+      <Outlet/>
     </div>
   )
 }

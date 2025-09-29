@@ -1,7 +1,9 @@
+import { Outlet } from "react-router"
+
 const Employee = () => {
   return (
     <div>
-      This is the Employee Page
+      <Outlet/>
     </div>
   )
 }
