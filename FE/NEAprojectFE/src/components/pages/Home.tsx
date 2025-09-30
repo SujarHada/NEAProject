@@ -12,10 +12,10 @@ const Home = () => {
       case "create-letter": navigate("/letters/create-letter"); break;
       case "all-letters": navigate("/letters/all-letters"); break;
       case "letter-bin": navigate("/letters/letter-bin"); break;
-      case "product": navigate("/product"); break;
-      case "create-product": navigate("/product/create-product"); break;
-      case "active-products": navigate("/product/active-products"); break;
-      case "bin-product": navigate("/product/bin-product"); break;
+      case "product": navigate("/products"); break;
+      case "create-product": navigate("/products/create-product"); break;
+      case "active-products": navigate("/products/active-products"); break;
+      case "bin-product": navigate("/products/bin-product"); break;
       case "offices": navigate("/offices"); break;
       case "create-office": navigate("/offices/create-office"); break;
       case "office-list": navigate("/offices/office-list"); break;

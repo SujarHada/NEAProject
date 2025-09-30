@@ -25,6 +25,7 @@ import CreateEmployee from "../components/pages/employee/CreateEmployee";
 import ManageEmployees from "../components/pages/employee/ManageEmployees";
 import AllEmployees from "../components/pages/employee/AllEmployees";
 import EditBranch from "../components/pages/branches/EditBranch";
+import EditProduct from "../components/pages/products/EditProduct";
 
 const router = createBrowserRouter([
     {
@@ -54,7 +55,7 @@ const router = createBrowserRouter([
                 ]
             },
             {
-                path: "product",
+                path: "products",
                 element: createElement(Product),
                 children:[
                     {
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
                     {
                         path:"bin-product",
                         element: createElement(ProductsBin)
+                    },
+                    {
+                        path:'edit/:id',
+                        element:createElement(EditProduct)
                     }
                 ]
 
