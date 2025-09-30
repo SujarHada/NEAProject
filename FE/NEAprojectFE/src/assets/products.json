@@ -1,0 +1,502 @@
+[
+    {
+        "name": "Product 1",
+        "SN": 1,
+        "SKU_ID": "SKU0001",
+        "companyName": "Company 19",
+        "purchasePrice": 824,
+        "sellingPrice": 705,
+        "discountedPrice": null,
+        "unit": "nos"
+    },
+    {
+        "name": "Product 2",
+        "SN": 2,
+        "SKU_ID": "SKU0002",
+        "companyName": "Company 10",
+        "purchasePrice": 982,
+        "sellingPrice": 688,
+        "discountedPrice": 273,
+        "unit": "kg"
+    },
+    {
+        "name": "Product 3",
+        "SN": 3,
+        "SKU_ID": "SKU0003",
+        "companyName": "Company 20",
+        "purchasePrice": 61,
+        "sellingPrice": 1493,
+        "discountedPrice": null,
+        "unit": "kg"
+    },
+    {
+        "name": "Product 4",
+        "SN": 4,
+        "SKU_ID": "SKU0004",
+        "companyName": "Company 8",
+        "purchasePrice": 717,
+        "sellingPrice": 273,
+        "discountedPrice": null,
+        "unit": "set"
+    },
+    {
+        "name": "Product 5",
+        "SN": 5,
+        "SKU_ID": "SKU0005",
+        "companyName": "Company 7",
+        "purchasePrice": 861,
+        "sellingPrice": 1486,
+        "discountedPrice": null,
+        "unit": "ltr"
+    },
+    {
+        "name": "Product 6",
+        "SN": 6,
+        "SKU_ID": "SKU0006",
+        "companyName": "Company 18",
+        "purchasePrice": 815,
+        "sellingPrice": 198,
+        "discountedPrice": 458,
+        "unit": "pcs"
+    },
+    {
+        "name": "Product 7",
+        "SN": 7,
+        "SKU_ID": "SKU0007",
+        "companyName": "Company 15",
+        "purchasePrice": 557,
+        "sellingPrice": 701,
+        "discountedPrice": 296,
+        "unit": "kg"
+    },
+    {
+        "name": "Product 8",
+        "SN": 8,
+        "SKU_ID": "SKU0008",
+        "companyName": "Company 15",
+        "purchasePrice": 800,
+        "sellingPrice": 1074,
+        "discountedPrice": null,
+        "unit": "set"
+    },
+    {
+        "name": "Product 9",
+        "SN": 9,
+        "SKU_ID": "SKU0009",
+        "companyName": "Company 9",
+        "purchasePrice": 319,
+        "sellingPrice": 588,
+        "discountedPrice": 744,
+        "unit": "ltr"
+    },
+    {
+        "name": "Product 10",
+        "SN": 10,
+        "SKU_ID": "SKU0010",
+        "companyName": "Company 12",
+        "purchasePrice": 166,
+        "sellingPrice": 618,
+        "discountedPrice": null,
+        "unit": "pcs"
+    },
+    {
+        "name": "Product 11",
+        "SN": 11,
+        "SKU_ID": "SKU0011",
+        "companyName": "Company 8",
+        "purchasePrice": 493,
+        "sellingPrice": 698,
+        "discountedPrice": null,
+        "unit": "nos"
+    },
+    {
+        "name": "Product 12",
+        "SN": 12,
+        "SKU_ID": "SKU0012",
+        "companyName": "Company 13",
+        "purchasePrice": 280,
+        "sellingPrice": 1166,
+        "discountedPrice": null,
+        "unit": "kg"
+    },
+    {
+        "name": "Product 13",
+        "SN": 13,
+        "SKU_ID": "SKU0013",
+        "companyName": "Company 18",
+        "purchasePrice": 162,
+        "sellingPrice": 772,
+        "discountedPrice": 173,
+        "unit": "pcs"
+    },
+    {
+        "name": "Product 14",
+        "SN": 14,
+        "SKU_ID": "SKU0014",
+        "companyName": "Company 14",
+        "purchasePrice": 387,
+        "sellingPrice": 578,
+        "discountedPrice": null,
+        "unit": "nos"
+    },
+    {
+        "name": "Product 15",
+        "SN": 15,
+        "SKU_ID": "SKU0015",
+        "companyName": "Company 7",
+        "purchasePrice": 477,
+        "sellingPrice": 858,
+        "discountedPrice": 876,
+        "unit": "kg"
+    },
+    {
+        "name": "Product 16",
+        "SN": 16,
+        "SKU_ID": "SKU0016",
+        "companyName": "Company 16",
+        "purchasePrice": 539,
+        "sellingPrice": 898,
+        "discountedPrice": null,
+        "unit": "nos"
+    },
+    {
+        "name": "Product 17",
+        "SN": 17,
+        "SKU_ID": "SKU0017",
+        "companyName": "Company 5",
+        "purchasePrice": 236,
+        "sellingPrice": 675,
+        "discountedPrice": 293,
+        "unit": "ltr"
+    },
+    {
+        "name": "Product 18",
+        "SN": 18,
+        "SKU_ID": "SKU0018",
+        "companyName": "Company 17",
+        "purchasePrice": 349,
+        "sellingPrice": 1149,
+        "discountedPrice": null,
+        "unit": "kg"
+    },
+    {
+        "name": "Product 19",
+        "SN": 19,
+        "SKU_ID": "SKU0019",
+        "companyName": "Company 13",
+        "purchasePrice": 955,
+        "sellingPrice": 1445,
+        "discountedPrice": null,
+        "unit": "nos"
+    },
+    {
+        "name": "Product 20",
+        "SN": 20,
+        "SKU_ID": "SKU0020",
+        "companyName": "Company 10",
+        "purchasePrice": 601,
+        "sellingPrice": 635,
+        "discountedPrice": 813,
+        "unit": "ltr"
+    },
+    {
+        "name": "Product 21",
+        "SN": 21,
+        "SKU_ID": "SKU0021",
+        "companyName": "Company 5",
+        "purchasePrice": 144,
+        "sellingPrice": 1494,
+        "discountedPrice": 650,
+        "unit": "nos"
+    },
+    {
+        "name": "Product 22",
+        "SN": 22,
+        "SKU_ID": "SKU0022",
+        "companyName": "Company 15",
+        "purchasePrice": 657,
+        "sellingPrice": 353,
+        "discountedPrice": 565,
+        "unit": "nos"
+    },
+    {
+        "name": "Product 23",
+        "SN": 23,
+        "SKU_ID": "SKU0023",
+        "companyName": "Company 15",
+        "purchasePrice": 248,
+        "sellingPrice": 1047,
+        "discountedPrice": 379,
+        "unit": "pcs"
+    },
+    {
+        "name": "Product 24",
+        "SN": 24,
+        "SKU_ID": "SKU0024",
+        "companyName": "Company 19",
+        "purchasePrice": 748,
+        "sellingPrice": 1253,
+        "discountedPrice": 602,
+        "unit": "ltr"
+    },
+    {
+        "name": "Product 25",
+        "SN": 25,
+        "SKU_ID": "SKU0025",
+        "companyName": "Company 1",
+        "purchasePrice": 530,
+        "sellingPrice": 1046,
+        "discountedPrice": null,
+        "unit": "nos"
+    },
+    {
+        "name": "Product 26",
+        "SN": 26,
+        "SKU_ID": "SKU0026",
+        "companyName": "Company 3",
+        "purchasePrice": 126,
+        "sellingPrice": 1362,
+        "discountedPrice": 384,
+        "unit": "pcs"
+    },
+    {
+        "name": "Product 27",
+        "SN": 27,
+        "SKU_ID": "SKU0027",
+        "companyName": "Company 17",
+        "purchasePrice": 186,
+        "sellingPrice": 539,
+        "discountedPrice": 269,
+        "unit": "set"
+    },
+    {
+        "name": "Product 28",
+        "SN": 28,
+        "SKU_ID": "SKU0028",
+        "companyName": "Company 20",
+        "purchasePrice": 899,
+        "sellingPrice": 800,
+        "discountedPrice": 482,
+        "unit": "pcs"
+    },
+    {
+        "name": "Product 29",
+        "SN": 29,
+        "SKU_ID": "SKU0029",
+        "companyName": "Company 4",
+        "purchasePrice": 74,
+        "sellingPrice": 1221,
+        "discountedPrice": 327,
+        "unit": "pcs"
+    },
+    {
+        "name": "Product 30",
+        "SN": 30,
+        "SKU_ID": "SKU0030",
+        "companyName": "Company 10",
+        "purchasePrice": 870,
+        "sellingPrice": 1394,
+        "discountedPrice": null,
+        "unit": "set"
+    },
+    {
+        "name": "Product 31",
+        "SN": 31,
+        "SKU_ID": "SKU0031",
+        "companyName": "Company 19",
+        "purchasePrice": 676,
+        "sellingPrice": 1439,
+        "discountedPrice": null,
+        "unit": "set"
+    },
+    {
+        "name": "Product 32",
+        "SN": 32,
+        "SKU_ID": "SKU0032",
+        "companyName": "Company 2",
+        "purchasePrice": 74,
+        "sellingPrice": 1202,
+        "discountedPrice": 666,
+        "unit": "pcs"
+    },
+    {
+        "name": "Product 33",
+        "SN": 33,
+        "SKU_ID": "SKU0033",
+        "companyName": "Company 11",
+        "purchasePrice": 516,
+        "sellingPrice": 1442,
+        "discountedPrice": null,
+        "unit": "pcs"
+    },
+    {
+        "name": "Product 34",
+        "SN": 34,
+        "SKU_ID": "SKU0034",
+        "companyName": "Company 13",
+        "purchasePrice": 373,
+        "sellingPrice": 835,
+        "discountedPrice": 346,
+        "unit": "nos"
+    },
+    {
+        "name": "Product 35",
+        "SN": 35,
+        "SKU_ID": "SKU0035",
+        "companyName": "Company 15",
+        "purchasePrice": 972,
+        "sellingPrice": 526,
+        "discountedPrice": null,
+        "unit": "ltr"
+    },
+    {
+        "name": "Product 36",
+        "SN": 36,
+        "SKU_ID": "SKU0036",
+        "companyName": "Company 17",
+        "purchasePrice": 923,
+        "sellingPrice": 200,
+        "discountedPrice": null,
+        "unit": "pcs"
+    },
+    {
+        "name": "Product 37",
+        "SN": 37,
+        "SKU_ID": "SKU0037",
+        "companyName": "Company 10",
+        "purchasePrice": 377,
+        "sellingPrice": 1029,
+        "discountedPrice": 78,
+        "unit": "ltr"
+    },
+    {
+        "name": "Product 38",
+        "SN": 38,
+        "SKU_ID": "SKU0038",
+        "companyName": "Company 20",
+        "purchasePrice": 169,
+        "sellingPrice": 130,
+        "discountedPrice": null,
+        "unit": "pcs"
+    },
+    {
+        "name": "Product 39",
+        "SN": 39,
+        "SKU_ID": "SKU0039",
+        "companyName": "Company 7",
+        "purchasePrice": 62,
+        "sellingPrice": 685,
+        "discountedPrice": null,
+        "unit": "kg"
+    },
+    {
+        "name": "Product 40",
+        "SN": 40,
+        "SKU_ID": "SKU0040",
+        "companyName": "Company 10",
+        "purchasePrice": 754,
+        "sellingPrice": 1266,
+        "discountedPrice": null,
+        "unit": "kg"
+    },
+    {
+        "name": "Product 41",
+        "SN": 41,
+        "SKU_ID": "SKU0041",
+        "companyName": "Company 13",
+        "purchasePrice": 863,
+        "sellingPrice": 1010,
+        "discountedPrice": 367,
+        "unit": "kg"
+    },
+    {
+        "name": "Product 42",
+        "SN": 42,
+        "SKU_ID": "SKU0042",
+        "companyName": "Company 4",
+        "purchasePrice": 449,
+        "sellingPrice": 1486,
+        "discountedPrice": null,
+        "unit": "nos"
+    },
+    {
+        "name": "Product 43",
+        "SN": 43,
+        "SKU_ID": "SKU0043",
+        "companyName": "Company 12",
+        "purchasePrice": 605,
+        "sellingPrice": 1053,
+        "discountedPrice": 230,
+        "unit": "kg"
+    },
+    {
+        "name": "Product 44",
+        "SN": 44,
+        "SKU_ID": "SKU0044",
+        "companyName": "Company 9",
+        "purchasePrice": 130,
+        "sellingPrice": 756,
+        "discountedPrice": null,
+        "unit": "nos"
+    },
+    {
+        "name": "Product 45",
+        "SN": 45,
+        "SKU_ID": "SKU0045",
+        "companyName": "Company 1",
+        "purchasePrice": 305,
+        "sellingPrice": 332,
+        "discountedPrice": 296,
+        "unit": "set"
+    },
+    {
+        "name": "Product 46",
+        "SN": 46,
+        "SKU_ID": "SKU0046",
+        "companyName": "Company 1",
+        "purchasePrice": 765,
+        "sellingPrice": 1493,
+        "discountedPrice": 377,
+        "unit": "ltr"
+    },
+    {
+        "name": "Product 47",
+        "SN": 47,
+        "SKU_ID": "SKU0047",
+        "companyName": "Company 12",
+        "purchasePrice": 82,
+        "sellingPrice": 1467,
+        "discountedPrice": null,
+        "unit": "kg"
+    },
+    {
+        "name": "Product 48",
+        "SN": 48,
+        "SKU_ID": "SKU0048",
+        "companyName": "Company 10",
+        "purchasePrice": 290,
+        "sellingPrice": 338,
+        "discountedPrice": null,
+        "unit": "ltr"
+    },
+    {
+        "name": "Product 49",
+        "SN": 49,
+        "SKU_ID": "SKU0049",
+        "companyName": "Company 6",
+        "purchasePrice": 209,
+        "sellingPrice": 863,
+        "discountedPrice": null,
+        "unit": "kg"
+    },
+    {
+        "name": "Product 50",
+        "SN": 50,
+        "SKU_ID": "SKU0050",
+        "companyName": "Company 13",
+        "purchasePrice": 165,
+        "sellingPrice": 1379,
+        "discountedPrice": null,
+        "unit": "kg"
+    }
+]

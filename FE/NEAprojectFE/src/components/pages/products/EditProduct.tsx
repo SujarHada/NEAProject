@@ -1,29 +1,58 @@
+import Products from '../../../assets/products.json'
+import * as z from 'zod'
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import z from "zod"
-import { FaChevronDown } from "react-icons/fa"
-
-interface createProductInputs {
+import { useNavigate, useParams} from "react-router"
+import { FaChevronDown } from 'react-icons/fa'
+import { useEffect, useState } from 'react'
+export interface Product {
     name: string
+    SN: number
+    SKU_ID: string
     companyName: string
-    purchasePrice: number | null
-    sellingPrice: number | null
+    purchasePrice: number
+    sellingPrice: number
     discountedPrice?: number | null
     unit: string
 }
 
-const createproductFormschema = z.object({
-    name: z.string().min(1, "Products Name is required"),
-    companyName: z.string().min(1, "Company Name is required"),
-    purchasePrice: z.number().min(1, "Purchase Price is required").nullable(),
-    sellingPrice: z.number().min(1, "Selling Price is required").nullable(),
-    discountedPrice: z.number().nullable().optional(),
-    unit: z.string().min(1, "Unit is required")
-})
+const EditProduct = () => {
+    const param = useParams()
+    const navigate = useNavigate()
+    const [product, setProduct] = useState<Product>()
+    useEffect(() => {
+        if(!product){
+            const editProduct = Products.find(product => product.SN === +param.id!)
+            setProduct(editProduct)
+            return
+        }
+        setValue("name", product.name)
+        setValue("companyName", product.companyName)
+        setValue("purchasePrice", product.purchasePrice)
+        setValue("sellingPrice", product.sellingPrice)
+        setValue("discountedPrice", product.discountedPrice)
+        setValue("unit", product.unit)
+    }, [param, product])
+    interface ProductInputs {
+        name: string
+        companyName: string
+        purchasePrice: number | null
+        sellingPrice: number | null
+        discountedPrice?: number | null
+        unit: string
+    }
+
+    const createproductFormschema = z.object({
+        name: z.string().min(1, "Products Name is required"),
+        companyName: z.string().min(1, "Company Name is required"),
+        purchasePrice: z.number().min(1, "Purchase Price is required").nullable(),
+        sellingPrice: z.number().min(1, "Selling Price is required").nullable(),
+        discountedPrice: z.number().optional().nullable(),
+        unit: z.string().min(1, "Unit is required")
+    })
 
 
-const CreateProducts = () => {
-    const { control, handleSubmit, formState: { isSubmitting, errors }, reset } = useForm<createProductInputs>(
+    const { control, handleSubmit, formState: { isSubmitting, errors }, reset, setValue } = useForm<ProductInputs>(
         {
             defaultValues: {
                 name: "",
@@ -38,11 +67,14 @@ const CreateProducts = () => {
         }
     )
 
-    const onSubmit = (data: createProductInputs) => {
+    const onSubmit = (data: ProductInputs) => {
         console.log(data)
-        alert("Product created successfully")
         reset()
+        navigate("/products/active-products")
     }
+
+
+
     return (
         <div className="flex flex-col gap-6">
             <h1 className="text-2xl font-bold">Create product</h1>
@@ -121,7 +153,6 @@ const CreateProducts = () => {
                                     <option value="set">Set</option>
                                     <option value="ltr">Ltr</option>
                                     <option value="pcs">Pcs.</option>
-
                                 </select>
                                 <FaChevronDown className="absolute right-3 text-gray-500" />
                             </div>
@@ -141,11 +172,11 @@ const CreateProducts = () => {
                     onClick={handleSubmit(onSubmit)}
                     className="outline-none w-full bg-[#10172A] text-white h-12 hover:bg-[#233058] active:bg-[#314379] rounded-md disabled:opacity-50"
                 >
-                    {isSubmitting ? "Creating..." : "Create Product"}
+                    {isSubmitting ? "Saving..." : "Save"}
                 </button>
             </div>
         </div>
     )
 }
+export default EditProduct
 
-export default CreateProducts
