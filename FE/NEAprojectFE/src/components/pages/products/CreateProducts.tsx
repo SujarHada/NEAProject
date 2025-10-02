@@ -2,15 +2,7 @@ import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import z from "zod"
 import { FaChevronDown } from "react-icons/fa"
-
-interface createProductInputs {
-    name: string
-    companyName: string
-    purchasePrice: number | null
-    sellingPrice: number | null
-    discountedPrice?: number | null
-    unit: string
-}
+import type { createProductInputs } from "../../../interfaces/interfaces"
 
 const createproductFormschema = z.object({
     name: z.string().min(1, "Products Name is required"),
@@ -44,10 +36,10 @@ const CreateProducts = () => {
         reset()
     }
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-1 flex-col gap-6 ">
             <h1 className="text-2xl font-bold">Create product</h1>
-            <div className="flex gap-4 w-full">
-                <div className="flex flex-col w-full gap-2">
+            <div className="flex gap-4 flex-wrap w-full">
+                <div className="flex flex-1 flex-col w-full gap-2">
                     <label htmlFor="name"> Producers Name * </label>
                     <Controller
                         name="name"
@@ -58,7 +50,7 @@ const CreateProducts = () => {
                     />
                     {errors.name && <p className="text-red-500">{errors.name.message}</p>}
                 </div>
-                <div className="flex flex-col w-full gap-2">
+                <div className="flex flex-1 flex-col w-full gap-2">
                     <label htmlFor="companyName"> Company Name * </label>
                     <Controller
                         name="companyName"
@@ -70,9 +62,9 @@ const CreateProducts = () => {
                     {errors.companyName && <p className="text-red-500">{errors.companyName.message}</p>}
                 </div>
             </div>
-            <div className="flex w-full gap-4">
+            <div className="flex w-full flex-wrap gap-4">
 
-                <div className="w-full flex flex-col gap-2">
+                <div className="w-full flex flex-1 flex-col gap-2">
                     <label htmlFor="purchasePrice"> Purchase Price * </label>
                     <Controller
                         name="purchasePrice"
@@ -83,7 +75,7 @@ const CreateProducts = () => {
                     />
                     {errors.purchasePrice && <p className="text-red-500">{errors.purchasePrice.message}</p>}
                 </div>
-                <div className="w-full flex flex-col gap-2">
+                <div className="w-full flex flex-1 flex-col gap-2">
                     <label htmlFor="sellingPrice"> Selling Price * </label>
                     <Controller
                         name="sellingPrice"
@@ -94,7 +86,7 @@ const CreateProducts = () => {
                     />
                     {errors.sellingPrice && <p className="text-red-500">{errors.sellingPrice.message}</p>}
                 </div>
-                <div className="w-full flex flex-col gap-2 ">
+                <div className="w-full flex flex-1 flex-col gap-2 ">
                     <label htmlFor="discountedPrice"> Discounted Price </label>
                     <Controller
                         name="discountedPrice"
@@ -107,7 +99,7 @@ const CreateProducts = () => {
                 </div>
             </div>
 
-            <div className="w-1/2 flex flex-col relative">
+            <div className="w-1/2 flex flex-1 flex-col relative">
                 <div className="flex ">
                     <Controller
                         name="unit"

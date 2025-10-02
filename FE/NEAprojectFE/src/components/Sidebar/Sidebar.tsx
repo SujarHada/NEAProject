@@ -30,9 +30,17 @@ type MenuItem = {
 };
 
 const Sidebar = ({ onSelect }: SidebarProps) => {
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(true);
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
+    const handleSelect = (pageId: string) => {
+        onSelect(pageId);
+        toggleCollapse();
+    };
+    const toggleCollapse = () => {
+        setCollapsed(!collapsed)
+        setOpenMenus({});        
+    };
     const toggleMenu = (id: string) => {
         setOpenMenus((prev) => ({ ...prev, [id]: !prev[id] }));
     };
@@ -112,7 +120,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
     return (
         <div
             className={` flex max-h-screen flex-col ${collapsed ? "w-10" : "w-55"
-                } bg-gray-800 text-white min-h-screen `}
+                } bg-gray-800 text-white min-h-screen max-md:absolute z-50`}
         >
             {/* Header */}
             <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"} p-4`} >
@@ -122,7 +130,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
                     </h2>
                 )}
                 <button
-                    onClick={() => setCollapsed(!collapsed)}
+                    onClick={() => toggleCollapse()}
                     className="text-white hover:text-gray-300 "
                 >
                     {collapsed ? <FaAngleRight /> : <FaAngleLeft />}
@@ -136,7 +144,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
                         <div
                             className="flex items-center gap-3 p-3 justify-center cursor-pointer hover:bg-gray-700"
                             onClick={() =>
-                                item.children ? toggleMenu(item.id) : onSelect(item.id)
+                                item.children ? collapsed ? (toggleCollapse(), toggleMenu(item.id)) : toggleMenu(item.id) : onSelect(item.id)
                             }
                         >
                             <span className="text-xl">{item.icon}</span>
@@ -158,7 +166,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
                                 {item.children.map((child) => (
                                     <li
                                         key={child.id}
-                                        onClick={() => onSelect(child.id)}
+                                        onClick={() => handleSelect(child.id)}
                                         className="flex items-center  gap-3 p-2 cursor-pointer hover:bg-gray-700 text-sm"
                                     >
                                         <span className="text-base">{child.icon}</span>
