@@ -1,7 +1,8 @@
 import { useState } from "react"
 import products from "../../../assets/products.json"
 import { useNavigate } from "react-router"
-import type { Product } from "./EditProduct"
+import type { Product } from "../../../interfaces/interfaces"
+
 const ActiveProducts = () => {
     const [openDropdownId, setOpenDropdownId] = useState<number | null>(null)
     const navigate = useNavigate()

@@ -1,12 +1,12 @@
 import products from "../../../assets/products.json"
-import type { Product } from "./EditProduct"
+import type { Product } from "../../../interfaces/interfaces"
 const ProductsBin = () => {
 const goLive = (id:number)=>{
     console.log('Going live: ', id)
 }
     return (
         <div className="flex flex-col gap-6">
-            <h1 className="text-2xl font-bold">Product List</h1>
+            <h1 className="text-2xl font-bold">Product Bin</h1>
 
             <div className="relative overflow-x-auto">
                 <table className="w-full text-sm text-left text-gray-400">

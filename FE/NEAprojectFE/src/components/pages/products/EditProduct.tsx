@@ -5,16 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate, useParams} from "react-router"
 import { FaChevronDown } from 'react-icons/fa'
 import { useEffect, useState } from 'react'
-export interface Product {
-    name: string
-    SN: number
-    SKU_ID: string
-    companyName: string
-    purchasePrice: number
-    sellingPrice: number
-    discountedPrice?: number | null
-    unit: string
-}
+import type { Product } from '../../../interfaces/interfaces'
+
 
 const EditProduct = () => {
     const param = useParams()

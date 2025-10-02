@@ -2,16 +2,7 @@ import { Controller, useForm, type SubmitHandler } from "react-hook-form"
 import * as z from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
-interface BranchFormInputs {
-    orgId: string
-    branchName: string
-    email: string
-    address: string
-    bankName: string
-    accName: string
-    accNo: string
-    phNo: string
-}
+import type { BranchFormInputs } from "../../../interfaces/interfaces"
 
 const formSchema = z.object({
     orgId: z.string().min(1, "Organization ID is required for form"),

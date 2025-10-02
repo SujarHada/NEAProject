@@ -25,9 +25,9 @@ const Home = () => {
       case "branches": navigate("/branches"); break;
       case "all-branches": navigate("/branches/all-branches"); break;
       case "create-branch": navigate("/branches/create-branch"); break;
-      case "employee": navigate("/employee"); break;
-      case "create-employee": navigate("/employee/create-employee"); break;
-      case "manage-employees": navigate("/employee/manage-employees"); break;
+      case "employee": navigate("/employees"); break;
+      case "create-employee": navigate("/employees/create"); break;
+      case "manage-employees": navigate("/employees/manage"); break;
       case "profile": navigate("/profile"); break;
     }
   };
@@ -35,7 +35,7 @@ const Home = () => {
   return (
     <div className="flex">
       <Sidebar onSelect={renderPage} />
-      <main className="flex-1 p-4 max-h-screen overflow-y-scroll bg-[#A7B9D6] " >
+      <main className="flex-1 max-md:ml-10 p-4 min-h-screen max-h-screen overflow-y-scroll bg-[#A7B9D6] " >
       <Outlet/>
       </main>
     </div>

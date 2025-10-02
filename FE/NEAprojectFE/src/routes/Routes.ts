@@ -22,10 +22,11 @@ import ReceiverList from "../components/pages/receiver/ReceiverList";
 import AllBranches from "../components/pages/branches/AllBranches";
 import CreateBranches from "../components/pages/branches/CreateBranches";
 import CreateEmployee from "../components/pages/employee/CreateEmployee";
-import ManageEmployees from "../components/pages/employee/ManageEmployees";
+import ManageEmployees from "../components/pages/employee/EditEmployee";
 import AllEmployees from "../components/pages/employee/AllEmployees";
 import EditBranch from "../components/pages/branches/EditBranch";
 import EditProduct from "../components/pages/products/EditProduct";
+import EditEmployee from "../components/pages/employee/EditEmployee";
 
 const router = createBrowserRouter([
     {
@@ -132,16 +133,20 @@ const router = createBrowserRouter([
                 ]
             },
             {
-                path: "employee",
+                path: "employees",
                 element: createElement(Employee),
                 children:[
                     {
-                        path:"create-employee",
+                        path:"create",
                         element: createElement(CreateEmployee)
                     },
                     {
-                        path:"manage-employees",
-                        element: createElement(ManageEmployees)
+                        path:"manage",
+                        element: createElement(AllEmployees)
+                    },
+                    {
+                        path:"edit/:id",
+                        element: createElement(EditEmployee)
                     }
                 ]
             },
