@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -59,10 +59,52 @@ class ProductViewSet(viewsets.ModelViewSet):
     permission_classes = []  # No authentication required
     filterset_fields = ["status"]
 
+    def get_queryset(self):
+        """By default, return only active products, unless overridden."""
+        queryset = super().get_queryset()
+        
+        # Allow restore action to access bin products
+        if self.action == 'restore':
+            return queryset.filter(status=ProductStatus.BIN)
+        
+        status_param = self.request.query_params.get("status")
+
+        if status_param:
+            return queryset.filter(status=status_param)
+
+        # Default: only ACTIVE
+        return queryset.filter(status=ProductStatus.ACTIVE)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        # Create a mapping of product IDs to their index in the queryset
+        product_index_map = {obj.id: idx for idx, obj in enumerate(queryset)}
+        request.product_index_map = product_index_map
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        product_name = instance.name
         instance.status = ProductStatus.BIN
-        instance.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        instance.save(update_fields=["status", "updated_at"])
+        
+        # Return a informative response
+        return Response(
+            {
+                "status": "success",
+                "message": f"Product '{product_name}' has been moved to bin",
+                "id": instance.id
+            },
+            status=status.HTTP_200_OK
+        )
 
 
 class SeedDatabaseView(APIView):

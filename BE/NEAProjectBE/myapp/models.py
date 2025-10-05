@@ -65,11 +65,37 @@ class ProductStatus(models.TextChoices):
     ACTIVE = "active", "Active"
     BIN = "bin", "Bin"
 
+class UnitOfMeasurement(models.TextChoices):
+    NOS = "nos", "Nos."
+    SET = "set", "Set"
+    KG = "kg", "KG"
+    LTR = "ltr", "Ltr"
+    PCS = "pcs", "Pcs"
 
 class Product(TimeStampedModel):
     name = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
+    company = models.CharField(max_length=255, blank=True, default="")
     status = models.CharField(max_length=10, choices=ProductStatus.choices, default=ProductStatus.ACTIVE)
+    
+    # Stock information
+    stock_quantity = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    unit_of_measurement = models.CharField(
+        max_length=10, 
+        choices=UnitOfMeasurement.choices, 
+        default=UnitOfMeasurement.NOS
+    )
+    
+    # Unique identifier
+    sku = models.CharField(max_length=50, unique=True, blank=True, null=True)
+    
+    def save(self, *args, **kwargs):
+        # Auto-generate SKU if not provided or empty string
+        if not self.sku or self.sku.strip() == '':
+            # Generate a 13-digit unique number
+            import random
+            random_digits = ''.join([str(random.randint(0, 9)) for _ in range(13)])
+            self.sku = random_digits
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:  # pragma: no cover
         return self.name
