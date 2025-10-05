@@ -52,3 +52,21 @@ export interface Employee{
     role: string
     branch: string
 }
+
+export interface createReceiverInputs {
+    name:string
+    post:string
+    id:string
+    idType:string
+    departmentName:string
+    departmentAddress:string
+    phoneNo:string
+    vehicleNo:string
+}
+
+export interface Receiver {
+    name: string
+    post: string
+    id: string
+    phoneNo: string
+}
