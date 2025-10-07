@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 
 class TimeStampedModel(models.Model):
@@ -11,18 +12,35 @@ class TimeStampedModel(models.Model):
 class Office(TimeStampedModel):
     name = models.CharField(max_length=255)
     address = models.CharField(max_length=512, blank=True)
+    email = models.EmailField(blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True)
 
     def __str__(self) -> str:  # pragma: no cover
         return self.name
 
+class BranchStatus(models.TextChoices):
+    ACTIVE = "active", "Active"
+    BIN = "bin", "Bin"
 
 class Branch(TimeStampedModel):
-    office = models.ForeignKey(Office, on_delete=models.CASCADE, related_name="branches")
+    organization_id = models.UUIDField(default=uuid.uuid4, null=True, editable=False)
     name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True, null=True)
     address = models.CharField(max_length=512, blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
+    bank_name = models.CharField(max_length=255, blank=True)
+    account_name = models.CharField(max_length=255, blank=True)
+    account_number = models.CharField(max_length=50, blank=True)
 
-    def __str__(self) -> str:  # pragma: no cover
-        return f"{self.name} ({self.office.name})"
+    # Soft delete field
+    status = models.CharField(
+        max_length=10,
+        choices=BranchStatus.choices,
+        default=BranchStatus.ACTIVE
+    )
+
+    def __str__(self):
+        return self.name
 
 
 class Employee(TimeStampedModel):

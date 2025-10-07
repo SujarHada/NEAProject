@@ -3,8 +3,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import action
 
-from .models import Office, Branch, Employee, Receiver, Letter, Product, ProductStatus, LetterStatus
+from .models import Office, Branch, Employee, Receiver, Letter, Product, ProductStatus, LetterStatus, BranchStatus
 from .serializers import (
     OfficeSerializer,
     BranchSerializer,
@@ -25,6 +26,60 @@ class BranchViewSet(viewsets.ModelViewSet):
     queryset = Branch.objects.all().order_by("-created_at")
     serializer_class = BranchSerializer
     permission_classes = []  # No authentication required
+    filterset_fields = ["status"]
+
+    def get_queryset(self):
+        """By default, return only active branches, unless overridden."""
+        queryset = super().get_queryset()
+
+        # Allow restore action to access bin branches
+        if self.action == 'restore':
+            return queryset.filter(status=BranchStatus.BIN)
+
+        status_param = self.request.query_params.get("status")
+        if status_param:
+            return queryset.filter(status=status_param)
+
+        # Default: only ACTIVE
+        return queryset.filter(status=BranchStatus.ACTIVE)
+
+    def destroy(self, request, *args, **kwargs):
+        """Instead of deleting, mark branch as BIN."""
+        instance = self.get_object()
+        branch_name = instance.name
+        instance.status = BranchStatus.BIN
+        instance.save(update_fields=["status", "updated_at"])
+
+        return Response(
+            {
+                "status": "success",
+                "message": f"Branch '{branch_name}' has been moved to bin",
+                "id": instance.id
+            },
+            status=status.HTTP_200_OK
+        )
+
+    @action(detail=True, methods=["post"])
+    def restore(self, request, pk=None):
+        """Restore a branch from BIN to ACTIVE."""
+        instance = self.get_object()
+        if instance.status == BranchStatus.ACTIVE:
+            return Response(
+                {"message": f"Branch '{instance.name}' is already active."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        instance.status = BranchStatus.ACTIVE
+        instance.save(update_fields=["status", "updated_at"])
+
+        return Response(
+            {
+                "status": "success",
+                "message": f"Branch '{instance.name}' has been restored.",
+                "id": instance.id
+            },
+            status=status.HTTP_200_OK
+        )
 
 
 class EmployeeViewSet(viewsets.ModelViewSet):
@@ -105,7 +160,28 @@ class ProductViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK
         )
+    @action(detail=True, methods=["post"])
+    def restore(self, request, pk=None):
+        """Restore a product from BIN to ACTIVE."""
+        instance = self.get_object()
 
+        if instance.status == ProductStatus.ACTIVE:
+            return Response(
+                {"message": f"Product '{instance.name}' is already active."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        instance.status = ProductStatus.ACTIVE
+        instance.save(update_fields=["status", "updated_at"])
+
+        return Response(
+            {
+                "status": "success",
+                "message": f"Product '{instance.name}' has been restored.",
+                "id": instance.id,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 class SeedDatabaseView(APIView):
     """
