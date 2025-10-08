@@ -1,8 +1,9 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from myapp.models import Office, Branch, Employee, Receiver, Letter, Product, LetterStatus, ProductStatus
+from myapp.models import Office, Branch, Employee, Receiver, Letter, Product, LetterStatus, ProductStatus, BranchStatus
 from faker import Faker
 import random
+import uuid
 
 class Command(BaseCommand):
     help = 'Seeds the database with sample data'
@@ -26,16 +27,21 @@ class Command(BaseCommand):
             offices.append(office)
         self.stdout.write(self.style.SUCCESS(f'Created {len(offices)} offices'))
         
-        # Create branches for each office
+        # Create branches
         branches = []
-        for office in offices:
-            for _ in range(2):
-                branch = Branch.objects.create(
-                    name=f"{office.name} - {fake.city()}",
-                    address=fake.address(),
-                    office=office
-                )
-                branches.append(branch)
+        for _ in range(6):
+            branch = Branch.objects.create(
+                organization_id=uuid.uuid4(),
+                name=f"{fake.company()} Branch",
+                email=fake.unique.company_email(),
+                address=fake.address(),
+                phone_number=fake.phone_number(),
+                bank_name=fake.company(),
+                account_name=fake.name(),
+                account_number=fake.bban(),
+                status=BranchStatus.ACTIVE
+            )
+            branches.append(branch)
         self.stdout.write(self.style.SUCCESS(f'Created {len(branches)} branches'))
         
         # Create employees
@@ -57,8 +63,10 @@ class Command(BaseCommand):
         for _ in range(10):
             product = Product.objects.create(
                 name=fake.catch_phrase(),
-                description=fake.text(),
-                status=random.choice([ProductStatus.ACTIVE, ProductStatus.BIN])
+                company=fake.company(),
+                status=random.choice([ProductStatus.ACTIVE, ProductStatus.BIN]),
+                stock_quantity=random.randint(1, 100),
+                unit_of_measurement=random.choice(['nos', 'set', 'kg', 'ltr', 'pcs'])
             )
             products.append(product)
         self.stdout.write(self.style.SUCCESS(f'Created {len(products)} products'))
@@ -79,7 +87,7 @@ class Command(BaseCommand):
             Letter.objects.create(
                 title=f"Letter: {fake.sentence()}",
                 content='\n\n'.join(fake.paragraphs(nb=3)),
-                status=random.choice([LetterStatus.DRAFT, LetterStatus.SENT, 'bin']),
+                status=random.choice([LetterStatus.DRAFT, LetterStatus.SENT, LetterStatus.BIN]),
                 receiver=random.choice(receivers) if random.random() > 0.3 else None
             )
         self.stdout.write(self.style.SUCCESS('Created 15 letters'))
