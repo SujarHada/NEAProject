@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
+    'corsheaders',
     # Local apps
     'myapp',
     'drf_spectacular',
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -153,3 +155,5 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API schema for dashboard',
     'VERSION': '1.0.0',
 }
+#use CORS_ALLOWED_ORIGINS for production
+CORS_ALLOW_ALL_ORIGINS = True
