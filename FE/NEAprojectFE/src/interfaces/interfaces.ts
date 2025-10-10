@@ -79,3 +79,12 @@ export interface Branch{
     account_number:string
     phone_number:string
 }
+
+export interface Office {
+    id:number
+    name:string
+    email:string
+    address:string
+    phone_number:string
+}
+export interface OfficeFormInputs extends Omit<Office, 'id'> {}
