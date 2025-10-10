@@ -18,14 +18,6 @@ const ProductsBin = () => {
     const toggleDropdown = (productId: number) => {
         setOpenDropdownId(prev => (prev === productId ? null : productId))
     }
-    // const fetchProducts = async () => {
-    //     if (currentPage <= 1) {
-    //         setCurrentPage(1)
-    //     }
-    //     const res = await axios.get(`http://127.0.0.1:8000/api/products/?status=bin&page=${currentPage}`)
-    //     setProducts(res.data.results)
-    //     setProductsCount(res.data.count)
-    // }
     const fetchProducts = async (pageUrl?: string, pageNum?: number) => {
         try {
             const apiUrl = pageUrl || `http://127.0.0.1:8000/api/products/?status=bin&page=${pageNum || currentPage}`
