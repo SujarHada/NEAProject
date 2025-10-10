@@ -1,32 +1,29 @@
 export interface BranchFormInputs {
-    orgId: string
-    branchName: string
+    name: string
     email: string
     address: string
-    bankName: string
-    accName: string
-    accNo: string
-    phNo: string
+    bank_name: string
+    account_name: string
+    account_number: string
+    phone_number: string
 }
 
 export interface createProductInputs {
     name: string
-    companyName: string
-    purchasePrice: number | null
-    sellingPrice: number | null
-    discountedPrice?: number | null
-    unit: string
+    company: string
+    unit_of_measurement: string
+    stock_quantity: string
 }
 
 export interface Product {
     name: string
-    SN: number
-    SKU_ID: string
-    companyName: string
-    purchasePrice: number
-    sellingPrice: number
-    discountedPrice?: number | null
-    unit: string
+    id: number
+    serial_number: number
+    sku: string
+    company: string
+    status: string
+    stock_quantity: string
+    unit_of_measurement: string
 }
 
 export interface createEmployeesInputs {
@@ -69,4 +66,16 @@ export interface Receiver {
     post: string
     id: string
     phoneNo: string
+}
+
+export interface Branch{
+    id:number
+    organization_id:string
+    name:string
+    email:string
+    address:string
+    bank_name:string
+    account_name:string
+    account_number:string
+    phone_number:string
 }
