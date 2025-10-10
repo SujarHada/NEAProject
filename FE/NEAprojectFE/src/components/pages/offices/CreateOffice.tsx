@@ -36,7 +36,7 @@ const CreateOffice = () => {
 
     return (
         <div className="flex flex-col gap-6">
-            <h1 className="text-2xl font-bold">Create Employee</h1>
+            <h1 className="text-2xl font-bold">Create Office</h1>
             <div className="flex  w-full flex-wrap gap-4">
 
                 <div className="flex flex-1 flex-col w-full gap-2">
