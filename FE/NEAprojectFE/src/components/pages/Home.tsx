@@ -35,7 +35,7 @@ const Home = () => {
   return (
     <div className="flex">
       <Sidebar onSelect={renderPage} />
-      <main className="flex-1 max-md:ml-10 p-4 min-h-screen max-h-screen overflow-y-scroll bg-[#A7B9D6] " >
+      <main className="flex-1 max-md:ml-10 p-4 min-h-screen max-h-screen overflow-y-auto bg-[#A7B9D6] " >
       <Outlet/>
       </main>
     </div>
