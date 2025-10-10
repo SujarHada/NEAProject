@@ -51,7 +51,6 @@ const EditOffice = () => {
 
     const onSubmit: SubmitHandler<OfficeFormInputs> = async (data) => {
         const res = await axios.put(`http://127.0.0.1:8000/api/offices/${params.id}/`, data)
-        console.log(res);
         if (res.status === 200) {
         navigate("/offices/office-list")
         }

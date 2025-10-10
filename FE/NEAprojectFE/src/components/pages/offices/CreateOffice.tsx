@@ -27,7 +27,6 @@ const CreateOffice = () => {
 
     const onSubmit: SubmitHandler<OfficeFormInputs> = async (data) => {
         const res = await axios.post("http://127.0.0.1:8000/api/offices/", data)
-        console.log(res);
         if (res.status === 201) {
             navigate("/offices/office-list")
         }
