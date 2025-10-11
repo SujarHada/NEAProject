@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 
-from .models import Office, Branch, Employee, Receiver, Letter, Product, ProductStatus, LetterStatus, BranchStatus
+from .models import Office, Branch, Employee, Receiver, Letter, Product, ProductStatus, LetterStatus, BranchStatus, OfficeStatus
 from .serializers import (
     OfficeSerializer,
     BranchSerializer,
@@ -20,6 +20,74 @@ class OfficeViewSet(viewsets.ModelViewSet):
     queryset = Office.objects.all().order_by("-created_at")
     serializer_class = OfficeSerializer
     permission_classes = []  # No authentication required
+    filterset_fields = ["status"]
+
+    def get_queryset(self):
+        """By default, return only active offices, unless overridden."""
+        queryset = super().get_queryset()
+        
+        # Allow restore action to access bin offices
+        if self.action == 'restore':
+            return queryset.filter(status=OfficeStatus.BIN)
+        
+        status_param = self.request.query_params.get("status")
+        if status_param:
+            return queryset.filter(status=status_param)
+
+        # Default: only ACTIVE
+        return queryset.filter(status=OfficeStatus.ACTIVE)
+    #Serial Number for Office
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        office_index_map = {obj.id: idx for idx, obj in enumerate(queryset)}
+        request.office_index_map = office_index_map
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    def destroy(self, request, *args, **kwargs):
+        """Instead of deleting, mark office as BIN."""
+        instance = self.get_object()
+        office_name = instance.name
+        instance.status = OfficeStatus.BIN
+        instance.save(update_fields=["status", "updated_at"])
+        
+        return Response(
+            {
+                "status": "success",
+                "message": f"Office '{office_name}' has been moved to bin",
+                "id": instance.id
+            },
+            status=status.HTTP_200_OK
+        )
+
+    @action(detail=True, methods=["post"])
+    def restore(self, request, pk=None):
+        """Restore an office from BIN to ACTIVE."""
+        instance = self.get_object()
+        if instance.status == OfficeStatus.ACTIVE:
+            return Response(
+                {"message": f"Office '{instance.name}' is already active."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        instance.status = OfficeStatus.ACTIVE
+        instance.save(update_fields=["status", "updated_at"])
+
+        return Response(
+            {
+                "status": "success",
+                "message": f"Office '{instance.name}' has been restored.",
+                "id": instance.id
+            },
+            status=status.HTTP_200_OK
+        )
 
 
 class BranchViewSet(viewsets.ModelViewSet):
@@ -42,7 +110,21 @@ class BranchViewSet(viewsets.ModelViewSet):
 
         # Default: only ACTIVE
         return queryset.filter(status=BranchStatus.ACTIVE)
+    #Serial Number for Branch
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
 
+        branch_index_map = {obj.id: idx for idx, obj in enumerate(queryset)}
+        request.branch_index_map = branch_index_map
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
     def destroy(self, request, *args, **kwargs):
         """Instead of deleting, mark branch as BIN."""
         instance = self.get_object()
@@ -85,8 +167,70 @@ class BranchViewSet(viewsets.ModelViewSet):
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all().order_by("-created_at")
     serializer_class = EmployeeSerializer
-    permission_classes = []  # No authentication required
+    permission_classes = []
 
+    #Serial Number for employee
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        employee_index_map = {obj.id: idx for idx, obj in enumerate(queryset)}
+        request.employee_index_map = employee_index_map
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    def create(self, request, *args, **kwargs):
+        """
+        Ensure the provided organization_id belongs to an existing Branch.
+        """
+        organization_id = request.data.get("organization_id")
+
+        if not organization_id:
+            return Response(
+                {"error": "organization_id is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            branch = Branch.objects.get(organization_id=organization_id)
+        except Branch.DoesNotExist:
+            return Response(
+                {"error": "Branch ID is not correct."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Replace organization_id with actual branch foreign key
+        data = request.data.copy()
+        data["branch"] = branch.id
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path=r"by-organization/(?P<organization_id>[^/.]+)"
+    )
+    def get_by_organization(self, request, organization_id=None):
+        branch = Branch.objects.filter(organization_id=organization_id).first()
+        if not branch:
+            return Response(
+                {"detail": "Branch not found for the given organization."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        employees = Employee.objects.filter(branch=branch)
+        serializer = self.get_serializer(employees, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
 class ReceiverViewSet(viewsets.ModelViewSet):
     queryset = Receiver.objects.all().order_by("-created_at")
@@ -105,7 +249,7 @@ class LetterViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         instance.status = LetterStatus.BIN
         instance.save(update_fields=["status", "updated_at"])
-        return Response(status=drf_status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)  # Fixed drf_status to status
 
 
 class ProductViewSet(viewsets.ModelViewSet):
