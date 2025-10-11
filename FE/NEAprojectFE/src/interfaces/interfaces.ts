@@ -70,6 +70,7 @@ export interface Receiver {
 
 export interface Branch{
     id:number
+    serial_number:number
     organization_id:string
     name:string
     email:string
