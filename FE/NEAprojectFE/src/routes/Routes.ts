@@ -27,6 +27,7 @@ import AllEmployees from "../components/pages/employee/AllEmployees";
 import EditBranch from "../components/pages/branches/EditBranch";
 import EditProduct from "../components/pages/products/EditProduct";
 import EditEmployee from "../components/pages/employee/EditEmployee";
+import EditOffice from "../components/pages/offices/EditOffice";
 
 const router = createBrowserRouter([
     {
@@ -89,6 +90,10 @@ const router = createBrowserRouter([
                     {
                         path:"office-list",
                         element: createElement(OfficeList)
+                    },
+                    {
+                        path:"edit/:id",
+                        element: createElement(EditOffice)
                     }
                 ]
             },
