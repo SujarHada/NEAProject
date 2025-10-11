@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from myapp.models import Office, Branch, Employee, Receiver, Letter, Product, LetterStatus, ProductStatus, BranchStatus
+from myapp.models import Office, Branch, Employee, Receiver, Letter, Product, LetterStatus, ProductStatus, BranchStatus, OfficeStatus, UnitOfMeasurement
 from faker import Faker
 import random
 import uuid
@@ -22,7 +22,10 @@ class Command(BaseCommand):
         for _ in range(3):
             office = Office.objects.create(
                 name=f"{fake.company()} Office",
-                address=fake.address()
+                address=fake.address(),
+                email=fake.company_email(),
+                phone_number=fake.phone_number(),
+                status=OfficeStatus.ACTIVE
             )
             offices.append(office)
         self.stdout.write(self.style.SUCCESS(f'Created {len(offices)} offices'))
@@ -50,6 +53,7 @@ class Command(BaseCommand):
             for _ in range(3):
                 employee = Employee.objects.create(
                     first_name=fake.first_name(),
+                    middle_name=fake.first_name() if random.random() > 0.5 else None,
                     last_name=fake.last_name(),
                     email=fake.unique.email(),
                     position=fake.job(),
@@ -66,7 +70,7 @@ class Command(BaseCommand):
                 company=fake.company(),
                 status=random.choice([ProductStatus.ACTIVE, ProductStatus.BIN]),
                 stock_quantity=random.randint(1, 100),
-                unit_of_measurement=random.choice(['nos', 'set', 'kg', 'ltr', 'pcs'])
+                unit_of_measurement=random.choice([u.value for u in UnitOfMeasurement]),
             )
             products.append(product)
         self.stdout.write(self.style.SUCCESS(f'Created {len(products)} products'))

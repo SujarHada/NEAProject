@@ -8,12 +8,20 @@ class TimeStampedModel(models.Model):
     class Meta:
         abstract = True
 
-
+class OfficeStatus(models.TextChoices):
+    ACTIVE = "active", "Active"
+    BIN = "bin", "Bin"
 class Office(TimeStampedModel):
     name = models.CharField(max_length=255)
     address = models.CharField(max_length=512, blank=True)
     email = models.EmailField(blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True)
+    # Add status field
+    status = models.CharField(
+        max_length=10,
+        choices=OfficeStatus.choices,
+        default=OfficeStatus.ACTIVE
+    )
 
     def __str__(self) -> str:  # pragma: no cover
         return self.name
@@ -46,11 +54,14 @@ class Branch(TimeStampedModel):
 class Employee(TimeStampedModel):
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="employees")
     first_name = models.CharField(max_length=100)
+    middle_name = models.CharField(max_length=100, blank=True, null=True)  # <-- Renamed from Middle_name
     last_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     position = models.CharField(max_length=100, blank=True)
 
     def __str__(self) -> str:  # pragma: no cover
+        if self.middle_name:
+            return f"{self.first_name} {self.middle_name} {self.last_name}"
         return f"{self.first_name} {self.last_name}"
 
 
