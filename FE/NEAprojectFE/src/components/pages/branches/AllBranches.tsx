@@ -5,7 +5,7 @@ import axios from "axios"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from 'usehooks-ts'
 
-const OfficeList = () => {
+const AllBranches = () => {
     const [openDropdownId, setOpenDropdownId] = useState<number | null>(null)
     const [branchesCount, setBranchesCount] = useState(0)
     const [branches, setBranches] = useState<Branch[]>([])
@@ -158,4 +158,4 @@ const OfficeList = () => {
     )
 }
 
-export default OfficeList
+export default AllBranches
