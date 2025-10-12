@@ -47,6 +47,9 @@ class Branch(TimeStampedModel):
     def __str__(self):
         return self.name
 
+class EmployeeRole(models.TextChoices):
+    ADMIN = "admin", "Admin"
+    VIEWER = "viewer", "Viewer"
 class EmployeeStatus(models.TextChoices):
     ACTIVE = "active", "Active"
     BIN = "bin", "Bin"
@@ -56,7 +59,11 @@ class Employee(TimeStampedModel):
     middle_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
-    position = models.CharField(max_length=100, blank=True)
+    role = models.CharField(
+        max_length=10,
+        choices=EmployeeRole.choices,
+        default=EmployeeRole.VIEWER
+    )
     status = models.CharField(
         max_length=10,
         choices=EmployeeStatus.choices,

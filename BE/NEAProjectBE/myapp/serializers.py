@@ -60,7 +60,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "middle_name",
             "last_name",
             "email",
-            "position",
+            "role",
             "organization_id",  # both input & output
             "branch_name",
             "serial_number",
