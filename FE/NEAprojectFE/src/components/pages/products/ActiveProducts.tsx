@@ -4,8 +4,10 @@ import type { Product } from "../../../interfaces/interfaces"
 import axios from "axios"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from 'usehooks-ts'
+import { useTranslation } from "react-i18next"
 
 const ActiveProducts = () => {
+    const { t } = useTranslation()
     const [openDropdownId, setOpenDropdownId] = useState<number | null>(null)
     const [products, setProducts] = useState<Product[]>([])
     const [productsCount, setProductsCount] = useState(0)
@@ -56,24 +58,24 @@ const ActiveProducts = () => {
 
     return (
         <div className="flex flex-col gap-5">
-            <h1 className="text-2xl font-bold">Product List</h1>
+            <h1 className="text-2xl font-bold">{ t("activeProductsPage.title") }</h1>
 
             <table className="w-full text-sm text-left text-gray-400">
                 <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
                     <tr>
-                        <th className="px-6 py-3">S.N</th>
-                        <th className="px-6 py-3">SKU Id</th>
-                        <th className="px-6 py-3">Name</th>
-                        <th className="px-6 py-3">Company</th>
-                        <th className="px-6 py-3">Unit</th>
-                        <th className="px-6 py-3">Action</th>
+                        <th className="px-6 py-3"> { t("activeProductsPage.table.sn") } </th>
+                        <th className="px-6 py-3"> { t("activeProductsPage.table.sku") } </th>
+                        <th className="px-6 py-3"> { t("activeProductsPage.table.name") } </th>
+                        <th className="px-6 py-3"> { t("activeProductsPage.table.company") } </th>
+                        <th className="px-6 py-3"> { t("activeProductsPage.table.unit") } </th>
+                        <th className="px-6 py-3"> { t("activeProductsPage.table.action") } </th>
                     </tr>
                 </thead>
                 <tbody>
                     {products.length === 0 ? (
                         <tr className="border-b bg-gray-800 border-gray-700">
                             <td className="px-6 py-4 font-medium text-center text-white" colSpan={6}>
-                                No Products Found
+                                { t("activeProductsPage.noProducts") }
                             </td>
                         </tr>
                     ) : (
@@ -106,7 +108,7 @@ const ActiveProducts = () => {
                                                         onClick={() => navigate(`/products/edit/${product.id}`)}
                                                         className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
                                                     >
-                                                        Edit
+                                                        { t("activeProductsPage.dropdown.edit") }
                                                     </button>
                                                 </li>
                                                 <li>
@@ -114,7 +116,7 @@ const ActiveProducts = () => {
                                                         onClick={() => softDelete(product.id)}
                                                         className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
                                                     >
-                                                        Move to bin
+                                                        { t("activeProductsPage.dropdown.moveToBin") }
                                                     </button>
                                                 </li>
                                             </ul>
