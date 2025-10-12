@@ -14,12 +14,6 @@ const CreateBranches = () => {
         name: z.string().min(1, t("createBranch.validation.name")),
         email: z.string().email({ message: t("createBranch.validation.emailInvalid") }).min(1, t("createBranch.validation.email")),
         address: z.string().min(1, t("createBranch.validation.address")),
-        bank_name: z.string().min(1, t("createBranch.validation.bankName")),
-        account_name: z.string().min(1, t("createBranch.validation.accountName")),
-        account_number: z.string()
-            .min(1, t("createBranch.validation.accountNumber"))
-            .regex(/^\d+$/, t("createBranch.validation.accountNumberNum"))
-            .max(15, t("createBranch.validation.accountNumberMax")),
         phone_number: z.string()
             .min(1, t("createBranch.validation.phone"))
             .regex(/^\d+$/, t("createBranch.validation.phoneNum"))
@@ -31,9 +25,6 @@ const CreateBranches = () => {
             name: "",
             email: "",
             address: "",
-            bank_name: "",
-            account_name: "",
-            account_number: "",
             phone_number: "",
         },
         resolver: zodResolver(formSchema),
@@ -88,57 +79,16 @@ const CreateBranches = () => {
                     {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
                 </div>
             </div>
-
-            <div className="flex gap-4 flex-wrap w-full">
-                <div className="flex flex-1 flex-col gap-2">
-                    <label htmlFor="bank_name">{t("createBranch.form.bankName")}</label>
-                    <Controller
-                        name="bank_name"
-                        control={control}
-                        render={({ field }) => (
-                            <input {...field} id="bank_name" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />
-                        )}
-                    />
-                    {errors.bank_name && <p className="text-red-500 text-sm">{errors.bank_name.message}</p>}
-                </div>
-
-                <div className="flex flex-1 flex-col gap-2">
-                    <label htmlFor="account_name">{t("createBranch.form.accountName")}</label>
-                    <Controller
-                        name="account_name"
-                        control={control}
-                        render={({ field }) => (
-                            <input {...field} id="account_name" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />
-                        )}
-                    />
-                    {errors.account_name && <p className="text-red-500 text-sm">{errors.account_name.message}</p>}
-                </div>
-            </div>
-
-            <div className="flex gap-4 flex-wrap w-full">
-                <div className="flex flex-1 flex-col gap-2">
-                    <label htmlFor="account_number">{t("createBranch.form.accountNumber")}</label>
-                    <Controller
-                        name="account_number"
-                        control={control}
-                        render={({ field }) => (
-                            <input {...field} id="account_number" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />
-                        )}
-                    />
-                    {errors.account_number && <p className="text-red-500 text-sm">{errors.account_number.message}</p>}
-                </div>
-
-                <div className="flex flex-1 flex-col gap-2">
-                    <label htmlFor="phone_number">{t("createBranch.form.phone")}</label>
-                    <Controller
-                        name="phone_number"
-                        control={control}
-                        render={({ field }) => (
-                            <input {...field} id="phone_number" type="tel" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />
-                        )}
-                    />
-                    {errors.phone_number && <p className="text-red-500 text-sm">{errors.phone_number.message}</p>}
-                </div>
+             <div className="lg:w-1/2 flex flex-col gap-2">
+                <label htmlFor="phone_number">{t("createBranch.form.phone")} *</label>
+                <Controller
+                    name="phone_number"
+                    control={control}
+                    render={({ field }) => (
+                        <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="phone_number" />
+                    )}
+                />
+                {errors.phone_number && <p className="text-red-500">{errors.phone_number.message}</p>}
             </div>
 
             <div className="flex">

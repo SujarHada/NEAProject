@@ -5,9 +5,6 @@ export interface Branch{
     name:string
     email:string
     address:string
-    bank_name:string
-    account_name:string
-    account_number:string
     phone_number:string
 }
 
