@@ -5,17 +5,24 @@ import { FaChevronDown } from "react-icons/fa"
 import type { createProductInputs } from "../../../interfaces/interfaces"
 import axios from "axios"
 import { useNavigate } from "react-router"
+import { useTranslation } from "react-i18next"
 
-const createproductFormschema = z.object({
-    name: z.string().min(1, "Products Name is required"),
-    company: z.string().min(1, "Company Name is required"),
-    unit_of_measurement: z.string().min(1, "Unit is required"),
-    stock_quantity: z.string().min(1,"Quantity is required").regex(/^-?\d{0,8}(?:\.\d{0,2})?$/, "Quantity must be a number"),
-})
+
 
 
 const CreateProducts = () => {
+    const { t } = useTranslation()
     const navigate = useNavigate()
+
+    const createproductFormschema = z.object({
+        name: z.string().min(1, t("editProductPage.errors.productNameRequired")),
+        company: z.string().min(1, t("editProductPage.errors.companyNameRequired")),
+        unit_of_measurement: z.string().min(1, t("editProductPage.errors.unitRequired")),
+        stock_quantity: z.string()
+            .min(1, t("editProductPage.errors.quantityRequired"))
+            .regex(/^-?\d{0,8}(?:\.\d{0,2})?$/, t("editProductPage.errors.quantityNumber")),
+    })
+
     const { control, handleSubmit, formState: { isSubmitting, errors }, reset } = useForm<createProductInputs>(
         {
             defaultValues: {
@@ -31,18 +38,18 @@ const CreateProducts = () => {
 
     const onSubmit = async (data: createProductInputs) => {
         const res = await axios.post("http://127.0.0.1:8000/api/products/", data)
-        if(res.status === 201){
+        if (res.status === 201) {
             navigate("/products/active-products")
-        } 
+        }
 
         reset()
     }
     return (
         <div className="flex flex-1 flex-col gap-6 ">
-            <h1 className="text-2xl font-bold">Create product</h1>
+            <h1 className="text-2xl font-bold">{t("createProductPage.title")}</h1>
             <div className="flex gap-4 flex-wrap w-full ">
                 <div className="flex flex-1 flex-col w-full gap-2">
-                    <label htmlFor="name"> Product Name * </label>
+                    <label htmlFor="name">{t('createProductPage.productName')}</label>
                     <Controller
                         name="name"
                         control={control}
@@ -53,7 +60,7 @@ const CreateProducts = () => {
                     {errors.name && <p className="text-red-500">{errors.name.message}</p>}
                 </div>
                 <div className="flex flex-1 flex-col w-full gap-2">
-                    <label htmlFor="company"> Company Name * </label>
+                    <label htmlFor="company"> {t('createProductPage.companyName')} </label>
                     <Controller
                         name="company"
                         control={control}
@@ -66,7 +73,7 @@ const CreateProducts = () => {
             </div>
             <div className="flex gap-4 flex-wrap w-full items-end">
                 <div className="flex flex-1 flex-col w-full min-w-[48.5%] gap-2">
-                    <label htmlFor="stock_quantity"> Quantity * </label>
+                    <label htmlFor="stock_quantity"> {t('createProductPage.quantity')} </label>
                     <Controller
                         name="stock_quantity"
                         control={control}
@@ -85,11 +92,11 @@ const CreateProducts = () => {
                             <div className=" w-full ">
                                 <select id="unit" {...field} className="bg-[#B5C9DC] w-full appearance-none  border-2 h-10 outline-none px-3 rounded-md border-gray-600" >
                                     <option value="" disabled hidden> Unit </option>
-                                    <option value="kg">KG</option>
-                                    <option value="nos">Nos.</option>
-                                    <option value="set">Set</option>
-                                    <option value="ltr">Ltr</option>
-                                    <option value="pcs">Pcs.</option>
+                                    <option value="kg">{t("createProductPage.units.kg")}</option>
+                                    <option value="nos">{t("createProductPage.units.nos")}</option>
+                                    <option value="set"> {t("createProductPage.units.set")} </option>
+                                    <option value="ltr">{t("createProductPage.units.ltr")} </option>
+                                    <option value="pcs">{t("createProductPage.units.pcs")}</option>
 
                                 </select>
                                 <FaChevronDown className="absolute top-3  right-3 text-gray-500" />

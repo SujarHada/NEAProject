@@ -1,0 +1,300 @@
+{
+  "createLetterPage": {
+    "title": "Create a letter in this page"
+  },
+  "allLettersPage": {
+    "title": "List your all letters"
+  },
+  "lettersBinPage": {
+    "title": "This is the Letters Bin Page"
+  },
+  "createProductPage": {
+    "title": "Create Product",
+    "productName": "Product Name *",
+    "companyName": "Company Name *",
+    "quantity": "Quantity *",
+    "unit": "Unit",
+    "submitButton": "Create Product",
+    "creatingButton": "Creating...",
+    "errors": {
+      "productNameRequired": "Product Name is required",
+      "companyNameRequired": "Company Name is required",
+      "unitRequired": "Unit is required",
+      "quantityRequired": "Quantity is required",
+      "quantityNumber": "Quantity must be a number"
+    },
+    "units": {
+      "kg": "KG",
+      "nos": "Nos.",
+      "set": "Set",
+      "ltr": "Ltr",
+      "pcs": "Pcs."
+    }
+  },
+  "editProductPage": {
+    "title": "Edit Product",
+    "productName": "Product Name *",
+    "companyName": "Company Name *",
+    "quantity": "Quantity *",
+    "unit": "Unit",
+    "submitButton": "Save",
+    "savingButton": "Saving...",
+    "errors": {
+      "productNameRequired": "Product Name is required",
+      "companyNameRequired": "Company Name is required",
+      "unitRequired": "Unit is required",
+      "quantityRequired": "Quantity is required",
+      "quantityNumber": "Quantity must be a number"
+    },
+    "units": {
+      "kg": "KG",
+      "nos": "Nos.",
+      "set": "Set",
+      "ltr": "Ltr",
+      "pcs": "Pcs."
+    }
+  },
+  "activeProductsPage": {
+    "title": "Product List",
+    "table": {
+      "sn": "S.N",
+      "sku": "SKU Id",
+      "name": "Name",
+      "company": "Company",
+      "unit": "Unit",
+      "action": "Action"
+    },
+    "noProducts": "No Products Found",
+    "dropdown": { "edit": "Edit", "moveToBin": "Move to bin" },
+    "pagination": { "previous": "Previous", "next": "Next" }
+  },
+  "productsBinPage": {
+    "title": "Product Bin",
+    "table": {
+      "sn": "S.N",
+      "sku": "SKU Id",
+      "name": "Name",
+      "company": "Company",
+      "unit": "Unit",
+      "action": "Action"
+    },
+    "noProducts": "No Products Found",
+    "dropdown": { "goLive": "Go Live" },
+    "pagination": { "previous": "Previous", "next": "Next" }
+  },
+  "createOffice": {
+    "title": "Create Office",
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "address": "Address",
+      "phone": "Phone Number"
+    },
+    "errors": {
+      "nameRequired": "Name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Email is invalid",
+      "addressRequired": "Address is required",
+      "phoneRequired": "Phone Number is required",
+      "phoneNumber": "Phone Number must be a number",
+      "phoneMax": "Phone Number must be 10 digits max"
+    },
+    "buttons": {
+      "create": "Create Office",
+      "creating": "Creating..."
+    }
+  },
+  "officeList": {
+    "title": "Office List",
+    "table": {
+      "id": "Id",
+      "name": "Name",
+      "address": "Address",
+      "email": "Email",
+      "contact": "Contact",
+      "action": "Actions"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "noData": "No offices found",
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+  "editOffice": {
+    "title": "Edit Office",
+    "form": {
+      "name": "Name",
+      "address": "Address",
+      "email": "Email",
+      "phone": "Phone Number"
+    },
+    "validation": {
+      "name": "Name is required",
+      "email": "Email is required",
+      "emailInvalid": "Email is invalid",
+      "address": "Address is required",
+      "phone": "Phone Number is required",
+      "phoneNumber": "Phone Number must be a number",
+      "phoneMax": "Phone Number must be 10 digits max"
+    },
+    "loading": "Loading...",
+    "fetchError": "Failed to fetch office",
+    "updateError": "Failed to update office",
+    "save": "Save",
+    "saving": "Saving..."
+  },
+  "createBranch": {
+    "title": "Create Branch",
+    "form": {
+      "name": "Branch Name",
+      "email": "Email",
+      "address": "Address",
+      "bankName": "Bank Name",
+      "accountName": "Account Name",
+      "accountNumber": "Account Number",
+      "phone": "Phone Number"
+    },
+    "validation": {
+      "name": "Branch Name is required",
+      "email": "Email is required",
+      "emailInvalid": "Email is invalid",
+      "address": "Address is required",
+      "bankName": "Bank Name is required",
+      "accountName": "Account Name is required",
+      "accountNumber": "Account Number is required",
+      "accountNumberNum": "Account Number must be a number",
+      "accountNumberMax": "Account Number must be 15 digits max",
+      "phone": "Phone Number is required",
+      "phoneNum": "Phone Number must be a number",
+      "phoneMax": "Phone Number must be 10 digits max"
+    },
+    "create": "Create Branch",
+    "creating": "Creating..."
+  },
+  "editBranch": {
+    "title": "Edit Branch",
+    "form": {
+      "name": "Branch Name",
+      "email": "Email",
+      "address": "Address",
+      "bankName": "Bank Name",
+      "accountName": "Account Name",
+      "accountNumber": "Account Number",
+      "phone": "Phone Number"
+    },
+    "validation": {
+      "name": "Branch Name is required",
+      "email": "Email is required",
+      "emailInvalid": "Email is invalid",
+      "address": "Address is required",
+      "bankName": "Bank Name is required",
+      "accountName": "Account Name is required",
+      "accountNumber": "Account Number is required",
+      "accountNumberNum": "Account Number must be a number",
+      "accountNumberMax": "Account Number must be 15 digits max",
+      "phone": "Phone Number is required",
+      "phoneNum": "Phone Number must be a number",
+      "phoneMax": "Phone Number must be 10 digits max"
+    },
+    "save": "Save",
+    "saving": "Saving...",
+    "loading": "Loading..."
+  },
+  "allBranches": {
+    "title": "Branches List",
+    "table": {
+      "id": "Id",
+      "name": "Branch Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "action": "Action"
+    },
+    "noBranches": "No Branches Found",
+    "actions": {
+      "edit": "Edit",
+      "addEmployees": "Add Employees",
+      "allEmployees": "All Employees"
+    }
+  },
+  "createEmployee": {
+    "title": "Create Employee",
+    "labels": {
+      "branchId": "Branch Id",
+      "firstName": "First Name",
+      "middleName": "Middle Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "position": "Position"
+    },
+    "placeholders": {
+      "position": "Select Position *"
+    },
+    "positions": {
+      "admin": "Admin",
+      "accountant": "Accountant",
+      "peon": "Peon"
+    },
+    "button": {
+      "create": "Create User",
+      "creating": "Creating..."
+    },
+    "errors": {
+      "firstName": "First Name is required",
+      "lastName": "Last Name is required",
+      "emailInvalid": "Email is invalid",
+      "emailRequired": "Email is required",
+      "branchId": "Branch Id is required",
+      "position": "Position is required"
+    }
+  },
+  "editEmployee": {
+    "title": "Edit Employee",
+    "labels": {
+      "branchId": "Branch Id",
+      "firstName": "First Name",
+      "middleName": "Middle Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "position": "Position"
+    },
+    "placeholders": {
+      "position": "Select Position *"
+    },
+    "positions": {
+      "admin": "Admin",
+      "accountant": "Accountant",
+      "peon": "Peon"
+    },
+    "button": {
+      "save": "Save",
+      "saving": "Saving..."
+    },
+    "errors": {
+      "firstName": "First Name is required",
+      "lastName": "Last Name is required",
+      "emailInvalid": "Email is invalid",
+      "emailRequired": "Email is required",
+      "branchId": "Branch Id is required",
+      "position": "Position is required"
+    },
+    "loading": "Loading..."
+  },
+  "allEmployees": {
+    "title": "Employees List",
+    "headers": {
+      "id": "Id",
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "branch": "Branch",
+      "action": "Action"
+    },
+    "noData": "No employees found",
+    "edit": "Edit"
+  }
+}

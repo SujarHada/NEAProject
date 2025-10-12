@@ -4,10 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate, useParams } from "react-router"
 import { FaChevronDown } from 'react-icons/fa'
 import { useEffect, useState } from 'react'
-import type { Product } from '../../../interfaces/interfaces'
+import type { Product, createProductInputs } from '../../../interfaces/interfaces'
 import axios from 'axios'
-import { type createProductInputs } from '../../../interfaces/interfaces'
+import { useTranslation } from "react-i18next"
+
 const EditProduct = () => {
+    const { t } = useTranslation()
     const param = useParams()
     const navigate = useNavigate()
     const [product, setProduct] = useState<Product>()
@@ -16,10 +18,25 @@ const EditProduct = () => {
         try {
             const res = await axios.get(`http://127.0.0.1:8000/api/products/${param.id}/`)
             setProduct(res.data)
-        } catch(err:any) {
+        } catch (err: any) {
             setErr(err?.response.data.detail)
         }
     }
+
+    const editproductFormschema = z.object({
+        name: z.string().min(1, t("editProductPage.errors.productNameRequired")),
+        company: z.string().min(1, t("editProductPage.errors.companyNameRequired")),
+        unit_of_measurement: z.string().min(1, t("editProductPage.errors.unitRequired")),
+        stock_quantity: z.string()
+            .min(1, t("editProductPage.errors.quantityRequired"))
+            .regex(/^-?\d{0,8}(?:\.\d{0,2})?$/, t("editProductPage.errors.quantityNumber")),
+    })
+
+    const { control, handleSubmit, formState: { isSubmitting, errors }, setValue } = useForm<createProductInputs>({
+        defaultValues: { name: "", company: "", stock_quantity: "", unit_of_measurement: "" },
+        resolver: zodResolver(editproductFormschema),
+        mode: "onSubmit"
+    })
 
     useEffect(() => {
         if (!product) {
@@ -31,45 +48,26 @@ const EditProduct = () => {
         setValue("stock_quantity", product.stock_quantity)
         setValue("unit_of_measurement", product.unit_of_measurement)
     }, [param, product])
-    const createproductFormschema = z.object({
-        name: z.string().min(1, "Products Name is required"),
-        company: z.string().min(1, "Company Name is required"),
-        unit_of_measurement: z.string().min(1, "Unit is required"),
-        stock_quantity: z.string().min(1, "Quantity is required").regex(/^-?\d{0,8}(?:\.\d{0,2})?$/, "Quantity must be a number"),
-    })
-
-    const { control, handleSubmit, formState: { isSubmitting, errors }, setValue } = useForm<createProductInputs>(
-        {
-            defaultValues: {
-                name: "",
-                company: "",
-                stock_quantity: "",
-                unit_of_measurement: ""
-            },
-            resolver: zodResolver(createproductFormschema),
-            mode: "onSubmit"
-        }
-    )
 
     const onSubmit = async (data: createProductInputs) => {
-        try{
+        try {
             await axios.put(`http://127.0.0.1:8000/api/products/${param.id}/`, data)
-        }catch(err){
+        } catch (err) {
             console.error(err)
         }
         navigate("/products/active-products")
     }
 
-    if(!product && !err) return <div>Loading...</div>
-    if (err) {
-        return <div>{err}</div>
-    }
+    if (!product && !err) return <div>{t("loading", { defaultValue: "Loading..." })}</div>
+    if (err) return <div>{err}</div>
+
     return (
         <div className="flex flex-1 flex-col gap-6 ">
-            <h1 className="text-2xl font-bold">Edit product</h1>
+            <h1 className="text-2xl font-bold">{t("editProductPage.title")}</h1>
+
             <div className="flex gap-4 flex-wrap w-full ">
                 <div className="flex flex-1 flex-col w-full gap-2">
-                    <label htmlFor="name"> Product Name * </label>
+                    <label htmlFor="name">{t("editProductPage.productName")}</label>
                     <Controller
                         name="name"
                         control={control}
@@ -79,8 +77,9 @@ const EditProduct = () => {
                     />
                     {errors.name && <p className="text-red-500">{errors.name.message}</p>}
                 </div>
+
                 <div className="flex flex-1 flex-col w-full gap-2">
-                    <label htmlFor="company"> Company Name * </label>
+                    <label htmlFor="company">{t("editProductPage.companyName")}</label>
                     <Controller
                         name="company"
                         control={control}
@@ -91,9 +90,10 @@ const EditProduct = () => {
                     {errors.company && <p className="text-red-500">{errors.company.message}</p>}
                 </div>
             </div>
+
             <div className="flex gap-4 flex-wrap w-full items-end">
                 <div className="flex flex-1 flex-col w-full min-w-[48.5%] gap-2">
-                    <label htmlFor="stock_quantity"> Quantity * </label>
+                    <label htmlFor="stock_quantity">{t("editProductPage.quantity")}</label>
                     <Controller
                         name="stock_quantity"
                         control={control}
@@ -110,23 +110,20 @@ const EditProduct = () => {
                         control={control}
                         render={({ field }) => (
                             <div className=" w-full ">
-                                <select id="unit" {...field} className="bg-[#B5C9DC] w-full appearance-none  border-2 h-10 outline-none px-3 rounded-md border-gray-600" >
-                                    <option value="" disabled hidden> Unit </option>
-                                    <option value="kg">KG</option>
-                                    <option value="nos">Nos.</option>
-                                    <option value="set">Set</option>
-                                    <option value="ltr">Ltr</option>
-                                    <option value="pcs">Pcs.</option>
-
+                                <select id="unit" {...field} className="bg-[#B5C9DC] w-full appearance-none border-2 h-10 outline-none px-3 rounded-md border-gray-600" >
+                                    <option value="" disabled hidden>{t("editProductPage.unit")}</option>
+                                    <option value="kg">{t("editProductPage.units.kg")}</option>
+                                    <option value="nos">{t("editProductPage.units.nos")}</option>
+                                    <option value="set">{t("editProductPage.units.set")}</option>
+                                    <option value="ltr">{t("editProductPage.units.ltr")}</option>
+                                    <option value="pcs">{t("editProductPage.units.pcs")}</option>
                                 </select>
-                                <FaChevronDown className="absolute top-3  right-3 text-gray-500" />
+                                <FaChevronDown className="absolute top-3 right-3 text-gray-500" />
                             </div>
-
                         )}
                     />
                     {errors.unit_of_measurement && <p className="text-red-500">{errors.unit_of_measurement.message}</p>}
                 </div>
-
             </div>
 
             <div className="flex">
@@ -136,11 +133,10 @@ const EditProduct = () => {
                     onClick={handleSubmit(onSubmit)}
                     className="outline-none w-full bg-[#10172A] text-white h-12 hover:bg-[#233058] active:bg-[#314379] rounded-md disabled:opacity-50"
                 >
-                    {isSubmitting ? "Saving..." : "Save"}
+                    {isSubmitting ? t("editProductPage.savingButton") : t("editProductPage.submitButton")}
                 </button>
             </div>
         </div>
     )
 }
 export default EditProduct
-
