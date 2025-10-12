@@ -36,9 +36,6 @@ class Branch(TimeStampedModel):
     email = models.EmailField(unique=True, null=True)
     address = models.CharField(max_length=512, blank=True)
     phone_number = models.CharField(max_length=20, blank=True)
-    bank_name = models.CharField(max_length=255, blank=True)
-    account_name = models.CharField(max_length=255, blank=True)
-    account_number = models.CharField(max_length=50, blank=True)
 
     # Soft delete field
     status = models.CharField(
@@ -50,15 +47,21 @@ class Branch(TimeStampedModel):
     def __str__(self):
         return self.name
 
-
+class EmployeeStatus(models.TextChoices):
+    ACTIVE = "active", "Active"
+    BIN = "bin", "Bin"
 class Employee(TimeStampedModel):
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="employees")
     first_name = models.CharField(max_length=100)
-    middle_name = models.CharField(max_length=100, blank=True, null=True)  # <-- Renamed from Middle_name
+    middle_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     position = models.CharField(max_length=100, blank=True)
-
+    status = models.CharField(
+        max_length=10,
+        choices=EmployeeStatus.choices,
+        default=EmployeeStatus.ACTIVE
+    )
     def __str__(self) -> str:  # pragma: no cover
         if self.middle_name:
             return f"{self.first_name} {self.middle_name} {self.last_name}"
@@ -67,8 +70,13 @@ class Employee(TimeStampedModel):
 
 class Receiver(TimeStampedModel):
     name = models.CharField(max_length=255)
-    email = models.EmailField(blank=True)
-    address = models.CharField(max_length=512, blank=True)
+    post = models.CharField(max_length=255, default="UNKNOWN")
+    id_card_number = models.CharField(max_length=50, default="UNKNOWN")
+    id_card_type = models.CharField(max_length=50, default="UNKNOWN")
+    office_name = models.CharField(max_length=255, default="UNKNOWN")
+    office_address = models.TextField(default="UNKNOWN")
+    phone_number = models.CharField(max_length=20, default="UNKNOWN")
+    vehicle_number = models.CharField(max_length=50, default="UNKNOWN")
 
     def __str__(self) -> str:  # pragma: no cover
         return self.name
