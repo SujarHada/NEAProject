@@ -18,8 +18,8 @@ const AllBranches = () => {
         setOpenDropdownId(null)
     })
 
-    const toggleDropdown = (productId: number) => {
-        setOpenDropdownId(prev => (prev === productId ? null : productId))
+    const toggleDropdown = (branchId: number) => {
+        setOpenDropdownId(prev => (prev === branchId ? null : branchId))
     }
     const fetchBranches = async (pageUrl?: string, pageNum?: number) => {
         try {

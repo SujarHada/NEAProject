@@ -1,91 +1,94 @@
-import { useForm, Controller, type SubmitHandler } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type createEmployeesInputs } from "../../../interfaces/interfaces"
 import { FaChevronDown } from "react-icons/fa"
+import axios from "axios"
+import { useNavigate } from "react-router"
 const CreateEmployee = () => {
     const createEmployeesFormschema = z.object({
-        firstName: z.string().min(1, "First Name is required"),
-        middleName: z.string().optional(),
-        lastName: z.string().min(1, "Last Name is required"),
-        email: z.email({ error: "Email is invalid" }).min(1, "Email is required"),
-        branchId: z.string().min(1, "Branch is required"),
-        role: z.string().min(1, "Role is required"),
+        first_name: z.string().min(1, "First Name is required"),
+        middle_name: z.string().optional(),
+        last_name: z.string().min(1, "Last Name is required"),
+        email: z.email({ message: "Email is invalid" }).min(1, "Email is required"),
+        organization_id: z.string().min(1, "Organization Id is required"),
+        position: z.string().min(1, "Position is required"),
     })
     const { control, handleSubmit, formState: { isSubmitting, errors }, reset } = useForm<createEmployeesInputs>(
         {
             defaultValues: {
-                firstName: "",
-                middleName: "",
-                lastName: "",
+                first_name: "",
+                middle_name: "",
+                last_name: "",
                 email: "",
-                branchId: "",
-                role: ""
+                organization_id: "",
+                position: "",
             },
             resolver: zodResolver(createEmployeesFormschema),
             mode: "onSubmit"
         }
     )
-
-    const onSubmit: SubmitHandler<createEmployeesInputs> = (data) => {
-        console.log('Submitted')
-        console.log(data);
+    const navigate = useNavigate()
+    const onSubmit = async (data: createEmployeesInputs) => {
+        const res = await axios.post("http://127.0.0.1:8000/api/employees/", data)
+        if(res.status === 201){
+            navigate("/employees/manage")
+        } 
 
         reset()
     }
-
     return (
         <div className="flex flex-col gap-6">
             <h1 className="text-2xl font-bold">Create Employee</h1>
             {/* <div className="flex gap-4 w-full"> */}
             <div className="flex flex-col lg:w-1/2 gap-2">
-                <label htmlFor="name"> Branch Id *</label>
+                <label htmlFor="organization_id"> Branch Id *</label>
                 <Controller
-                    name="branchId"
+                    name="organization_id"
                     control={control}
                     render={({ field }) => (
-                        <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="name" />
+                        <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="organization_id" />
                     )}
                 />
-                {errors.branchId && <p className="text-red-500">{errors.branchId.message}</p>}
+                {errors.organization_id && <p className="text-red-500">{errors.organization_id.message}</p>}
             </div>
             {/* <div> */}
                 <div className="flex  w-full flex-wrap gap-4">
 
                 <div className="flex flex-1 flex-col w-full gap-2">
-                    <label htmlFor="firstName"> First Name * </label>
+                    <label htmlFor="first_name"> First Name * </label>
                     <Controller
-                        name="firstName"
+                        name="first_name"
                         control={control}
                         render={({ field }) => (
-                            <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="firstName" />
+                            <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="first_name" />
                         )}
                     />
-                    {errors.firstName && <p className="text-red-500">{errors.firstName.message}</p>}
+                    {errors.first_name && <p className="text-red-500">{errors.first_name.message}</p>}
                 </div>
                 {/* </div> */}
 
                     <div className="w-full flex-1 flex flex-col gap-2">
-                        <label htmlFor="middleName"> Middle Name </label>
+                        <label htmlFor="middle_name"> Middle Name </label>
                         <Controller
-                            name="middleName"
+                            name="middle_name"
                             control={control}
                             render={({ field }) => (
-                                <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="middleName" />
+                                <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="middle_name" />
                             )}
                         />
-                        {errors.middleName && <p className="text-red-500">{errors.middleName.message}</p>}
+                        {errors.middle_name && <p className="text-red-500">{errors.middle_name.message}</p>}
                     </div>
                     <div className="w-full flex flex-1 flex-col gap-2">
-                        <label htmlFor="lastName"> Last name * </label>
+                        <label htmlFor="last_name"> Last name * </label>
                         <Controller
-                            name="lastName"
+                            name="last_name"
                             control={control}
                             render={({ field }) => (
-                                <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="lastName" />
+                                <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="last_name" />
                             )}
                         />
-                        {errors.lastName && <p className="text-red-500">{errors.lastName.message}</p>}
+                        {errors.last_name && <p className="text-red-500">{errors.last_name.message}</p>}
                     </div>
                 </div>
                 <div className="lg:w-1/2 flex flex-col gap-2 ">
@@ -103,12 +106,12 @@ const CreateEmployee = () => {
                 <div className="lg:w-1/2 flex flex-col relative">
                     <div className="flex ">
                         <Controller
-                            name="role"
+                            name="position"
                             control={control}
                             render={({ field }) => (
                                 <div className="flex w-full items-center">
-                                    <select id="role" {...field} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none  px-3 rounded-md border-gray-600" >
-                                        <option value="" disabled hidden> Role *</option>
+                                    <select id="position" {...field} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none  px-3 rounded-md border-gray-600" >
+                                        <option value="" disabled hidden> position *</option>
                                         <option value="admin">Admin</option>
                                         <option value="accountant">Accountant</option>
                                         <option value="peon">Peon</option>
@@ -120,7 +123,7 @@ const CreateEmployee = () => {
                         />
                     </div>
                     <div className="flex ">
-                        {errors.role && <p className="text-red-500"> {errors.role.message} </p>}
+                        {errors.position && <p className="text-red-500"> {errors.position.message} </p>}
                     </div>
                 </div>
 

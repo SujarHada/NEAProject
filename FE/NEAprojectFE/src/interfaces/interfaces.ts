@@ -27,27 +27,33 @@ export interface Product {
 }
 
 export interface createEmployeesInputs {
-    firstName: string
-    middleName?: string
-    lastName: string
+    first_name: string
+    middle_name?: string
+    last_name: string
     email: string
-    branchId: string
-    role: string
+    organization_id: string
+    position: string
 }
 
 export interface EditEmployeesInputs {
-    firstName: string
-    middleName?: string
-    lastName: string
+    first_name: string
+    middle_name?: string
+    last_name: string
     email: string
-    role: string
+    position: string
+    organization_id: string
 }
 
 export interface Employee{
-    name: string
+    id:number
+    first_name: string
+    middle_name?: string
+    last_name: string
     email: string
-    role: string
-    branch: string
+    position: string
+    organization_id: string
+    branch_name: string
+    serial_number:number
 }
 
 export interface createReceiverInputs {
