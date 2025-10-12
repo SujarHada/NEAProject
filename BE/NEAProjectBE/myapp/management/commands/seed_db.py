@@ -39,9 +39,6 @@ class Command(BaseCommand):
                 email=fake.unique.company_email(),
                 address=fake.address(),
                 phone_number=fake.phone_number(),
-                bank_name=fake.company(),
-                account_name=fake.name(),
-                account_number=fake.bban(),
                 status=BranchStatus.ACTIVE
             )
             branches.append(branch)
@@ -76,12 +73,18 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f'Created {len(products)} products'))
         
         # Create receivers
+        id_card_types = ["National ID", "Driver’s License", "Passport", "Voter ID"]
         receivers = []
         for _ in range(5):
             receiver = Receiver.objects.create(
-                name=fake.company(),
-                address=fake.address(),
-                email=fake.unique.company_email()
+                name=fake.name(),
+                post=fake.job(),
+                id_card_number=f"{random.randint(100000, 999999)}",
+                id_card_type=random.choice(id_card_types),
+                office_name=fake.company(),
+                office_address=fake.address(),
+                phone_number=fake.phone_number(),
+                vehicle_number=f"BA-{random.randint(1, 9)}-{random.randint(1000, 9999)}"
             )
             receivers.append(receiver)
         self.stdout.write(self.style.SUCCESS(f'Created {len(receivers)} receivers'))

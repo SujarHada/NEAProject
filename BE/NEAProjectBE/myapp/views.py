@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 
-from .models import Office, Branch, Employee, Receiver, Letter, Product, ProductStatus, LetterStatus, BranchStatus, OfficeStatus
+from .models import EmployeeStatus, Office, Branch, Employee, Receiver, Letter, Product, ProductStatus, LetterStatus, BranchStatus, OfficeStatus
 from .serializers import (
     OfficeSerializer,
     BranchSerializer,
@@ -168,6 +168,16 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all().order_by("-created_at")
     serializer_class = EmployeeSerializer
     permission_classes = []
+    filterset_fields = ["status"]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.action == 'restore':
+            return queryset.filter(status=EmployeeStatus.BIN)
+        status_param = self.request.query_params.get("status")
+        if status_param:
+            return queryset.filter(status=status_param)
+        return queryset.filter(status=EmployeeStatus.ACTIVE)
 
     #Serial Number for employee
     def list(self, request, *args, **kwargs):
@@ -215,10 +225,10 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(
-        detail=False,
-        methods=["get"],
-        url_path=r"by-organization/(?P<organization_id>[^/.]+)"
-    )
+    detail=False,
+    methods=["get"],
+    url_path=r"by-organization-id/(?P<organization_id>[^/.]+)"  # Changed from (?P<organization_id>[^/.]+)
+)
     def get_by_organization(self, request, organization_id=None):
         branch = Branch.objects.filter(organization_id=organization_id).first()
         if not branch:
@@ -230,7 +240,38 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         employees = Employee.objects.filter(branch=branch)
         serializer = self.get_serializer(employees, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        employee_name = f"{instance.first_name} {instance.last_name}"
+        instance.status = EmployeeStatus.BIN
+        instance.save(update_fields=["status", "updated_at"])
+        return Response(
+            {
+                "status": "success",
+                "message": f"Employee '{employee_name}' has been moved to bin",
+                "id": instance.id
+            },
+            status=status.HTTP_200_OK
+        )
+
+    @action(detail=True, methods=["post"])
+    def restore(self, request, pk=None):
+        instance = self.get_object()
+        if instance.status == EmployeeStatus.ACTIVE:
+            return Response(
+                {"message": f"Employee '{instance.first_name} {instance.last_name}' is already active."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        instance.status = EmployeeStatus.ACTIVE
+        instance.save(update_fields=["status", "updated_at"])
+        return Response(
+            {
+                "status": "success",
+                "message": f"Employee '{instance.first_name} {instance.last_name}' has been restored.",
+                "id": instance.id
+            },
+            status=status.HTTP_200_OK
+        )
 
 class ReceiverViewSet(viewsets.ModelViewSet):
     queryset = Receiver.objects.all().order_by("-created_at")

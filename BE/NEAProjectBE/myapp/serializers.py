@@ -35,9 +35,6 @@ class BranchSerializer(serializers.ModelSerializer):
             "email",
             "address",
             "phone_number",
-            "bank_name",
-            "account_name",
-            "account_number",
             "status",
             
         ]
@@ -63,10 +60,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "middle_name",
             "last_name",
             "email",
-            "position",
+            "role",
             "organization_id",  # both input & output
             "branch_name",
             "serial_number",
+            "status",
         ]
 
     @extend_schema_field(serializers.IntegerField())
