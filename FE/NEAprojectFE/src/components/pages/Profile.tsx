@@ -5,6 +5,7 @@ const Profile = () => {
 
   const changeLanguage = (lang: string) => {
     i18n.changeLanguage(lang)
+    localStorage.setItem("lang", lang)
   }
 
   return (

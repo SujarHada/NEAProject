@@ -227,7 +227,7 @@
   "createEmployee": {
     "title": "कर्मचारी सिर्जना गर्नुहोस्",
     "labels": {
-      "branchId": "शाखा आईडी",
+      "branchId": "शाखा",
       "firstName": "पहिलो नाम",
       "middleName": "मध्य नाम",
       "lastName": "थर",
@@ -235,12 +235,12 @@
       "position": "पद"
     },
     "placeholders": {
-      "position": "पद छान्नुहोस् *"
+      "position": "भूमिका छान्नुहोस् *",
+      "branches":"शाखा छान्नुहोस् *"
     },
     "positions": {
       "admin": "प्रशासक",
-      "accountant": "अकाउन्टेन्ट",
-      "peon": "चपरासी"
+      "viewer": "दर्शक"
     },
     "button": {
       "create": "कर्मचारी सिर्जना गर्नुहोस्",
@@ -270,8 +270,7 @@
     },
     "positions": {
       "admin": "प्रशासक",
-      "accountant": "अकाउन्टेन्ट",
-      "peon": "चपरासी"
+      "viewer": "दर्शक"
     },
     "button": {
       "save": "सुरक्षित गर्नुहोस्",
