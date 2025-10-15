@@ -28,7 +28,7 @@ export interface Employee{
     middle_name?: string
     last_name: string
     email: string
-    position: string
+    role: string
     organization_id: string
     branch_name: string
     serial_number:number

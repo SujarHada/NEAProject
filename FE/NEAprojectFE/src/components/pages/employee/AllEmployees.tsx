@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { useNavigate } from "react-router"
+import { useNavigate, useParams } from "react-router"
 import type { Employee } from "../../../interfaces/interfaces"
 import axios from "axios"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
@@ -7,6 +7,7 @@ import { useOnClickOutside } from 'usehooks-ts'
 import { useTranslation } from "react-i18next"
 
 const AllEmployees = () => {
+    const params = useParams()
     const { t } = useTranslation()
     const [openDropdownId, setOpenDropdownId] = useState<number | null>(null)
     const [employeesCount, setEmployeesCount] = useState(0)
@@ -22,8 +23,17 @@ const AllEmployees = () => {
         setOpenDropdownId(prev => (prev === employeeId ? null : employeeId))
     }
 
-    const fetchEmployees = async (pageUrl?: string, pageNum?: number) => {
+    const fetchEmployees = async (pageUrl?: string, pageNum?: number, orgId?: string) => {
         try {
+            if(orgId){
+                const apiUrl = pageUrl || `http://127.0.0.1:8000/api/employees/by-organization-id/${orgId}/?page=${pageNum || currentPage}`
+                const res = await axios.get(apiUrl)
+                setEmployees(res.data)
+                setEmployeesCount(res.data.length)
+                setNextPage(res.data.next)
+                setPrevPage(res.data.previous)
+                if (pageNum) setCurrentPage(pageNum)
+            }else{
             const apiUrl = pageUrl || `http://127.0.0.1:8000/api/employees/?page=${pageNum || currentPage}`
             const res = await axios.get(apiUrl)
             setEmployees(res.data.results)
@@ -31,6 +41,8 @@ const AllEmployees = () => {
             setNextPage(res.data.next)
             setPrevPage(res.data.previous)
             if (pageNum) setCurrentPage(pageNum)
+        }
+
         } catch (err: any) {
             if (err.response?.status === 404 && currentPage > 1) {
                 await fetchEmployees(undefined, currentPage - 1)
@@ -41,7 +53,13 @@ const AllEmployees = () => {
         }
     }
 
-    useEffect(() => { fetchEmployees() }, [])
+    useEffect(() => {
+        if(params.id){
+            fetchEmployees(undefined,undefined,params.id) 
+        } else{
+            fetchEmployees()
+        }
+    }, [params.id])
 
     const totalPages = Math.ceil(employeesCount / 10)
 
@@ -61,7 +79,7 @@ const AllEmployees = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {employees.length === 0 && (
+                    {employees?.length === 0 && (
                         <tr className="border-b bg-gray-800 border-gray-700">
                             <td className="px-6 py-4 font-medium text-center text-white" colSpan={6}>
                                 {t("allEmployees.noData")}
@@ -69,12 +87,12 @@ const AllEmployees = () => {
                         </tr>
                     )}
 
-                    {employees.map((employee) => (
+                    {employees?.map((employee) => (
                         <tr key={employee.id} className="border-b bg-gray-800 border-gray-700">
-                            <td className="px-6 py-4">{employee.serial_number}</td>
+                            <td className="px-6 py-4">{employee.serial_number || employee.id}</td>
                             <td className="px-6 py-4">{employee.first_name} {employee?.middle_name} {employee.last_name}</td>
                             <td className="px-6 py-4">{employee.email}</td>
-                            <td className="px-6 py-4">{employee.position}</td>
+                            <td className="px-6 py-4">{employee.role}</td>
                             <td className="px-6 py-4">{employee.branch_name}</td>
                             <td className="px-6 py-4 relative">
                                 <button

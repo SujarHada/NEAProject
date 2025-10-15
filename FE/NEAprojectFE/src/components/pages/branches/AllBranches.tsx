@@ -90,12 +90,12 @@ const AllBranches = () => {
                                                 </button>
                                             </li>
                                             <li>
-                                                <button onClick={() => navigate(`/branches/${branch.id}/employee/create-employee`)} className="block w-full text-left px-4 py-2 hover:bg-gray-600">
+                                                <button onClick={() => navigate(`/branches/${branch.organization_id}/employee/create-employee`)} className="block w-full text-left px-4 py-2 hover:bg-gray-600">
                                                     {t("allBranches.actions.addEmployees")}
                                                 </button>
                                             </li>
                                             <li>
-                                                <button onClick={() => navigate(`/branches/${branch.id}/employee/all-employees`)} className="block w-full text-left px-4 py-2 hover:bg-gray-600">
+                                                <button onClick={() => navigate(`/branches/${branch.organization_id}/employee/all-employees`)} className="block w-full text-left px-4 py-2 hover:bg-gray-600">
                                                     {t("allBranches.actions.allEmployees")}
                                                 </button>
                                             </li>

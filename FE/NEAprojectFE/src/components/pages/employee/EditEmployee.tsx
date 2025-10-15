@@ -7,20 +7,40 @@ import axios from "axios"
 import { useNavigate, useParams } from "react-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
+import { type Branch } from "../../../interfaces/interfaces"
 
 const EditEmployee = () => {
     const { t } = useTranslation()
     const param = useParams()
     const [err, setErr] = useState<string | null>(null)
     const [employee, setEmployee] = useState<Employee | null>(null)
-
+    const [branches, setBranches] = useState<Branch[]>([])
+    const fetchBranches = async () => {
+        const response = await axios.get("http://127.0.0.1:8000/api/branches/")
+        if (branches.length) return
+        const fetchedBranches = response.data.results as Branch[]
+        setBranches(fetchedBranches)
+    }
+    useEffect(() => {
+        if (!branches.length) {
+            fetchBranches()
+        }
+    }, [branches])
+    useEffect(() => {
+        if (param.id) {
+            const branch = branches?.find((branch) => branch.organization_id === employee?.organization_id)
+            if (branch) {
+                setValue('organization_id', branch.organization_id)
+            }
+        }
+    }, [param.id, branches, employee])
     const formSchema = z.object({
         first_name: z.string().min(1, t("editEmployee.errors.firstName")),
         middle_name: z.string().optional(),
         last_name: z.string().min(1, t("editEmployee.errors.lastName")),
         email: z.string().email(t("editEmployee.errors.emailInvalid")).min(1, t("editEmployee.errors.emailRequired")),
         organization_id: z.string().min(1, t("editEmployee.errors.branchId")),
-        position: z.string().min(1, t("editEmployee.errors.position")),
+        role: z.string().min(1, t("editEmployee.errors.position")),
     })
 
     const { control, handleSubmit, formState: { isSubmitting, errors }, setValue, reset } = useForm<createEmployeesInputs>({
@@ -30,7 +50,7 @@ const EditEmployee = () => {
             last_name: "",
             email: "",
             organization_id: "",
-            position: "",
+            role: "",
         },
         resolver: zodResolver(formSchema),
         mode: "onSubmit"
@@ -57,7 +77,7 @@ const EditEmployee = () => {
         setValue("last_name", employee.last_name)
         setValue("email", employee.email)
         setValue("organization_id", employee.organization_id)
-        setValue("position", employee.position)
+        setValue("role", employee.role)
     }, [param, employee])
 
     const onSubmit = async (data: createEmployeesInputs) => {
@@ -81,7 +101,17 @@ const EditEmployee = () => {
                     name="organization_id"
                     control={control}
                     render={({ field }) => (
-                        <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="organization_id" />
+                        <div className="flex w-full items-center relative">
+                            <select id="position" {...field} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                                <option value="" disabled hidden>{t("createEmployee.placeholders.branches")}</option>
+                                {
+                                    branches.map((branch) => (
+                                        <option key={branch.id} value={branch.organization_id}>{branch.name}</option>
+                                    ))
+                                }
+                            </select>
+                            <FaChevronDown className="absolute right-3 text-gray-500" />
+                        </div>
                     )}
                 />
                 {errors.organization_id && <p className="text-red-500">{errors.organization_id.message}</p>}
@@ -138,23 +168,23 @@ const EditEmployee = () => {
             </div>
 
             <div className="lg:w-1/2 flex flex-col relative">
-                <label htmlFor="position">{t("editEmployee.labels.position")} *</label>
+                <label htmlFor="role">{t("editEmployee.labels.position")} *</label>
                 <Controller
-                    name="position"
+                    name="role"
                     control={control}
                     render={({ field }) => (
                         <div className="flex w-full items-center relative">
-                            <select id="position" {...field} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                            <select id="role" {...field} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
                                 <option value="" disabled hidden>{t("editEmployee.placeholders.position")}</option>
                                 <option value="admin">{t("editEmployee.positions.admin")}</option>
-                                <option value="accountant">{t("editEmployee.positions.accountant")}</option>
-                                <option value="peon">{t("editEmployee.positions.peon")}</option>
+                                <option value="viewer">{t("editEmployee.positions.viewer")}</option>
+
                             </select>
                             <FaChevronDown className="absolute right-3 text-gray-500" />
                         </div>
                     )}
                 />
-                {errors.position && <p className="text-red-500">{errors.position.message}</p>}
+                {errors.role && <p className="text-red-500">{errors.role.message}</p>}
             </div>
 
             <div className="flex">

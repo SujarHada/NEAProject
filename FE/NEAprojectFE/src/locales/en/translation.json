@@ -224,7 +224,7 @@
   "createEmployee": {
     "title": "Create Employee",
     "labels": {
-      "branchId": "Branch Id",
+      "branchId": "Branch",
       "firstName": "First Name",
       "middleName": "Middle Name",
       "lastName": "Last Name",
@@ -232,10 +232,12 @@
       "position": "Position"
     },
     "placeholders": {
-      "position": "Select Position *"
+      "position": "Select Role*",
+      "branches": "Select Branch*"
     },
     "positions": {
       "admin": "Admin",
+      "viewer":"Viewer",
       "accountant": "Accountant",
       "peon": "Peon"
     },
@@ -267,6 +269,7 @@
     },
     "positions": {
       "admin": "Admin",
+      "viewer": "Viewer",
       "accountant": "Accountant",
       "peon": "Peon"
     },

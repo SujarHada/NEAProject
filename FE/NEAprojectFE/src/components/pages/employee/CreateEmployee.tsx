@@ -1,31 +1,54 @@
 import { useForm, Controller } from "react-hook-form"
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { type createEmployeesInputs } from "../../../interfaces/interfaces"
+import { type Branch, type createEmployeesInputs } from "../../../interfaces/interfaces"
 import { FaChevronDown } from "react-icons/fa"
 import axios from "axios"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
-
+import { useEffect, useState } from "react"
+import { useParams } from "react-router"
 const CreateEmployee = () => {
+    const params = useParams()
     const { t } = useTranslation()
+    const [branches, setBranches] = useState<Branch[]>([])
+    const fetchBranches = async () => {
+        const response = await axios.get("http://127.0.0.1:8000/api/branches/")
+        if (branches.length) return
+        const fetchedBranches = response.data.results as Branch[]
+        setBranches(fetchedBranches)
+    }
+    useEffect(() => {
+        if (!branches.length) {
+            fetchBranches()
+        }
+    }, [branches])
+    useEffect(() => {
+        if (params.id) {
+            const branch = branches?.find((branch) => branch.organization_id === params.id)
+            if (branch) {
+                setValue('organization_id', branch.organization_id)
+            }
+            console.log(getValues('organization_id'))
+        }
+    }, [params.id, branches])
     const createEmployeesFormschema = z.object({
         first_name: z.string().min(1, t("createEmployee.errors.firstName")),
         middle_name: z.string().optional(),
         last_name: z.string().min(1, t("createEmployee.errors.lastName")),
-        email: z.string().email(t("createEmployee.errors.emailInvalid")).min(1, t("createEmployee.errors.emailRequired")),
+        email: z.email(t("createEmployee.errors.emailInvalid")).min(1, t("createEmployee.errors.emailRequired")),
         organization_id: z.string().min(1, t("createEmployee.errors.branchId")),
-        position: z.string().min(1, t("createEmployee.errors.position")),
+        role: z.string().min(1, t("createEmployee.errors.position")),
     })
 
-    const { control, handleSubmit, formState: { isSubmitting, errors }, reset } = useForm<createEmployeesInputs>({
+    const { control, handleSubmit, formState: { isSubmitting, errors }, reset, setValue,getValues } = useForm<createEmployeesInputs>({
         defaultValues: {
             first_name: "",
             middle_name: "",
             last_name: "",
             email: "",
             organization_id: "",
-            position: "",
+            role: "",
         },
         resolver: zodResolver(createEmployeesFormschema),
         mode: "onSubmit"
@@ -35,7 +58,7 @@ const CreateEmployee = () => {
 
     const onSubmit = async (data: createEmployeesInputs) => {
         const res = await axios.post("http://127.0.0.1:8000/api/employees/", data)
-        if(res.status === 201){
+        if (res.status === 201) {
             navigate("/employees/manage")
             reset()
         }
@@ -51,7 +74,17 @@ const CreateEmployee = () => {
                     name="organization_id"
                     control={control}
                     render={({ field }) => (
-                        <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="organization_id" />
+                        <div className="flex w-full items-center relative">
+                            <select id="position" {...field} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                                <option value="" disabled hidden>{t("createEmployee.placeholders.branches")}</option>
+                                {
+                                    branches.map((branch) => (
+                                        <option key={branch.id} value={branch.organization_id}>{branch.name}</option>
+                                    ))
+                                }
+                            </select>
+                            <FaChevronDown className="absolute right-3 text-gray-500" />
+                        </div>
                     )}
                 />
                 {errors.organization_id && <p className="text-red-500">{errors.organization_id.message}</p>}
@@ -108,23 +141,22 @@ const CreateEmployee = () => {
             </div>
 
             <div className="lg:w-1/2 flex flex-col relative">
-                <label htmlFor="position">{t("createEmployee.labels.position")} *</label>
+                <label htmlFor="role">{t("createEmployee.labels.position")} *</label>
                 <Controller
-                    name="position"
+                    name="role"
                     control={control}
                     render={({ field }) => (
                         <div className="flex w-full items-center relative">
-                            <select id="position" {...field} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                            <select id="role" {...field} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
                                 <option value="" disabled hidden>{t("createEmployee.placeholders.position")}</option>
                                 <option value="admin">{t("createEmployee.positions.admin")}</option>
-                                <option value="accountant">{t("createEmployee.positions.accountant")}</option>
-                                <option value="peon">{t("createEmployee.positions.peon")}</option>
+                                <option value="accountant">{t("createEmployee.positions.viewer")}</option>
                             </select>
                             <FaChevronDown className="absolute right-3 text-gray-500" />
                         </div>
                     )}
                 />
-                {errors.position && <p className="text-red-500">{errors.position.message}</p>}
+                {errors.role && <p className="text-red-500">{errors.role.message}</p>}
             </div>
 
             <div className="flex">
