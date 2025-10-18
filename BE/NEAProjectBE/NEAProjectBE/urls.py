@@ -21,6 +21,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 from myapp.views import (
+    DashboardViewSet,
     LetterViewSet,
     ProductViewSet,
     OfficeViewSet,
@@ -37,6 +38,8 @@ router.register('offices', OfficeViewSet)
 router.register('receivers', ReceiverViewSet)
 router.register('branches', BranchViewSet)
 router.register('employees', EmployeeViewSet)
+router.register('dashboard', DashboardViewSet, basename='dashboard')
+
 
 urlpatterns = [
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

@@ -31,7 +31,7 @@ class BranchStatus(models.TextChoices):
     BIN = "bin", "Bin"
 
 class Branch(TimeStampedModel):
-    organization_id = models.UUIDField(default=uuid.uuid4, null=True, editable=False)
+    organization_id = models.PositiveSmallIntegerField(unique=True, null=True, blank=True, editable=False)
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True, null=True)
     address = models.CharField(max_length=512, blank=True)
@@ -43,6 +43,13 @@ class Branch(TimeStampedModel):
         choices=BranchStatus.choices,
         default=BranchStatus.ACTIVE
     )
+    def save(self, *args, **kwargs):
+        if not self.organization_id:
+            last_id = Branch.objects.aggregate(models.Max('organization_id'))['organization_id__max'] or 0
+            if last_id >= 9999:
+                raise ValueError("Maximum organization_id limit (9999) reached.")
+            self.organization_id = last_id + 1
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -74,18 +81,31 @@ class Employee(TimeStampedModel):
             return f"{self.first_name} {self.middle_name} {self.last_name}"
         return f"{self.first_name} {self.last_name}"
 
-
 class Receiver(TimeStampedModel):
+    # ID Card Type Choices
+    class IDCardType(models.TextChoices):
+        NATIONAL_ID = "national_id", "National Identity Card"
+        CITIZENSHIP = "citizenship", "Citizenship Certificate"
+        VOTER_ID = "voter_id", "Voter ID Card"
+        PASSPORT = "passport", "Passport / E-Passport"
+        DRIVERS_LICENSE = "drivers_license", "Driver’s License"
+        PAN_CARD = "pan_card", "PAN Card"
+        UNKNOWN = "unknown", "UNKNOWN"
+
     name = models.CharField(max_length=255)
     post = models.CharField(max_length=255, default="UNKNOWN")
     id_card_number = models.CharField(max_length=50, default="UNKNOWN")
-    id_card_type = models.CharField(max_length=50, default="UNKNOWN")
+    id_card_type = models.CharField(
+        max_length=20, 
+        choices=IDCardType.choices,
+        default=IDCardType.UNKNOWN
+    )
     office_name = models.CharField(max_length=255, default="UNKNOWN")
     office_address = models.TextField(default="UNKNOWN")
     phone_number = models.CharField(max_length=20, default="UNKNOWN")
     vehicle_number = models.CharField(max_length=50, default="UNKNOWN")
 
-    def __str__(self) -> str:  # pragma: no cover
+    def __str__(self) -> str:
         return self.name
 
 
@@ -122,7 +142,7 @@ class Product(TimeStampedModel):
     status = models.CharField(max_length=10, choices=ProductStatus.choices, default=ProductStatus.ACTIVE)
     
     # Stock information
-    stock_quantity = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    remarks = models.TextField(blank=True, default="")
     unit_of_measurement = models.CharField(
         max_length=10, 
         choices=UnitOfMeasurement.choices, 
@@ -143,3 +163,75 @@ class Product(TimeStampedModel):
 
     def __str__(self) -> str:  # pragma: no cover
         return self.name
+
+
+class Dashboard(models.Model):
+    """
+    Model to store dashboard statistics.
+    This model doesn't need timestamps as it will be dynamically calculated.
+    """
+    # Total counts
+    total_active_products = models.IntegerField(default=0)
+    total_active_branches = models.IntegerField(default=0)
+    total_active_offices = models.IntegerField(default=0)
+    total_active_employees = models.IntegerField(default=0)
+    total_receivers = models.IntegerField(default=0)
+    total_letters = models.IntegerField(default=0)
+    
+    # Additional statistics
+    total_draft_letters = models.IntegerField(default=0)
+    total_sent_letters = models.IntegerField(default=0)
+    
+    # Timestamp for when the statistics were last updated
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Dashboard Statistics"
+        verbose_name_plural = "Dashboard Statistics"
+
+    def __str__(self):
+        return f"Dashboard Stats - {self.last_updated.strftime('%Y-%m-%d %H:%M')}"
+
+    @classmethod
+    def get_current_stats(cls):
+        """
+        Get or create the current dashboard statistics with real-time counts.
+        """
+        # Calculate real-time counts
+        total_active_products = Product.objects.filter(status=ProductStatus.ACTIVE).count()
+        total_active_branches = Branch.objects.filter(status=BranchStatus.ACTIVE).count()
+        total_active_offices = Office.objects.filter(status=OfficeStatus.ACTIVE).count()
+        total_active_employees = Employee.objects.filter(status=EmployeeStatus.ACTIVE).count()
+        total_receivers = Receiver.objects.count()
+        total_letters = Letter.objects.count()
+        total_draft_letters = Letter.objects.filter(status=LetterStatus.DRAFT).count()
+        total_sent_letters = Letter.objects.filter(status=LetterStatus.SENT).count()
+        
+        # Get or create dashboard instance
+        dashboard, created = cls.objects.get_or_create(
+            id=1,  # Single instance for dashboard
+            defaults={
+                'total_active_products': total_active_products,
+                'total_active_branches': total_active_branches,
+                'total_active_offices': total_active_offices,
+                'total_active_employees': total_active_employees,
+                'total_receivers': total_receivers,
+                'total_letters': total_letters,
+                'total_draft_letters': total_draft_letters,
+                'total_sent_letters': total_sent_letters,
+            }
+        )
+        
+        # Update if not created
+        if not created:
+            dashboard.total_active_products = total_active_products
+            dashboard.total_active_branches = total_active_branches
+            dashboard.total_active_offices = total_active_offices
+            dashboard.total_active_employees = total_active_employees
+            dashboard.total_receivers = total_receivers
+            dashboard.total_letters = total_letters
+            dashboard.total_draft_letters = total_draft_letters
+            dashboard.total_sent_letters = total_sent_letters
+            dashboard.save()
+        
+        return dashboard

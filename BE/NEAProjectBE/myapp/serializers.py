@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Office, Branch, Employee, Receiver, Letter, Product
+from .models import Office, Branch, Employee, Receiver, Letter, Product, Dashboard
 from drf_spectacular.utils import extend_schema_field
 
 
@@ -50,7 +50,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
     serial_number = serializers.SerializerMethodField()
     branch_name = serializers.CharField(source="branch.name", read_only=True)
     # Use organization_id for both input and output
-    organization_id = serializers.UUIDField(source="branch.organization_id")
+    organization_id = serializers.IntegerField(source="branch.organization_id")
 
     class Meta:
         model = Employee
@@ -107,6 +107,34 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = "__all__"
 
+    def validate(self, data):
+        """
+        Validate that the same product name cannot be inserted for the same company.
+        """
+        instance = self.instance  # Existing instance for update
+        name = data.get('name')
+        company = data.get('company')
+        
+        # If this is an update, get the current instance values for fields not being updated
+        if instance:
+            name = name if name is not None else instance.name
+            company = company if company is not None else instance.company
+        
+        # Check for duplicate product name within the same company
+        if name and company:
+            queryset = Product.objects.filter(name=name, company=company, status=ProductStatus.ACTIVE)
+            
+            # If updating, exclude the current instance from the duplicate check
+            if instance:
+                queryset = queryset.exclude(id=instance.id)
+            
+            if queryset.exists():
+                raise serializers.ValidationError({
+                    "name": f"A product with name '{name}' already exists for company '{company}'."
+                })
+        
+        return data
+
     @extend_schema_field(serializers.IntegerField())
     def get_serial_number(self, obj):
         # Get the position of this object in the queryset
@@ -115,3 +143,23 @@ class ProductSerializer(serializers.ModelSerializer):
         if request and hasattr(request, 'product_index_map'):
             return request.product_index_map.get(obj.id, 0) + 1
         return 0
+
+
+class DashboardSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Dashboard statistics.
+    """
+    class Meta:
+        model = Dashboard
+        fields = [
+            "total_active_products",
+            "total_active_branches",
+            "total_active_offices",
+            "total_active_employees",
+            "total_receivers",
+            "total_letters",
+            "total_draft_letters",
+            "total_sent_letters",
+            "last_updated",
+        ]
+        read_only_fields = fields
