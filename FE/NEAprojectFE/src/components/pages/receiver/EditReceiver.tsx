@@ -3,56 +3,82 @@ import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type createReceiverInputs } from "../../../interfaces/interfaces"
 import axios from "axios"
-import { useNavigate } from "react-router"
+import { useNavigate, useParams } from "react-router"
 import { useTranslation } from "react-i18next"
 import { FaChevronDown } from "react-icons/fa"
 import { id_types } from "../../../enum/id_types"
-const CreateReceiver = () => {
+import { type Receiver } from "../../../interfaces/interfaces"
+import { useEffect, useState } from "react"
+const EditReceiver = () => {
     const { t } = useTranslation()
+    const param = useParams()
+    const [receiver, setReceiver] = useState<Receiver>()
+    const [err, setErr] = useState<string | null>(null)
     const navigate = useNavigate()
-    const CreateReceiversFormschema = z.object({
-        name: z.string().min(1, t("createReceiver.errors.nameRequired")),
-        office_name: z.string().min(1, t("createReceiver.errors.deptRequired")),
-        office_address: z.string().min(1, t("createReceiver.errors.deptAddressRequired")),
-        id_card_number: z.string().min(1, t("createReceiver.errors.idNo")),
-        id_card_type: z.enum(["national_id", "citizenship", "voter_id", "passport", "drivers_license", "pan_card", "unknown"], t("createReceiver.errors.idType")),
+    const fetchReceiver = async () => {
+        try {
+            const res = await axios.get(`http://127.0.0.1:8000/api/receivers/${param.id}/`)
+            setReceiver(res.data)
+        } catch (err: any) {
+            setErr(err?.response.data.detail)
+        }
+    }
+
+    const EditReceiversFormschema = z.object({
+        name: z.string().min(1, t("editReceiver.errors.nameRequired")),
+        office_name: z.string().min(1, t("editReceiver.errors.deptRequired")),
+        office_address: z.string().min(1, t("editReceiver.errors.deptAddressRequired")),
+        id_card_number: z.string().min(1, t("editReceiver.errors.idNo")),
+        id_card_type: z.enum(["national_id", "citizenship", "voter_id", "passport", "drivers_license", "pan_card", "unknown"], t("editReceiver.errors.idType")),
         phone_number: z.string()
-            .min(1, t("createReceiver.errors.phone"))
-            .regex(/^\d+$/, t("createReceiver.errors.phoneNum"))
-            .max(10, t("createReceiver.errors.phoneMax")),
-        post: z.string().min(1, t("createReceiver.errors.post")),
-        vehicle_number: z.string().min(1, t("createReceiver.errors.vehicleNo")),
+            .min(1, t("editReceiver.errors.phone"))
+            .regex(/^\d+$/, t("editReceiver.errors.phoneNum"))
+            .max(10, t("editReceiver.errors.phoneMax")),
+        post: z.string().min(1, t("editReceiver.errors.post")),
+        vehicle_number: z.string().min(1, t("editReceiver.errors.vehicleNo")),
     })
-    const { control, handleSubmit, formState: { isSubmitting, errors } } = useForm<createReceiverInputs>(
+    const { control, handleSubmit, formState: { isSubmitting, errors }, setValue } = useForm<createReceiverInputs>(
         {
-            defaultValues: {
-                name: "",
-                post: "",
-                id_card_number: "",
-                id_card_type: 'national_id',
-                office_name: "",
-                office_address: "",
-                phone_number: "",
-                vehicle_number: "",
-            },
-            resolver: zodResolver(CreateReceiversFormschema),
+            resolver: zodResolver(EditReceiversFormschema),
             mode: "onSubmit"
         }
     )
 
+    useEffect(() => {
+        if (!receiver) {
+            fetchReceiver()
+            return
+        }
+        setValue("name", receiver.name)
+        setValue("name", receiver.name)
+        setValue("post", receiver.post)
+        setValue("id_card_number", receiver.id_card_number)
+        setValue("id_card_type", receiver.id_card_type)
+        setValue("office_name", receiver.office_name)
+        setValue("office_address", receiver.office_address)
+        setValue("phone_number", receiver.phone_number)
+        setValue("vehicle_number", receiver.vehicle_number)
+    }, [param, receiver])
+
+
+
     const onSubmit: SubmitHandler<createReceiverInputs> = async (data) => {
-        const res = await axios.post("http://127.0.0.1:8000/api/receivers/", data)
-        if (res.status === 201) {
+        const res = await axios.put(`http://127.0.0.1:8000/api/receivers/${param.id}/`, data)
+        if (res.status === 200) {
             navigate("/receiver/receiver-list")
         }
     }
 
+    if (!receiver && !err) return <div>{t("loading", { defaultValue: "Loading..." })}</div>
+    if (err) return <div>{err}</div>
+
+
     return (
         <div className="flex flex-col gap-6">
-            <h1 className="text-2xl font-bold">{t("createReceiver.title")}</h1>
+            <h1 className="text-2xl font-bold">{t("editReceiver.title")}</h1>
             <div className="flex gap-4 w-full flex-wrap">
                 <div className="flex flex-col flex-1 lg:w-1/2 gap-2">
-                    <label htmlFor="name">{t("createReceiver.labels.name")} </label>
+                    <label htmlFor="name">{t("editReceiver.labels.name")} </label>
                     <Controller
                         name="name"
                         control={control}
@@ -63,7 +89,7 @@ const CreateReceiver = () => {
                     {errors.name && <p className="text-red-500">{errors.name.message}</p>}
                 </div>
                 <div className="flex flex-1 flex-col w-full gap-2">
-                    <label htmlFor="post"> {t("createReceiver.labels.post")} </label>
+                    <label htmlFor="post"> {t("editReceiver.labels.post")} </label>
                     <Controller
                         name="post"
                         control={control}
@@ -76,7 +102,7 @@ const CreateReceiver = () => {
             </div>
             <div className="flex gap-4 w-full flex-wrap">
                 <div className="w-full flex-1 flex flex-col gap-2">
-                    <label htmlFor="id_card_number"> {t("createReceiver.labels.idNo")} </label>
+                    <label htmlFor="id_card_number"> {t("editReceiver.labels.idNo")} </label>
                     <Controller
                         name="id_card_number"
                         control={control}
@@ -87,15 +113,7 @@ const CreateReceiver = () => {
                     {errors.id_card_number && <p className="text-red-500">{errors.id_card_number.message}</p>}
                 </div>
                 <div className="w-full flex flex-1 flex-col gap-2">
-                    <label htmlFor="id_card_type"> {t("createReceiver.labels.idType")} </label>
-                    {/* <Controller
-                        name="id_card_type"
-                        control={control}
-                        render={({ field }) => (
-                            <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="id_card_type" />
-                        )}
-                    /> */}
-
+                    <label htmlFor="id_card_type"> {t("editReceiver.labels.idType")} </label>
                     <Controller
                         name="id_card_type"
                         control={control}
@@ -117,7 +135,7 @@ const CreateReceiver = () => {
             </div>
             <div className="flex gap-4 w-full flex-wrap">
                 <div className="lg:w-1/2 flex flex-1 flex-col gap-2 ">
-                    <label htmlFor="office_name"> {t("createReceiver.labels.deptName")} </label>
+                    <label htmlFor="office_name"> {t("editReceiver.labels.deptName")} </label>
                     <Controller
                         name="office_name"
                         control={control}
@@ -128,7 +146,7 @@ const CreateReceiver = () => {
                     {errors.office_name && <p className="text-red-500">{errors.office_name.message}</p>}
                 </div>
                 <div className="lg:w-1/2 flex flex-1 flex-col gap-2 ">
-                    <label htmlFor="office_address"> {t("createReceiver.labels.deptAddress")} </label>
+                    <label htmlFor="office_address"> {t("editReceiver.labels.deptAddress")} </label>
                     <Controller
                         name="office_address"
                         control={control}
@@ -141,7 +159,7 @@ const CreateReceiver = () => {
             </div>
             <div className="flex gap-4 w-full flex-wrap">
                 <div className="lg:w-1/2 flex flex-1 flex-col gap-2 ">
-                    <label htmlFor="phone_number"> {t("createReceiver.labels.phone")} </label>
+                    <label htmlFor="phone_number"> {t("editReceiver.labels.phone")} </label>
                     <Controller
                         name="phone_number"
                         control={control}
@@ -152,7 +170,7 @@ const CreateReceiver = () => {
                     {errors.phone_number && <p className="text-red-500">{errors.phone_number.message}</p>}
                 </div>
                 <div className="lg:w-1/2 flex flex-1 flex-col gap-2 ">
-                    <label htmlFor="vehicle_number"> {t("createReceiver.labels.vehicleNo")} </label>
+                    <label htmlFor="vehicle_number"> {t("editReceiver.labels.vehicleNo")} </label>
                     <Controller
                         name="vehicle_number"
                         control={control}
@@ -170,11 +188,11 @@ const CreateReceiver = () => {
                     onClick={handleSubmit(onSubmit)}
                     className="outline-none w-full bg-[#10172A] text-white h-12 hover:bg-[#233058] active:bg-[#314379] rounded-md disabled:opacity-50"
                 >
-                    {isSubmitting ? t("createReceiver.labels.creating") : t("createReceiver.labels.createReceiver")}
+                    {isSubmitting ? t("editReceiver.labels.creating") : t("editReceiver.labels.createReceiver")}
                 </button>
             </div>
         </div>
     )
 }
 
-export default CreateReceiver
+export default EditReceiver

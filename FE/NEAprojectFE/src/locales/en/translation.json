@@ -237,7 +237,7 @@
     },
     "positions": {
       "admin": "Admin",
-      "viewer":"Viewer",
+      "viewer": "Viewer",
       "accountant": "Accountant",
       "peon": "Peon"
     },
@@ -299,5 +299,95 @@
     },
     "noData": "No employees found",
     "edit": "Edit"
+  },
+  "createReceiver": {
+    "title": "Create Receiver",
+    "labels": {
+      "name": "Name *",
+      "post":"Post *",
+      "idNo": "Id card No. *",
+      "idType": "Id card type *",
+      "deptName": "Department Name *",
+      "deptAddress":"Department Address *",
+      "vehicleNo": "Vehicle No. *",
+      "phone": "Phone Number *",
+      "createReceiver":"Create receiver",
+      "creating":"Creating..."
+    },
+    "placeholders": {
+      "name": "Enter Name",
+      "email": "Enter Email",
+      "address": "Enter Address",
+      "phone": "Enter Phone Number"
+    },
+    "errors": {
+      "nameRequired": "Receiver Name is required",
+      "deptRequired":"Department Name is required",
+      "deptAddressRequired":"Department Address is required",
+      "idNo":"ID card number is required",
+      "idType":"ID card type is required",
+      "phone": "Phone Number is required",
+      "phoneNum": "Phone Number must be only numbers",
+      "phoneMax": "Only 10 digits allowed",
+      "post": "Post is required",
+      "vehicleNo": "Vehicle No is required"
+    }
+  },
+  "allreceivers": {
+    "title": "Receiver List",
+    "headers": {
+      "id": "Id",
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "branch": "Branch",
+      "action": "Action"
+    },
+    "table": {
+      "name": "Name",
+      "post": "Post",
+      "idcardNumber": "Id card no.",
+      "phoneNumber": "Phone number",
+      "action": "Actions"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "noData": "No receivers found",
+    "edit": "Edit"
+  },
+  "editReceiver": {
+    "title": "Edit Receiver",
+    "labels": {
+      "name": "Name *",
+      "post":"Post *",
+      "idNo": "Id card No. *",
+      "idType": "Id card type *",
+      "deptName": "Department Name *",
+      "deptAddress":"Department Address *",
+      "vehicleNo": "Vehicle No. *",
+      "phone": "Phone Number *",
+      "createReceiver":"Save",
+      "creating":"Saving..."
+    },
+    "placeholders": {
+      "name": "Enter Name",
+      "email": "Enter Email",
+      "address": "Enter Address",
+      "phone": "Enter Phone Number"
+    },
+    "errors": {
+      "nameRequired": "Receiver Name is required",
+      "deptRequired":"Department Name is required",
+      "deptAddressRequired":"Department Address is required",
+      "idNo":"ID card number is required",
+      "idType":"ID card type is required",
+      "phone": "Phone Number is required",
+      "phoneNum": "Phone Number must be only numbers",
+      "phoneMax": "Only 10 digits allowed",
+      "post": "Post is required",
+      "vehicleNo": "Vehicle No is required"
+    }
   }
 }

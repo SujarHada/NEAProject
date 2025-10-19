@@ -28,6 +28,7 @@ import EditBranch from "../components/pages/branches/EditBranch";
 import EditProduct from "../components/pages/products/EditProduct";
 import EditEmployee from "../components/pages/employee/EditEmployee";
 import EditOffice from "../components/pages/offices/EditOffice";
+import EditReceiver from "../components/pages/receiver/EditReceiver";
 
 const router = createBrowserRouter([
     {
@@ -108,6 +109,10 @@ const router = createBrowserRouter([
                     {
                         path:"receiver-list",
                         element: createElement(ReceiverList)
+                    },
+                    {
+                        path:"edit/:id",
+                        element: createElement(EditReceiver)
                     }
                 ]
             },
