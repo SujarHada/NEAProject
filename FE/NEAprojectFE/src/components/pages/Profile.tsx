@@ -9,7 +9,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a] text-gray-100">
+    <div className="h-full flex flex-col items-center justify-center bg-[#1E2939] text-gray-100">
       <div className="w-full max-w-sm text-center p-6">
         <h1 className="text-2xl font-semibold mb-6 text-blue-400">
           {t("profilePageTitle", { defaultValue: "Profile Page" })}
@@ -26,7 +26,7 @@ const Profile = () => {
               className={`px-4 py-2 rounded-md text-sm font-medium transition ${
                 i18n.language === "en"
                   ? "bg-blue-600 text-white"
-                  : "bg-gray-800 hover:bg-gray-700 text-gray-300"
+                  : "bg-gray-900 hover:bg-gray-950 text-gray-300"
               }`}
             >
               🇬🇧 English
@@ -37,7 +37,7 @@ const Profile = () => {
               className={`px-4 py-2 rounded-md text-sm font-medium transition ${
                 i18n.language === "np"
                   ? "bg-green-600 text-white"
-                  : "bg-gray-800 hover:bg-gray-700 text-gray-300"
+                  : "bg-gray-900 hover:bg-gray-950 text-gray-300"
               }`}
             >
               🇳🇵 नेपाली

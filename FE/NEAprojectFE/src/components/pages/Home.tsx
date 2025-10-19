@@ -1,9 +1,13 @@
+import { useEffect } from "react";
 import Sidebar from "../Sidebar/Sidebar";
 import { Outlet } from "react-router";
 import { useNavigate } from "react-router";
 
 const Home = () => {
   const navigate = useNavigate();
+  useEffect(() => {
+    navigate("/home");
+  },[navigate])
 
   const renderPage = (activePage:string) => {
     switch (activePage) {

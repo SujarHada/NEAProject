@@ -13,6 +13,7 @@
     "productName": "Product Name *",
     "companyName": "Company Name *",
     "quantity": "Quantity *",
+    "remarks":"Remarks",
     "unit": "Unit",
     "submitButton": "Create Product",
     "creatingButton": "Creating...",
