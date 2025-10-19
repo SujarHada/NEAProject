@@ -39,23 +39,17 @@ export interface createEmployeesInputs extends Omit<Employee, 'id' | 'serial_num
 export interface EditEmployeesInputs extends createEmployeesInputs{}
 
 export interface Receiver {
-    name: string
-    post: string
-    id: string
-    phoneNo: string
+  id: number
+  name: string
+  post: string
+  id_card_number: string
+  id_card_type: "national_id" | "citizenship" | "voter_id" | "passport" | "drivers_license" | "pan_card" | "unknown"
+  office_name: string
+  office_address: string
+  phone_number: string
+  vehicle_number: string
 }
-
-
-export interface createReceiverInputs {
-    name:string
-    post:string
-    id:string
-    idType:string
-    departmentName:string
-    departmentAddress:string
-    phoneNo:string
-    vehicleNo:string
-}
+export interface createReceiverInputs extends Omit<Receiver, 'id'>{}
 
 
 export interface Office {
