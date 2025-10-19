@@ -4,6 +4,12 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
+from datetime import datetime
+from django.db.models import Count
+from django.http import HttpResponse
+import csv
+from io import StringIO
+from datetime import datetime 
 
 from .models import EmployeeStatus, Office, Branch, Employee, Receiver, Letter, Product, ProductStatus, LetterStatus, BranchStatus, OfficeStatus, Dashboard
 from .serializers import (
@@ -68,27 +74,37 @@ class OfficeViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-    @action(detail=True, methods=["post"])
-    def restore(self, request, pk=None):
-        """Restore an office from BIN to ACTIVE."""
-        instance = self.get_object()
-        if instance.status == OfficeStatus.ACTIVE:
-            return Response(
-                {"message": f"Office '{instance.name}' is already active."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        instance.status = OfficeStatus.ACTIVE
-        instance.save(update_fields=["status", "updated_at"])
-
-        return Response(
-            {
-                "status": "success",
-                "message": f"Office '{instance.name}' has been restored.",
-                "id": instance.id
-            },
-            status=status.HTTP_200_OK
-        )
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export offices to CSV file.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="offices_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'S.N.', 'ID', 'Name', 'Address', 'Email', 'Phone Number', 
+            'Status', 'Created At', 'Updated At'
+        ])
+        
+        for index, office in enumerate(queryset, start=1):
+            writer.writerow([
+                index,
+                office.id,
+                office.name,
+                office.address,
+                office.email or '',
+                office.phone_number,
+                office.get_status_display(),
+                office.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                office.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        
+        return response
 
 
 class BranchViewSet(viewsets.ModelViewSet):
@@ -163,7 +179,37 @@ class BranchViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK
         )
-
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export branches to CSV file.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="branches_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'S.N.', 'Organization ID', 'Name', 'Email', 'Address', 
+            'Phone Number', 'Status', 'Created At', 'Updated At'
+        ])
+        
+        for index, branch in enumerate(queryset, start=1):
+            writer.writerow([
+                index,
+                branch.organization_id,
+                branch.name,
+                branch.email or '',
+                branch.address,
+                branch.phone_number,
+                branch.get_status_display(),
+                branch.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                branch.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        
+        return response
 
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all().order_by("-created_at")
@@ -180,7 +226,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
             return queryset.filter(status=status_param)
         return queryset.filter(status=EmployeeStatus.ACTIVE)
 
-    #Serial Number for employee
+    # Serial Number for employee
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
 
@@ -224,6 +270,31 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Handle update with organization_id validation.
+        """
+        instance = self.get_object()
+        organization_id = request.data.get("organization_id")
+
+        if organization_id:
+            try:
+                branch = Branch.objects.get(organization_id=organization_id)
+                # Replace organization_id with actual branch foreign key
+                data = request.data.copy()
+                data["branch"] = branch.id
+                serializer = self.get_serializer(instance, data=data, partial=kwargs.get('partial', False))
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                return Response(serializer.data)
+            except Branch.DoesNotExist:
+                return Response(
+                    {"error": "Branch ID is not correct."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        
+        return super().update(request, *args, **kwargs)
 
     @action(
         detail=False,
@@ -293,11 +364,244 @@ class EmployeeViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK
         )
+
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export employees to CSV file.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="employees_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'S.N.', 'ID', 'First Name', 'Middle Name', 'Last Name', 'Email',
+            'Role', 'Branch Name', 'Organization ID', 'Status', 
+            'Created At', 'Updated At'
+        ])
+        
+        for index, employee in enumerate(queryset, start=1):
+            writer.writerow([
+                index,
+                employee.id,
+                employee.first_name,
+                employee.middle_name or '',
+                employee.last_name,
+                employee.email,
+                employee.get_role_display(),
+                employee.branch.name,
+                employee.branch.organization_id,
+                employee.get_status_display(),
+                employee.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                employee.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        
+        return response
+
+    @action(detail=False, methods=['get'])
+    def export_csv_simple(self, request):
+        """
+        Export simplified employees CSV with only essential fields.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="employees_simple_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'S.N.', 'First Name', 'Last Name', 'Email', 'Role', 
+            'Branch Name', 'Organization ID', 'Status'
+        ])
+        
+        for index, employee in enumerate(queryset, start=1):
+            writer.writerow([
+                index,
+                employee.first_name,
+                employee.last_name,
+                employee.email,
+                employee.get_role_display(),
+                employee.branch.name,
+                employee.branch.organization_id,
+                employee.get_status_display()
+            ])
+        
+        return response
+
+    @action(detail=False, methods=['get'], url_path=r"export-by-organization/(?P<organization_id>[^/.]+)")
+    def export_by_organization(self, request, organization_id=None):
+        """
+        Export employees by organization to CSV.
+        """
+        branch = Branch.objects.filter(organization_id=organization_id).first()
+        if not branch:
+            return Response(
+                {"detail": "Branch not found for the given organization."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        employees = Employee.objects.filter(branch=branch).order_by("-created_at")
+        
+        # Apply status filter if provided
+        status_param = request.query_params.get("status")
+        if status_param:
+            employees = employees.filter(status=status_param)
+        else:
+            employees = employees.filter(status=EmployeeStatus.ACTIVE)
+
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="employees_org_{organization_id}_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'S.N.', 'ID', 'First Name', 'Middle Name', 'Last Name', 'Email',
+            'Role', 'Status', 'Created At', 'Updated At'
+        ])
+        
+        for index, employee in enumerate(employees, start=1):
+            writer.writerow([
+                index,
+                employee.id,
+                employee.first_name,
+                employee.middle_name or '',
+                employee.last_name,
+                employee.email,
+                employee.get_role_display(),
+                employee.get_status_display(),
+                employee.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                employee.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        
+        return response
+
+    @action(detail=False, methods=['get'])
+    def active_count(self, request):
+        """
+        Get count of active employees.
+        """
+        active_count = Employee.objects.filter(status=EmployeeStatus.ACTIVE).count()
+        return Response({'active_count': active_count})
+
+    @action(detail=False, methods=['get'])
+    def bin_count(self, request):
+        """
+        Get count of employees in bin.
+        """
+        bin_count = Employee.objects.filter(status=EmployeeStatus.BIN).count()
+        return Response({'bin_count': bin_count})
+
+    @action(detail=False, methods=['get'])
+    def role_stats(self, request):
+        """
+        Get employee statistics by role.
+        """
+        from django.db.models import Count
+        
+        role_stats = Employee.objects.filter(status=EmployeeStatus.ACTIVE).values(
+            'role'
+        ).annotate(
+            employee_count=Count('id')
+        ).order_by('-employee_count')
+        
+        # Convert role values to display names
+        for stat in role_stats:
+            stat['role_display'] = EmployeeRole(stat['role']).label
+        
+        return Response(role_stats)
+
+    @action(detail=False, methods=['get'])
+    def branch_stats(self, request):
+        """
+        Get employee statistics by branch.
+        """
+        from django.db.models import Count
+        
+        branch_stats = Employee.objects.filter(status=EmployeeStatus.ACTIVE).values(
+            'branch__name', 'branch__organization_id'
+        ).annotate(
+            employee_count=Count('id')
+        ).order_by('-employee_count')
+        
+        return Response(branch_stats)
+
+    @action(detail=False, methods=['get'])
+    def search(self, request):
+        """
+        Search employees by name or email.
+        """
+        search_query = request.query_params.get('q', '')
+        
+        if not search_query:
+            return Response(
+                {"error": "Search query parameter 'q' is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        employees = Employee.objects.filter(
+            status=EmployeeStatus.ACTIVE
+        ).filter(
+            models.Q(first_name__icontains=search_query) |
+            models.Q(last_name__icontains=search_query) |
+            models.Q(email__icontains=search_query) |
+            models.Q(middle_name__icontains=search_query)
+        ).order_by("-created_at")
+        
+        # Create serial number mapping
+        employee_index_map = {obj.id: idx for idx, obj in enumerate(employees)}
+        request.employee_index_map = employee_index_map
+
+        page = self.paginate_queryset(employees)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(employees, many=True)
+        return Response(serializer.data)
+    
 class ReceiverViewSet(viewsets.ModelViewSet):
     queryset = Receiver.objects.all().order_by("-created_at")
     serializer_class = ReceiverSerializer
     permission_classes = []  # No authentication required
 
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export letters to CSV file.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="letters_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'S.N.', 'ID', 'Title', 'Content Preview', 'Receiver Name', 
+            'Receiver Post', 'Status', 'Created At', 'Updated At'
+        ])
+        
+        for index, letter in enumerate(queryset, start=1):
+            # Create content preview (first 100 characters)
+            content_preview = letter.content[:100] + "..." if len(letter.content) > 100 else letter.content
+            
+            writer.writerow([
+                index,
+                letter.id,
+                letter.title,
+                content_preview,
+                letter.receiver.name if letter.receiver else 'N/A',
+                letter.receiver.post if letter.receiver else 'N/A',
+                letter.get_status_display(),
+                letter.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                letter.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        
+        return response
 
 class LetterViewSet(viewsets.ModelViewSet):
     queryset = Letter.objects.all().order_by("-created_at")
@@ -311,7 +615,40 @@ class LetterViewSet(viewsets.ModelViewSet):
         instance.status = LetterStatus.BIN
         instance.save(update_fields=["status", "updated_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)  # Fixed drf_status to status
-
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export letters to CSV file.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="letters_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'S.N.', 'ID', 'Title', 'Content Preview', 'Receiver Name', 
+            'Receiver Post', 'Status', 'Created At', 'Updated At'
+        ])
+        
+        for index, letter in enumerate(queryset, start=1):
+            # Create content preview (first 100 characters)
+            content_preview = letter.content[:100] + "..." if len(letter.content) > 100 else letter.content
+            
+            writer.writerow([
+                index,
+                letter.id,
+                letter.title,
+                content_preview,
+                letter.receiver.name if letter.receiver else 'N/A',
+                letter.receiver.post if letter.receiver else 'N/A',
+                letter.get_status_display(),
+                letter.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                letter.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        
+        return response
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all().order_by("-created_at")
@@ -392,6 +729,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK
         )
+
     @action(detail=True, methods=["post"])
     def restore(self, request, pk=None):
         """Restore a product from BIN to ACTIVE."""
@@ -431,6 +769,110 @@ class ProductViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export products to CSV file.
+        Supports filtering by status via query parameters.
+        """
+        # Get filtered queryset
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        # Create CSV response
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="products_export_{timestamp}.csv"'
+        
+        # Create CSV writer
+        writer = csv.writer(response)
+        
+        # Write headers
+        writer.writerow([
+            'S.N.',
+            'ID',
+            'Name', 
+            'Company',
+            'SKU',
+            'Remarks',
+            'Unit of Measurement',
+            'Status',
+            'Created At',
+            'Updated At'
+        ])
+        
+        # Write data rows
+        for index, product in enumerate(queryset, start=1):
+            writer.writerow([
+                index,
+                product.id,
+                product.name,
+                product.company,
+                product.sku,
+                product.remarks,
+                product.get_unit_of_measurement_display(),
+                product.get_status_display(),
+                product.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                product.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        
+        return response
+
+    @action(detail=False, methods=['get'])
+    def export_csv_simple(self, request):
+        """
+        Export simplified products CSV with only essential fields.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="products_simple_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow(['S.N.', 'Name', 'Company', 'SKU', 'Remarks', 'Unit', 'Status'])
+        
+        for index, product in enumerate(queryset, start=1):
+            writer.writerow([
+                index,
+                product.name,
+                product.company,
+                product.sku,
+                product.remarks,
+                product.get_unit_of_measurement_display(),
+                product.get_status_display()
+            ])
+        
+        return response
+
+    @action(detail=False, methods=['get'])
+    def active_count(self, request):
+        """
+        Get count of active products.
+        """
+        active_count = Product.objects.filter(status=ProductStatus.ACTIVE).count()
+        return Response({'active_count': active_count})
+
+    @action(detail=False, methods=['get'])
+    def bin_count(self, request):
+        """
+        Get count of products in bin.
+        """
+        bin_count = Product.objects.filter(status=ProductStatus.BIN).count()
+        return Response({'bin_count': bin_count})
+
+    @action(detail=False, methods=['get'])
+    def company_stats(self, request):
+        """
+        Get product statistics by company.
+        """
+        
+        company_stats = Product.objects.filter(status=ProductStatus.ACTIVE).values(
+            'company'
+        ).annotate(
+            product_count=Count('id')
+        ).order_by('-product_count')
+        
+        return Response(company_stats)
 
 class DashboardViewSet(viewsets.ViewSet):
     """
@@ -446,6 +888,30 @@ class DashboardViewSet(viewsets.ViewSet):
         serializer = DashboardSerializer(dashboard)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export dashboard statistics to CSV.
+        """
+        dashboard = Dashboard.get_current_stats()
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="dashboard_statistics_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow(['Statistics', 'Count'])
+        writer.writerow(['Active Products', dashboard.total_active_products])
+        writer.writerow(['Active Branches', dashboard.total_active_branches])
+        writer.writerow(['Active Offices', dashboard.total_active_offices])
+        writer.writerow(['Active Employees', dashboard.total_active_employees])
+        writer.writerow(['Total Receivers', dashboard.total_receivers])
+        writer.writerow(['Total Letters', dashboard.total_letters])
+        writer.writerow(['Draft Letters', dashboard.total_draft_letters])
+        writer.writerow(['Sent Letters', dashboard.total_sent_letters])
+        writer.writerow(['Last Updated', dashboard.last_updated.strftime('%Y-%m-%d %H:%M:%S')])
+        
+        return response
 
 class SeedDatabaseView(APIView):
     """
