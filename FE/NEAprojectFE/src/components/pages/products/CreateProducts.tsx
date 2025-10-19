@@ -18,9 +18,7 @@ const CreateProducts = () => {
         name: z.string().min(1, t("editProductPage.errors.productNameRequired")),
         company: z.string().min(1, t("editProductPage.errors.companyNameRequired")),
         unit_of_measurement: z.string().min(1, t("editProductPage.errors.unitRequired")),
-        stock_quantity: z.string()
-            .min(1, t("editProductPage.errors.quantityRequired"))
-            .regex(/^-?\d{0,8}(?:\.\d{0,2})?$/, t("editProductPage.errors.quantityNumber")),
+        remarks: z.string().optional(),
     })
 
     const { control, handleSubmit, formState: { isSubmitting, errors }, reset } = useForm<createProductInputs>(
@@ -29,7 +27,7 @@ const CreateProducts = () => {
                 name: "",
                 company: "",
                 unit_of_measurement: "",
-                stock_quantity: ""
+                remarks: ""
             },
             resolver: zodResolver(createproductFormschema),
             mode: "onChange"
@@ -45,7 +43,7 @@ const CreateProducts = () => {
         reset()
     }
     return (
-        <div className="flex flex-1 flex-col gap-6 ">
+        <div className="  flex-col gap-6 ">
             <h1 className="text-2xl font-bold">{t("createProductPage.title")}</h1>
             <div className="flex gap-4 flex-wrap w-full ">
                 <div className="flex flex-1 flex-col w-full gap-2">
@@ -73,15 +71,15 @@ const CreateProducts = () => {
             </div>
             <div className="flex gap-4 flex-wrap w-full items-end">
                 <div className="flex flex-1 flex-col w-full min-w-[48.5%] gap-2">
-                    <label htmlFor="stock_quantity"> {t('createProductPage.quantity')} </label>
+                    <label htmlFor="remarks"> {t('createProductPage.remarks')} </label>
                     <Controller
-                        name="stock_quantity"
+                        name="remarks"
                         control={control}
                         render={({ field }) => (
-                            <input type="text" {...field} onChange={(e) => field.onChange(e.target.value)} value={field.value} className=" bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="quantity" />
+                            <input type="text" {...field} onChange={(e) => field.onChange(e.target.value)} value={field.value} className=" bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="remarks" />
                         )}
                     />
-                    {errors.stock_quantity && <p className="text-red-500">{errors.stock_quantity.message}</p>}
+                    {errors.remarks && <p className="text-red-500">{errors.remarks.message}</p>}
                 </div>
 
                 <div className="flex flex-1 flex-col w-full min-w-[48.5%] gap-2 relative">

@@ -17,10 +17,10 @@ export interface Product {
     sku: string
     company: string
     status: string
-    stock_quantity: string
+    remarks?: string
     unit_of_measurement: string
 }
-export interface createProductInputs extends Pick<Product, "name" | "company" | "unit_of_measurement" | "stock_quantity"> {} 
+export interface createProductInputs extends Pick<Product, "name" | "company" | "unit_of_measurement" | "remarks"> {} 
 
 export interface Employee{
     id:number
@@ -61,3 +61,15 @@ export interface Office {
     phone_number:string
 }
 export interface OfficeFormInputs extends Omit<Office, 'id' | 'serial_number'>{}
+
+export interface dashboard{
+  total_active_products: number,
+  total_active_branches: number,
+  total_active_offices: number,
+  total_active_employees: number,
+  total_receivers: number,
+  total_letters: number,
+  total_draft_letters: number,
+  total_sent_letters: number,
+  last_updated: string
+}
