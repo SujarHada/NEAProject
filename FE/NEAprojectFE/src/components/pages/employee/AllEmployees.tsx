@@ -25,23 +25,18 @@ const AllEmployees = () => {
 
     const fetchEmployees = async (pageUrl?: string, pageNum?: number, orgId?: string) => {
         try {
-            if(orgId){
-                const apiUrl = pageUrl || `http://127.0.0.1:8000/api/employees/by-organization-id/${orgId}/?page=${pageNum || currentPage}`
-                const res = await axios.get(apiUrl)
-                setEmployees(res.data)
-                setEmployeesCount(res.data.length)
-                setNextPage(res.data.next)
-                setPrevPage(res.data.previous)
-                if (pageNum) setCurrentPage(pageNum)
-            }else{
-            const apiUrl = pageUrl || `http://127.0.0.1:8000/api/employees/?page=${pageNum || currentPage}`
+            let apiUrl: string
+            if (orgId) {
+                apiUrl = pageUrl || `http://127.0.0.1:8000/api/employees/by-organization-id/${orgId}/?page=${pageNum || currentPage}`
+            } else {
+                apiUrl = pageUrl || `http://127.0.0.1:8000/api/employees/?page=${pageNum || currentPage}`
+            }
             const res = await axios.get(apiUrl)
             setEmployees(res.data.results)
             setEmployeesCount(res.data.count)
             setNextPage(res.data.next)
             setPrevPage(res.data.previous)
             if (pageNum) setCurrentPage(pageNum)
-        }
 
         } catch (err: any) {
             if (err.response?.status === 404 && currentPage > 1) {
@@ -54,9 +49,9 @@ const AllEmployees = () => {
     }
 
     useEffect(() => {
-        if(params.id){
-            fetchEmployees(undefined,undefined,params.id) 
-        } else{
+        if (params.id) {
+            fetchEmployees(undefined, undefined, params.id)
+        } else {
             fetchEmployees()
         }
     }, [params.id])
@@ -134,7 +129,7 @@ const AllEmployees = () => {
                     {Array.from({ length: totalPages }).map((_, i) => (
                         <li key={i}>
                             <button
-                                onClick={() => fetchEmployees(undefined, i + 1)}
+                                onClick={() => fetchEmployees(undefined, i + 1, params?.id)}
                                 className={`flex items-center justify-center px-3 h-8 border bg-gray-800 border-gray-700 ${currentPage === i + 1 ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-700 hover:text-white"}`}
                             >
                                 {i + 1}

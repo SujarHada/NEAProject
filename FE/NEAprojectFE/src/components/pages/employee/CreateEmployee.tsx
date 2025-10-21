@@ -12,48 +12,61 @@ const CreateEmployee = () => {
     const params = useParams()
     const { t } = useTranslation()
     const [branches, setBranches] = useState<Branch[]>([])
-    const fetchBranches = async () => {
-        const response = await axios.get("http://127.0.0.1:8000/api/branches/")
-        if (branches.length) return
-        const fetchedBranches = response.data.results as Branch[]
-        setBranches(fetchedBranches)
-    }
+    const fetchAllBranches = async () => {
+        try {
+            let allBranches: Branch[] = [];
+            let nextUrl: string | null = "http://127.0.0.1:8000/api/branches/";
+
+            while (nextUrl) {
+                // @ts-ignore
+                const res = await axios.get(nextUrl);
+                // @ts-ignore
+                const data = res.data;
+                allBranches = [...allBranches, ...data.results];
+                nextUrl = data.next;
+            }
+
+            setBranches(allBranches);
+        } catch (err) {
+            console.error("Failed to fetch branches:", err);
+        }
+    };
+
     useEffect(() => {
         if (!branches.length) {
-            fetchBranches()
+            fetchAllBranches();
         }
-    }, [branches])
+    }, []);
+
     useEffect(() => {
-        if (params.id) {
-            const branch = branches?.find((branch) => branch.organization_id === params.id)
+        if (params.id && branches.length) {
+            const branch = branches.find(b => b.organization_id === +params.id!);
             if (branch) {
-                setValue('organization_id', branch.organization_id)
+                setValue("organization_id", branch.organization_id);
             }
-            console.log(getValues('organization_id'))
         }
-    }, [params.id, branches])
+    }, [params.id, branches]);
     const createEmployeesFormschema = z.object({
         first_name: z.string().min(1, t("createEmployee.errors.firstName")),
         middle_name: z.string().optional(),
         last_name: z.string().min(1, t("createEmployee.errors.lastName")),
         email: z.email(t("createEmployee.errors.emailInvalid")).min(1, t("createEmployee.errors.emailRequired")),
-        organization_id: z.string().min(1, t("createEmployee.errors.branchId")),
+        organization_id: z.number().positive(t("createEmployee.errors.branchId")),
         role: z.string().min(1, t("createEmployee.errors.position")),
     })
 
-    const { control, handleSubmit, formState: { isSubmitting, errors }, reset, setValue,getValues } = useForm<createEmployeesInputs>({
+    const { control, handleSubmit, formState: { isSubmitting, errors }, reset, setValue, watch } = useForm<createEmployeesInputs>({
         defaultValues: {
             first_name: "",
             middle_name: "",
             last_name: "",
             email: "",
-            organization_id: "",
+            organization_id: 0,
             role: "",
         },
         resolver: zodResolver(createEmployeesFormschema),
         mode: "onSubmit"
     })
-
     const navigate = useNavigate()
 
     const onSubmit = async (data: createEmployeesInputs) => {
@@ -75,8 +88,8 @@ const CreateEmployee = () => {
                     control={control}
                     render={({ field }) => (
                         <div className="flex w-full items-center relative">
-                            <select id="position" {...field} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
-                                <option value="" disabled hidden>{t("createEmployee.placeholders.branches")}</option>
+                            <select id="position" {...field} onChange={(e)=> field.onChange(+e.target.value) }  className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                                <option value={0} disabled hidden>{t("createEmployee.placeholders.branches")}</option>
                                 {
                                     branches.map((branch) => (
                                         <option key={branch.id} value={branch.organization_id}>{branch.name}</option>
@@ -150,7 +163,7 @@ const CreateEmployee = () => {
                             <select id="role" {...field} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
                                 <option value="" disabled hidden>{t("createEmployee.placeholders.position")}</option>
                                 <option value="admin">{t("createEmployee.positions.admin")}</option>
-                                <option value="accountant">{t("createEmployee.positions.viewer")}</option>
+                                <option value="viewer">{t("createEmployee.positions.viewer")}</option>
                             </select>
                             <FaChevronDown className="absolute right-3 text-gray-500" />
                         </div>
