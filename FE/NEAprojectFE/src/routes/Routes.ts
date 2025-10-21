@@ -22,13 +22,13 @@ import ReceiverList from "../components/pages/receiver/ReceiverList";
 import AllBranches from "../components/pages/branches/AllBranches";
 import CreateBranches from "../components/pages/branches/CreateBranches";
 import CreateEmployee from "../components/pages/employee/CreateEmployee";
-import ManageEmployees from "../components/pages/employee/EditEmployee";
 import AllEmployees from "../components/pages/employee/AllEmployees";
 import EditBranch from "../components/pages/branches/EditBranch";
 import EditProduct from "../components/pages/products/EditProduct";
 import EditEmployee from "../components/pages/employee/EditEmployee";
 import EditOffice from "../components/pages/offices/EditOffice";
 import EditReceiver from "../components/pages/receiver/EditReceiver";
+import { Navigate } from "react-router";
 
 const router = createBrowserRouter([
     {
@@ -36,23 +36,27 @@ const router = createBrowserRouter([
         element: createElement(Home),
         children: [
             {
+                index: true,
+                element: createElement(Navigate, { to: "/home", replace: true }),
+            },
+            {
                 path: "home",
                 element: createElement(HomeScreen),
             },
             {
                 path: "letters",
                 element: createElement(Letters),
-                children:[
+                children: [
                     {
-                        path:"create-letter",
+                        path: "create-letter",
                         element: createElement(CreateLetter)
                     },
                     {
-                        path:"all-letters",
+                        path: "all-letters",
                         element: createElement(AllLetters)
                     },
                     {
-                        path:"letter-bin",
+                        path: "letter-bin",
                         element: createElement(LettersBin)
                     }
                 ]
@@ -60,22 +64,22 @@ const router = createBrowserRouter([
             {
                 path: "products",
                 element: createElement(Product),
-                children:[
+                children: [
                     {
-                        path:"create-product",
+                        path: "create-product",
                         element: createElement(CreateProducts)
                     },
                     {
-                        path:"active-products",
+                        path: "active-products",
                         element: createElement(ActiveProducts)
                     },
                     {
-                        path:"bin-product",
+                        path: "bin-product",
                         element: createElement(ProductsBin)
                     },
                     {
-                        path:'edit/:id',
-                        element:createElement(EditProduct)
+                        path: 'edit/:id',
+                        element: createElement(EditProduct)
                     }
                 ]
 
@@ -83,17 +87,17 @@ const router = createBrowserRouter([
             {
                 path: "offices",
                 element: createElement(Offices),
-                children:[
+                children: [
                     {
-                        path:"create-office",
+                        path: "create-office",
                         element: createElement(CreateOffice)
                     },
                     {
-                        path:"office-list",
+                        path: "office-list",
                         element: createElement(OfficeList)
                     },
                     {
-                        path:"edit/:id",
+                        path: "edit/:id",
                         element: createElement(EditOffice)
                     }
                 ]
@@ -101,17 +105,17 @@ const router = createBrowserRouter([
             {
                 path: "receiver",
                 element: createElement(Receiver),
-                children:[
+                children: [
                     {
-                        path:"create-receiver",
+                        path: "create-receiver",
                         element: createElement(CreateReceiver)
                     },
                     {
-                        path:"receiver-list",
+                        path: "receiver-list",
                         element: createElement(ReceiverList)
                     },
                     {
-                        path:"edit/:id",
+                        path: "edit/:id",
                         element: createElement(EditReceiver)
                     }
                 ]
@@ -119,25 +123,25 @@ const router = createBrowserRouter([
             {
                 path: "branches",
                 element: createElement(Branches),
-                children:[
+                children: [
                     {
-                        path:"all-branches",
+                        path: "all-branches",
                         element: createElement(AllBranches)
                     },
                     {
-                        path:"create-branch",
+                        path: "create-branch",
                         element: createElement(CreateBranches)
                     },
                     {
-                        path:":id/employee/create-employee",
+                        path: ":id/employee/create-employee",
                         element: createElement(CreateEmployee)
                     },
                     {
-                        path:":id/employee/all-employees",
+                        path: ":id/employee/all-employees",
                         element: createElement(AllEmployees)
                     },
                     {
-                        path:":id/edit",
+                        path: ":id/edit",
                         element: createElement(EditBranch)
                     }
                 ]
@@ -145,17 +149,17 @@ const router = createBrowserRouter([
             {
                 path: "employees",
                 element: createElement(Employee),
-                children:[
+                children: [
                     {
-                        path:"create",
+                        path: "create",
                         element: createElement(CreateEmployee)
                     },
                     {
-                        path:"manage",
+                        path: "manage",
                         element: createElement(AllEmployees)
                     },
                     {
-                        path:"edit/:id",
+                        path: "edit/:id",
                         element: createElement(EditEmployee)
                     }
                 ]

@@ -16,14 +16,8 @@ const EditBranch = () => {
 
     const formSchema = z.object({
         name: z.string().min(1, t("editBranch.validation.name")),
-        email: z.string().email({ message: t("editBranch.validation.emailInvalid") }).min(1, t("editBranch.validation.email")),
+        email: z.email({ message: t("editBranch.validation.emailInvalid") }).min(1, t("editBranch.validation.email")),
         address: z.string().min(1, t("editBranch.validation.address")),
-        bank_name: z.string().min(1, t("editBranch.validation.bankName")),
-        account_name: z.string().min(1, t("editBranch.validation.accountName")),
-        account_number: z.string()
-            .min(1, t("editBranch.validation.accountNumber"))
-            .regex(/^\d+$/, t("editBranch.validation.accountNumberNum"))
-            .max(15, t("editBranch.validation.accountNumberMax")),
         phone_number: z.string()
             .min(1, t("editBranch.validation.phone"))
             .regex(/^\d+$/, t("editBranch.validation.phoneNum"))
@@ -35,9 +29,6 @@ const EditBranch = () => {
             name: "",
             email: "",
             address: "",
-            bank_name: "",
-            account_name: "",
-            account_number: "",
             phone_number: "",
         },
         resolver: zodResolver(formSchema),
@@ -61,9 +52,6 @@ const EditBranch = () => {
         setValue("name", branch.name)
         setValue("email", branch.email)
         setValue("address", branch.address)
-        setValue("bank_name", branch.bank_name)
-        setValue("account_name", branch.account_name)
-        setValue("account_number", branch.account_number)
         setValue("phone_number", branch.phone_number)
     }, [branch, param])
 
@@ -113,39 +101,7 @@ const EditBranch = () => {
                 </div>
             </div>
 
-            <div className="flex gap-4 flex-wrap w-full">
-                <div className="flex flex-1 flex-col gap-2">
-                    <label htmlFor="bank_name">{t("editBranch.form.bankName")}</label>
-                    <Controller
-                        name="bank_name"
-                        control={control}
-                        render={({ field }) => <input {...field} id="bank_name" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />}
-                    />
-                    {errors.bank_name && <p className="text-red-500 text-sm">{errors.bank_name.message}</p>}
-                </div>
-
-                <div className="flex flex-1 flex-col gap-2">
-                    <label htmlFor="account_name">{t("editBranch.form.accountName")}</label>
-                    <Controller
-                        name="account_name"
-                        control={control}
-                        render={({ field }) => <input {...field} id="account_name" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />}
-                    />
-                    {errors.account_name && <p className="text-red-500 text-sm">{errors.account_name.message}</p>}
-                </div>
-            </div>
-
-            <div className="flex gap-4 flex-wrap w-full">
-                <div className="flex flex-1 flex-col gap-2">
-                    <label htmlFor="account_number">{t("editBranch.form.accountNumber")}</label>
-                    <Controller
-                        name="account_number"
-                        control={control}
-                        render={({ field }) => <input {...field} id="account_number" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />}
-                    />
-                    {errors.account_number && <p className="text-red-500 text-sm">{errors.account_number.message}</p>}
-                </div>
-
+            <div className="flex gap-4 flex-wrap w-1/2">
                 <div className="flex flex-1 flex-col gap-2">
                     <label htmlFor="phone_number">{t("editBranch.form.phone")}</label>
                     <Controller

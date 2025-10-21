@@ -12,7 +12,7 @@ const CreateBranches = () => {
 
     const formSchema = z.object({
         name: z.string().min(1, t("createBranch.validation.name")),
-        email: z.string().email({ message: t("createBranch.validation.emailInvalid") }).min(1, t("createBranch.validation.email")),
+        email: z.email({ message: t("createBranch.validation.emailInvalid") }).min(1, t("createBranch.validation.email")),
         address: z.string().min(1, t("createBranch.validation.address")),
         phone_number: z.string()
             .min(1, t("createBranch.validation.phone"))

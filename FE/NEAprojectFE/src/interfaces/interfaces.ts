@@ -1,7 +1,7 @@
 export interface Branch{
     id:number
     serial_number:number
-    organization_id:string
+    organization_id:number
     name:string
     email:string
     address:string
@@ -29,7 +29,7 @@ export interface Employee{
     last_name: string
     email: string
     role: string
-    organization_id: string
+    organization_id: number
     branch_name: string
     serial_number:number
 }

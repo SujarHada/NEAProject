@@ -27,13 +27,11 @@ const EditProduct = () => {
         name: z.string().min(1, t("editProductPage.errors.productNameRequired")),
         company: z.string().min(1, t("editProductPage.errors.companyNameRequired")),
         unit_of_measurement: z.string().min(1, t("editProductPage.errors.unitRequired")),
-        stock_quantity: z.string()
-            .min(1, t("editProductPage.errors.quantityRequired"))
-            .regex(/^-?\d{0,8}(?:\.\d{0,2})?$/, t("editProductPage.errors.quantityNumber")),
+        remarks: z.string().optional(),
     })
 
     const { control, handleSubmit, formState: { isSubmitting, errors }, setValue } = useForm<createProductInputs>({
-        defaultValues: { name: "", company: "", stock_quantity: "", unit_of_measurement: "" },
+        defaultValues: { name: "", company: "", remarks: "", unit_of_measurement: "" },
         resolver: zodResolver(editproductFormschema),
         mode: "onSubmit"
     })
@@ -45,18 +43,32 @@ const EditProduct = () => {
         }
         setValue("name", product.name)
         setValue("company", product.company)
-        setValue("stock_quantity", product.stock_quantity)
+        setValue("remarks", product.remarks)
         setValue("unit_of_measurement", product.unit_of_measurement)
     }, [param, product])
 
     const onSubmit = async (data: createProductInputs) => {
         try {
-            await axios.put(`http://127.0.0.1:8000/api/products/${param.id}/`, data)
+            const res = await axios.put(`http://127.0.0.1:8000/api/products/${param.id}/`, data)
+            if (res.status === 200) {
+                navigate("/products/active-products")
+            }
         } catch (err) {
-            console.error(err)
+            if (axios.isAxiosError(err)) {
+                if (err.response) {
+                    alert(err.response.data.name[0])
+                } else if (err.request) {
+                    console.error("Network Error: Server not reachable")
+                } else {
+                    console.error("Axios Error:", err.message)
+                }
+            } else {
+                console.error("Unexpected Error:", err)
+            }
         }
-        navigate("/products/active-products")
     }
+
+
 
     if (!product && !err) return <div>{t("loading", { defaultValue: "Loading..." })}</div>
     if (err) return <div>{err}</div>
@@ -93,15 +105,15 @@ const EditProduct = () => {
 
             <div className="flex gap-4 flex-wrap w-full items-end">
                 <div className="flex flex-1 flex-col w-full min-w-[48.5%] gap-2">
-                    <label htmlFor="stock_quantity">{t("editProductPage.quantity")}</label>
+                    <label htmlFor="remarks">{t("editProductPage.quantity")}</label>
                     <Controller
-                        name="stock_quantity"
+                        name="remarks"
                         control={control}
                         render={({ field }) => (
                             <input type="text" {...field} onChange={(e) => field.onChange(e.target.value)} value={field.value} className=" bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="quantity" />
                         )}
                     />
-                    {errors.stock_quantity && <p className="text-red-500">{errors.stock_quantity.message}</p>}
+                    {errors.remarks && <p className="text-red-500">{errors.remarks.message}</p>}
                 </div>
 
                 <div className="flex flex-1 flex-col w-full min-w-[48.5%] gap-2 relative">

@@ -34,16 +34,30 @@ const CreateProducts = () => {
         }
     )
 
-    const onSubmit = async (data: createProductInputs) => {
-        const res = await axios.post("http://127.0.0.1:8000/api/products/", data)
-        if (res.status === 201) {
-            navigate("/products/active-products")
-        }
 
-        reset()
+const onSubmit = async (data: createProductInputs) => {
+  try {
+    const res = await axios.post("http://127.0.0.1:8000/api/products/", data)
+    if (res.status === 201) {
+      navigate("/products/active-products")
     }
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      if (err.response) {
+        alert(err.response.data.message)
+      } else if (err.request) {
+        console.error("Network Error: Server not reachable")
+      } else {
+        console.error("Axios Error:", err.message)
+      }
+    } else {
+      console.error("Unexpected Error:", err)
+    }
+  }
+}
+
     return (
-        <div className="  flex-col gap-6 ">
+        <div className="flex flex-col gap-6 ">
             <h1 className="text-2xl font-bold">{t("createProductPage.title")}</h1>
             <div className="flex gap-4 flex-wrap w-full ">
                 <div className="flex flex-1 flex-col w-full gap-2">

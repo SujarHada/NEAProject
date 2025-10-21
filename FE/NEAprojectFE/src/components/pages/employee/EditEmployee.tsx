@@ -15,17 +15,31 @@ const EditEmployee = () => {
     const [err, setErr] = useState<string | null>(null)
     const [employee, setEmployee] = useState<Employee | null>(null)
     const [branches, setBranches] = useState<Branch[]>([])
-    const fetchBranches = async () => {
-        const response = await axios.get("http://127.0.0.1:8000/api/branches/")
-        if (branches.length) return
-        const fetchedBranches = response.data.results as Branch[]
-        setBranches(fetchedBranches)
-    }
+    const fetchAllBranches = async () => {
+        try {
+            let allBranches: Branch[] = [];
+            let nextUrl: string | null = "http://127.0.0.1:8000/api/branches/";
+
+            while (nextUrl) {
+                // @ts-ignore
+                const res = await axios.get(nextUrl);
+                // @ts-ignore
+                const data = res.data;
+                allBranches = [...allBranches, ...data.results];
+                nextUrl = data.next;
+            }
+            setBranches(allBranches);
+        } catch (err) {
+            console.error("Failed to fetch branches:", err);
+        }
+    };
+
     useEffect(() => {
         if (!branches.length) {
-            fetchBranches()
+            fetchAllBranches();
         }
-    }, [branches])
+    }, []);
+
     useEffect(() => {
         if (param.id) {
             const branch = branches?.find((branch) => branch.organization_id === employee?.organization_id)
@@ -38,8 +52,8 @@ const EditEmployee = () => {
         first_name: z.string().min(1, t("editEmployee.errors.firstName")),
         middle_name: z.string().optional(),
         last_name: z.string().min(1, t("editEmployee.errors.lastName")),
-        email: z.string().email(t("editEmployee.errors.emailInvalid")).min(1, t("editEmployee.errors.emailRequired")),
-        organization_id: z.string().min(1, t("editEmployee.errors.branchId")),
+        email: z.email(t("editEmployee.errors.emailInvalid")).min(1, t("editEmployee.errors.emailRequired")),
+        organization_id: z.number().positive(t("editEmployee.errors.branchId")),
         role: z.string().min(1, t("editEmployee.errors.position")),
     })
 
@@ -49,7 +63,7 @@ const EditEmployee = () => {
             middle_name: "",
             last_name: "",
             email: "",
-            organization_id: "",
+            organization_id: 0,
             role: "",
         },
         resolver: zodResolver(formSchema),
@@ -73,7 +87,7 @@ const EditEmployee = () => {
             return
         }
         setValue("first_name", employee.first_name)
-        setValue("middle_name", employee.middle_name)
+        setValue("middle_name", employee?.middle_name)
         setValue("last_name", employee.last_name)
         setValue("email", employee.email)
         setValue("organization_id", employee.organization_id)
@@ -102,7 +116,7 @@ const EditEmployee = () => {
                     control={control}
                     render={({ field }) => (
                         <div className="flex w-full items-center relative">
-                            <select id="position" {...field} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                            <select id="position" {...field} onChange={(e)=>field.onChange(Number(e.target.value))} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
                                 <option value="" disabled hidden>{t("createEmployee.placeholders.branches")}</option>
                                 {
                                     branches.map((branch) => (
