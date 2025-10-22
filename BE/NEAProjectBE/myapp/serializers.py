@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Office, Branch, Employee, Receiver, Letter, Product, Dashboard
+from .models import Office, ProductStatus, Branch, Employee, Receiver, Letter, Product, Dashboard
 from drf_spectacular.utils import extend_schema_field
 
 
