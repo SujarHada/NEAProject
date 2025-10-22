@@ -5,13 +5,13 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from datetime import datetime
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import HttpResponse
 import csv
 from io import StringIO
 from datetime import datetime 
 
-from .models import EmployeeStatus, Office, Branch, Employee, Receiver, Letter, Product, ProductStatus, LetterStatus, BranchStatus, OfficeStatus, Dashboard
+from .models import EmployeeStatus, Office, Branch, Employee, Receiver, Letter, Product, ProductStatus, LetterStatus, BranchStatus, OfficeStatus, Dashboard, UnitOfMeasurement, EmployeeRole
 from .serializers import (
     OfficeSerializer,
     BranchSerializer,
@@ -69,6 +69,28 @@ class OfficeViewSet(viewsets.ModelViewSet):
             {
                 "status": "success",
                 "message": f"Office '{office_name}' has been moved to bin",
+                "id": instance.id
+            },
+            status=status.HTTP_200_OK
+        )
+
+    @action(detail=True, methods=["post"])
+    def restore(self, request, pk=None):
+        """Restore an office from BIN to ACTIVE."""
+        instance = self.get_object()
+        if instance.status == OfficeStatus.ACTIVE:
+            return Response(
+                {"message": f"Office '{instance.name}' is already active."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        instance.status = OfficeStatus.ACTIVE
+        instance.save(update_fields=["status", "updated_at"])
+
+        return Response(
+            {
+                "status": "success",
+                "message": f"Office '{instance.name}' has been restored.",
                 "id": instance.id
             },
             status=status.HTTP_200_OK
@@ -500,7 +522,6 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         """
         Get employee statistics by role.
         """
-        from django.db.models import Count
         
         role_stats = Employee.objects.filter(status=EmployeeStatus.ACTIVE).values(
             'role'
@@ -519,7 +540,6 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         """
         Get employee statistics by branch.
         """
-        from django.db.models import Count
         
         branch_stats = Employee.objects.filter(status=EmployeeStatus.ACTIVE).values(
             'branch__name', 'branch__organization_id'
@@ -545,10 +565,10 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         employees = Employee.objects.filter(
             status=EmployeeStatus.ACTIVE
         ).filter(
-            models.Q(first_name__icontains=search_query) |
-            models.Q(last_name__icontains=search_query) |
-            models.Q(email__icontains=search_query) |
-            models.Q(middle_name__icontains=search_query)
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(middle_name__icontains=search_query)
         ).order_by("-created_at")
         
         # Create serial number mapping
@@ -571,34 +591,35 @@ class ReceiverViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def export_csv(self, request):
         """
-        Export letters to CSV file.
+        Export receivers to CSV file.
         """
         queryset = self.filter_queryset(self.get_queryset())
         
         response = HttpResponse(content_type='text/csv')
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
-        response['Content-Disposition'] = f'attachment; filename="letters_export_{timestamp}.csv"'
+        response['Content-Disposition'] = f'attachment; filename="receivers_export_{timestamp}.csv"'
         
         writer = csv.writer(response)
         writer.writerow([
-            'S.N.', 'ID', 'Title', 'Content Preview', 'Receiver Name', 
-            'Receiver Post', 'Status', 'Created At', 'Updated At'
+            'S.N.', 'ID', 'Name', 'Post', 'ID Card Type', 'ID Card Number',
+            'Office Name', 'Office Address', 'Phone Number', 'Vehicle Number',
+            'Created At', 'Updated At'
         ])
         
-        for index, letter in enumerate(queryset, start=1):
-            # Create content preview (first 100 characters)
-            content_preview = letter.content[:100] + "..." if len(letter.content) > 100 else letter.content
-            
+        for index, receiver in enumerate(queryset, start=1):
             writer.writerow([
                 index,
-                letter.id,
-                letter.title,
-                content_preview,
-                letter.receiver.name if letter.receiver else 'N/A',
-                letter.receiver.post if letter.receiver else 'N/A',
-                letter.get_status_display(),
-                letter.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-                letter.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+                receiver.id,
+                receiver.name,
+                receiver.post,
+                receiver.get_id_card_type_display(),
+                receiver.id_card_number,
+                receiver.office_name,
+                receiver.office_address,
+                receiver.phone_number,
+                receiver.vehicle_number,
+                receiver.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                receiver.updated_at.strftime('%Y-%m-%d %H:%M:%S')
             ])
         
         return response
@@ -615,6 +636,7 @@ class LetterViewSet(viewsets.ModelViewSet):
         instance.status = LetterStatus.BIN
         instance.save(update_fields=["status", "updated_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)  # Fixed drf_status to status
+    
     @action(detail=False, methods=['get'])
     def export_csv(self, request):
         """
@@ -873,6 +895,254 @@ class ProductViewSet(viewsets.ModelViewSet):
         ).order_by('-product_count')
         
         return Response(company_stats)
+
+    @action(detail=False, methods=['post'])
+    def import_csv(self, request):
+        """
+        Import products from CSV file.
+        """
+        csv_file = request.FILES.get('file')
+        
+        if not csv_file:
+            return Response(
+                {
+                    "status": "error",
+                    "message": "CSV file is required. Please upload a file."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        if not csv_file.name.endswith('.csv'):
+            return Response(
+                {
+                    "status": "error",
+                    "message": "Invalid file format. Please upload a CSV file."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            # Read and decode the CSV file
+            decoded_file = csv_file.read().decode('utf-8')
+            csv_data = csv.reader(decoded_file.splitlines(), delimiter=',')
+            
+            # Get header row
+            headers = next(csv_data)
+            
+            # Convert headers to lowercase for case-insensitive matching
+            headers_lower = [h.strip().lower() for h in headers]
+            
+            # Validate required headers
+            required_headers = ['name', 'company']
+            missing_headers = [header for header in required_headers if header not in headers_lower]
+            
+            if missing_headers:
+                return Response(
+                    {
+                        "status": "error",
+                        "message": f"Missing required headers: {', '.join(missing_headers)}",
+                        "required_headers": required_headers,
+                        "found_headers": headers
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Process CSV data
+            results = {
+                'total_rows': 0,
+                'successful': 0,
+                'failed': 0,
+                'errors': [],
+                'duplicates_skipped': 0
+            }
+            
+            for row_num, row in enumerate(csv_data, start=2):  # start=2 to account for header
+                if not any(row):  # Skip empty rows
+                    continue
+                    
+                results['total_rows'] += 1
+                
+                try:
+                    # Create dictionary from row data (case-insensitive)
+                    row_data = {}
+                    for i, header in enumerate(headers):
+                        if i < len(row):
+                            row_data[header.strip().lower()] = row[i].strip()
+                    
+                    # Validate required fields
+                    name = row_data.get('name', '')
+                    company = row_data.get('company', '')
+                    
+                    if not name:
+                        results['failed'] += 1
+                        results['errors'].append(f"Row {row_num}: Product name is required")
+                        continue
+                    
+                    if not company:
+                        results['failed'] += 1
+                        results['errors'].append(f"Row {row_num}: Company name is required")
+                        continue
+                    
+                    # Check for duplicates
+                    existing_product = Product.objects.filter(
+                        name=name,
+                        company=company,
+                        status=ProductStatus.ACTIVE
+                    ).first()
+                    
+                    if existing_product:
+                        results['duplicates_skipped'] += 1
+                        results['errors'].append(f"Row {row_num}: Product '{name}' for company '{company}' already exists")
+                        continue
+                    
+                    # Create product data with defaults
+                    product_data = {
+                        'name': name,
+                        'company': company,
+                        'remarks': row_data.get('remarks', ''),
+                        'status': ProductStatus.ACTIVE,  # Default to active
+                    }
+                    
+                    # Handle unit of measurement
+                    unit_input = row_data.get('unit_of_measurement', '').lower()
+                    if unit_input:
+                        # Map common unit names to valid choices
+                        unit_mapping = {
+                            'nos': UnitOfMeasurement.NOS,
+                            'set': UnitOfMeasurement.SET,
+                            'kg': UnitOfMeasurement.KG,
+                            'ltr': UnitOfMeasurement.LTR,
+                            'pcs': UnitOfMeasurement.PCS,
+                            'number': UnitOfMeasurement.NOS,
+                            'numbers': UnitOfMeasurement.NOS,
+                            'piece': UnitOfMeasurement.PCS,
+                            'pieces': UnitOfMeasurement.PCS,
+                            'kilogram': UnitOfMeasurement.KG,
+                            'kilograms': UnitOfMeasurement.KG,
+                            'liter': UnitOfMeasurement.LTR,
+                            'liters': UnitOfMeasurement.LTR,
+                        }
+                        product_data['unit_of_measurement'] = unit_mapping.get(unit_input, UnitOfMeasurement.NOS)
+                    else:
+                        product_data['unit_of_measurement'] = UnitOfMeasurement.NOS
+                    
+                    # Handle status
+                    status_input = row_data.get('status', '').lower()
+                    if status_input:
+                        status_mapping = {
+                            'active': ProductStatus.ACTIVE,
+                            'bin': ProductStatus.BIN,
+                            'deleted': ProductStatus.BIN,
+                            'inactive': ProductStatus.BIN,
+                        }
+                        product_data['status'] = status_mapping.get(status_input, ProductStatus.ACTIVE)
+                    
+                    # Handle SKU - generate if not provided
+                    sku = row_data.get('sku', '')
+                    if sku:
+                        # Check if SKU already exists
+                        if Product.objects.filter(sku=sku).exists():
+                            results['failed'] += 1
+                            results['errors'].append(f"Row {row_num}: SKU '{sku}' already exists")
+                            continue
+                        product_data['sku'] = sku
+                    # If SKU not provided, it will be auto-generated in save method
+                    
+                    # Create the product
+                    product = Product.objects.create(**product_data)
+                    results['successful'] += 1
+                    
+                except Exception as e:
+                    results['failed'] += 1
+                    results['errors'].append(f"Row {row_num}: {str(e)}")
+                    continue
+            
+            # Prepare response
+            response_data = {
+                "status": "success",
+                "message": f"CSV import completed. Successful: {results['successful']}, Failed: {results['failed']}, Duplicates Skipped: {results['duplicates_skipped']}",
+                "results": results
+            }
+            
+            return Response(response_data, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            return Response(
+                {
+                    "status": "error",
+                    "message": f"Error processing CSV file: {str(e)}"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    @action(detail=False, methods=['get'])
+    def import_template(self, request):
+        """
+        Download CSV template for product import.
+        """
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="product_import_template.csv"'
+        
+        writer = csv.writer(response)
+        
+        # Write headers with descriptions
+        writer.writerow(['# Required Fields: name, company'])
+        writer.writerow(['# Optional Fields: remarks, unit_of_measurement, status, sku'])
+        writer.writerow(['# Unit of Measurement options: nos, set, kg, ltr, pcs (or common names like: number, piece, kilogram, liter)'])
+        writer.writerow(['# Status options: active, bin (default: active)'])
+        writer.writerow(['# SKU: Leave empty to auto-generate'])
+        writer.writerow([])  # Empty line
+        writer.writerow(['name', 'company', 'remarks', 'unit_of_measurement', 'status', 'sku'])
+        
+        # Write example rows
+        writer.writerow(['Laptop', 'Dell Inc', 'High performance laptop', 'nos', 'active', ''])
+        writer.writerow(['Wireless Mouse', 'Logitech', 'Wireless mouse with USB receiver', 'pcs', 'active', 'LOG-MOUSE-001'])
+        writer.writerow(['Mechanical Keyboard', 'Microsoft', 'Ergonomic mechanical keyboard', 'nos', 'active', 'MS-KB-2024'])
+        writer.writerow(['Monitor', 'Samsung', '27 inch 4K monitor', 'nos', 'active', ''])
+        writer.writerow(['Webcam', 'Logitech', 'HD webcam for video calls', 'pcs', 'active', 'LOG-WEBCAM-001'])
+        
+        return response
+
+    @action(detail=False, methods=['post'])
+    def bulk_delete(self, request):
+        """
+        Bulk delete products by IDs.
+        """
+        product_ids = request.data.get('product_ids', [])
+        
+        if not product_ids:
+            return Response(
+                {
+                    "status": "error",
+                    "message": "product_ids array is required"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            # Move products to bin
+            products = Product.objects.filter(id__in=product_ids, status=ProductStatus.ACTIVE)
+            count = products.count()
+            
+            products.update(status=ProductStatus.BIN)
+            
+            return Response(
+                {
+                    "status": "success",
+                    "message": f"Successfully moved {count} products to bin",
+                    "count": count
+                },
+                status=status.HTTP_200_OK
+            )
+            
+        except Exception as e:
+            return Response(
+                {
+                    "status": "error",
+                    "message": f"Error during bulk delete: {str(e)}"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 class DashboardViewSet(viewsets.ViewSet):
     """
