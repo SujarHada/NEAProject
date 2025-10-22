@@ -4,8 +4,14 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
+from datetime import datetime
+from django.db.models import Count, Q
+from django.http import HttpResponse
+import csv
+from io import StringIO
+from datetime import datetime 
 
-from .models import EmployeeStatus, Office, Branch, Employee, Receiver, Letter, Product, ProductStatus, LetterStatus, BranchStatus, OfficeStatus, Dashboard
+from .models import EmployeeStatus, Office, Branch, Employee, Receiver, Letter, Product, ProductStatus, LetterStatus, BranchStatus, OfficeStatus, Dashboard, UnitOfMeasurement, EmployeeRole
 from .serializers import (
     OfficeSerializer,
     BranchSerializer,
@@ -90,6 +96,38 @@ class OfficeViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export offices to CSV file.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="offices_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'S.N.', 'ID', 'Name', 'Address', 'Email', 'Phone Number', 
+            'Status', 'Created At', 'Updated At'
+        ])
+        
+        for index, office in enumerate(queryset, start=1):
+            writer.writerow([
+                index,
+                office.id,
+                office.name,
+                office.address,
+                office.email or '',
+                office.phone_number,
+                office.get_status_display(),
+                office.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                office.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        
+        return response
+
 
 class BranchViewSet(viewsets.ModelViewSet):
     queryset = Branch.objects.all().order_by("-created_at")
@@ -163,7 +201,37 @@ class BranchViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK
         )
-
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export branches to CSV file.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="branches_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'S.N.', 'Organization ID', 'Name', 'Email', 'Address', 
+            'Phone Number', 'Status', 'Created At', 'Updated At'
+        ])
+        
+        for index, branch in enumerate(queryset, start=1):
+            writer.writerow([
+                index,
+                branch.organization_id,
+                branch.name,
+                branch.email or '',
+                branch.address,
+                branch.phone_number,
+                branch.get_status_display(),
+                branch.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                branch.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        
+        return response
 
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all().order_by("-created_at")
@@ -180,7 +248,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
             return queryset.filter(status=status_param)
         return queryset.filter(status=EmployeeStatus.ACTIVE)
 
-    #Serial Number for employee
+    # Serial Number for employee
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
 
@@ -224,6 +292,31 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Handle update with organization_id validation.
+        """
+        instance = self.get_object()
+        organization_id = request.data.get("organization_id")
+
+        if organization_id:
+            try:
+                branch = Branch.objects.get(organization_id=organization_id)
+                # Replace organization_id with actual branch foreign key
+                data = request.data.copy()
+                data["branch"] = branch.id
+                serializer = self.get_serializer(instance, data=data, partial=kwargs.get('partial', False))
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                return Response(serializer.data)
+            except Branch.DoesNotExist:
+                return Response(
+                    {"error": "Branch ID is not correct."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        
+        return super().update(request, *args, **kwargs)
 
     @action(
         detail=False,
@@ -293,11 +386,243 @@ class EmployeeViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK
         )
+
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export employees to CSV file.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="employees_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'S.N.', 'ID', 'First Name', 'Middle Name', 'Last Name', 'Email',
+            'Role', 'Branch Name', 'Organization ID', 'Status', 
+            'Created At', 'Updated At'
+        ])
+        
+        for index, employee in enumerate(queryset, start=1):
+            writer.writerow([
+                index,
+                employee.id,
+                employee.first_name,
+                employee.middle_name or '',
+                employee.last_name,
+                employee.email,
+                employee.get_role_display(),
+                employee.branch.name,
+                employee.branch.organization_id,
+                employee.get_status_display(),
+                employee.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                employee.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        
+        return response
+
+    @action(detail=False, methods=['get'])
+    def export_csv_simple(self, request):
+        """
+        Export simplified employees CSV with only essential fields.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="employees_simple_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'S.N.', 'First Name', 'Last Name', 'Email', 'Role', 
+            'Branch Name', 'Organization ID', 'Status'
+        ])
+        
+        for index, employee in enumerate(queryset, start=1):
+            writer.writerow([
+                index,
+                employee.first_name,
+                employee.last_name,
+                employee.email,
+                employee.get_role_display(),
+                employee.branch.name,
+                employee.branch.organization_id,
+                employee.get_status_display()
+            ])
+        
+        return response
+
+    @action(detail=False, methods=['get'], url_path=r"export-by-organization/(?P<organization_id>[^/.]+)")
+    def export_by_organization(self, request, organization_id=None):
+        """
+        Export employees by organization to CSV.
+        """
+        branch = Branch.objects.filter(organization_id=organization_id).first()
+        if not branch:
+            return Response(
+                {"detail": "Branch not found for the given organization."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        employees = Employee.objects.filter(branch=branch).order_by("-created_at")
+        
+        # Apply status filter if provided
+        status_param = request.query_params.get("status")
+        if status_param:
+            employees = employees.filter(status=status_param)
+        else:
+            employees = employees.filter(status=EmployeeStatus.ACTIVE)
+
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="employees_org_{organization_id}_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'S.N.', 'ID', 'First Name', 'Middle Name', 'Last Name', 'Email',
+            'Role', 'Status', 'Created At', 'Updated At'
+        ])
+        
+        for index, employee in enumerate(employees, start=1):
+            writer.writerow([
+                index,
+                employee.id,
+                employee.first_name,
+                employee.middle_name or '',
+                employee.last_name,
+                employee.email,
+                employee.get_role_display(),
+                employee.get_status_display(),
+                employee.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                employee.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        
+        return response
+
+    @action(detail=False, methods=['get'])
+    def active_count(self, request):
+        """
+        Get count of active employees.
+        """
+        active_count = Employee.objects.filter(status=EmployeeStatus.ACTIVE).count()
+        return Response({'active_count': active_count})
+
+    @action(detail=False, methods=['get'])
+    def bin_count(self, request):
+        """
+        Get count of employees in bin.
+        """
+        bin_count = Employee.objects.filter(status=EmployeeStatus.BIN).count()
+        return Response({'bin_count': bin_count})
+
+    @action(detail=False, methods=['get'])
+    def role_stats(self, request):
+        """
+        Get employee statistics by role.
+        """
+        
+        role_stats = Employee.objects.filter(status=EmployeeStatus.ACTIVE).values(
+            'role'
+        ).annotate(
+            employee_count=Count('id')
+        ).order_by('-employee_count')
+        
+        # Convert role values to display names
+        for stat in role_stats:
+            stat['role_display'] = EmployeeRole(stat['role']).label
+        
+        return Response(role_stats)
+
+    @action(detail=False, methods=['get'])
+    def branch_stats(self, request):
+        """
+        Get employee statistics by branch.
+        """
+        
+        branch_stats = Employee.objects.filter(status=EmployeeStatus.ACTIVE).values(
+            'branch__name', 'branch__organization_id'
+        ).annotate(
+            employee_count=Count('id')
+        ).order_by('-employee_count')
+        
+        return Response(branch_stats)
+
+    @action(detail=False, methods=['get'])
+    def search(self, request):
+        """
+        Search employees by name or email.
+        """
+        search_query = request.query_params.get('q', '')
+        
+        if not search_query:
+            return Response(
+                {"error": "Search query parameter 'q' is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        employees = Employee.objects.filter(
+            status=EmployeeStatus.ACTIVE
+        ).filter(
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(middle_name__icontains=search_query)
+        ).order_by("-created_at")
+        
+        # Create serial number mapping
+        employee_index_map = {obj.id: idx for idx, obj in enumerate(employees)}
+        request.employee_index_map = employee_index_map
+
+        page = self.paginate_queryset(employees)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(employees, many=True)
+        return Response(serializer.data)
+    
 class ReceiverViewSet(viewsets.ModelViewSet):
     queryset = Receiver.objects.all().order_by("-created_at")
     serializer_class = ReceiverSerializer
     permission_classes = []  # No authentication required
 
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export receivers to CSV file.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="receivers_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'S.N.', 'ID', 'Name', 'Post', 'ID Card Type', 'ID Card Number',
+            'Office Name', 'Office Address', 'Phone Number', 'Vehicle Number',
+            'Created At', 'Updated At'
+        ])
+        
+        for index, receiver in enumerate(queryset, start=1):
+            writer.writerow([
+                index,
+                receiver.id,
+                receiver.name,
+                receiver.post,
+                receiver.get_id_card_type_display(),
+                receiver.id_card_number,
+                receiver.office_name,
+                receiver.office_address,
+                receiver.phone_number,
+                receiver.vehicle_number,
+                receiver.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                receiver.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        
+        return response
 
 class LetterViewSet(viewsets.ModelViewSet):
     queryset = Letter.objects.all().order_by("-created_at")
@@ -311,7 +636,41 @@ class LetterViewSet(viewsets.ModelViewSet):
         instance.status = LetterStatus.BIN
         instance.save(update_fields=["status", "updated_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)  # Fixed drf_status to status
-
+    
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export letters to CSV file.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="letters_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'S.N.', 'ID', 'Title', 'Content Preview', 'Receiver Name', 
+            'Receiver Post', 'Status', 'Created At', 'Updated At'
+        ])
+        
+        for index, letter in enumerate(queryset, start=1):
+            # Create content preview (first 100 characters)
+            content_preview = letter.content[:100] + "..." if len(letter.content) > 100 else letter.content
+            
+            writer.writerow([
+                index,
+                letter.id,
+                letter.title,
+                content_preview,
+                letter.receiver.name if letter.receiver else 'N/A',
+                letter.receiver.post if letter.receiver else 'N/A',
+                letter.get_status_display(),
+                letter.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                letter.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        
+        return response
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all().order_by("-created_at")
@@ -392,6 +751,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK
         )
+
     @action(detail=True, methods=["post"])
     def restore(self, request, pk=None):
         """Restore a product from BIN to ACTIVE."""
@@ -431,6 +791,358 @@ class ProductViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export products to CSV file.
+        Supports filtering by status via query parameters.
+        """
+        # Get filtered queryset
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        # Create CSV response
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="products_export_{timestamp}.csv"'
+        
+        # Create CSV writer
+        writer = csv.writer(response)
+        
+        # Write headers
+        writer.writerow([
+            'S.N.',
+            'ID',
+            'Name', 
+            'Company',
+            'SKU',
+            'Remarks',
+            'Unit of Measurement',
+            'Status',
+            'Created At',
+            'Updated At'
+        ])
+        
+        # Write data rows
+        for index, product in enumerate(queryset, start=1):
+            writer.writerow([
+                index,
+                product.id,
+                product.name,
+                product.company,
+                product.sku,
+                product.remarks,
+                product.get_unit_of_measurement_display(),
+                product.get_status_display(),
+                product.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                product.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        
+        return response
+
+    @action(detail=False, methods=['get'])
+    def export_csv_simple(self, request):
+        """
+        Export simplified products CSV with only essential fields.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="products_simple_export_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow(['S.N.', 'Name', 'Company', 'SKU', 'Remarks', 'Unit', 'Status'])
+        
+        for index, product in enumerate(queryset, start=1):
+            writer.writerow([
+                index,
+                product.name,
+                product.company,
+                product.sku,
+                product.remarks,
+                product.get_unit_of_measurement_display(),
+                product.get_status_display()
+            ])
+        
+        return response
+
+    @action(detail=False, methods=['get'])
+    def active_count(self, request):
+        """
+        Get count of active products.
+        """
+        active_count = Product.objects.filter(status=ProductStatus.ACTIVE).count()
+        return Response({'active_count': active_count})
+
+    @action(detail=False, methods=['get'])
+    def bin_count(self, request):
+        """
+        Get count of products in bin.
+        """
+        bin_count = Product.objects.filter(status=ProductStatus.BIN).count()
+        return Response({'bin_count': bin_count})
+
+    @action(detail=False, methods=['get'])
+    def company_stats(self, request):
+        """
+        Get product statistics by company.
+        """
+        
+        company_stats = Product.objects.filter(status=ProductStatus.ACTIVE).values(
+            'company'
+        ).annotate(
+            product_count=Count('id')
+        ).order_by('-product_count')
+        
+        return Response(company_stats)
+
+    @action(detail=False, methods=['post'])
+    def import_csv(self, request):
+        """
+        Import products from CSV file.
+        """
+        csv_file = request.FILES.get('file')
+        
+        if not csv_file:
+            return Response(
+                {
+                    "status": "error",
+                    "message": "CSV file is required. Please upload a file."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        if not csv_file.name.endswith('.csv'):
+            return Response(
+                {
+                    "status": "error",
+                    "message": "Invalid file format. Please upload a CSV file."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            # Read and decode the CSV file
+            decoded_file = csv_file.read().decode('utf-8')
+            csv_data = csv.reader(decoded_file.splitlines(), delimiter=',')
+            
+            # Get header row
+            headers = next(csv_data)
+            
+            # Convert headers to lowercase for case-insensitive matching
+            headers_lower = [h.strip().lower() for h in headers]
+            
+            # Validate required headers
+            required_headers = ['name', 'company']
+            missing_headers = [header for header in required_headers if header not in headers_lower]
+            
+            if missing_headers:
+                return Response(
+                    {
+                        "status": "error",
+                        "message": f"Missing required headers: {', '.join(missing_headers)}",
+                        "required_headers": required_headers,
+                        "found_headers": headers
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Process CSV data
+            results = {
+                'total_rows': 0,
+                'successful': 0,
+                'failed': 0,
+                'errors': [],
+                'duplicates_skipped': 0
+            }
+            
+            for row_num, row in enumerate(csv_data, start=2):  # start=2 to account for header
+                if not any(row):  # Skip empty rows
+                    continue
+                    
+                results['total_rows'] += 1
+                
+                try:
+                    # Create dictionary from row data (case-insensitive)
+                    row_data = {}
+                    for i, header in enumerate(headers):
+                        if i < len(row):
+                            row_data[header.strip().lower()] = row[i].strip()
+                    
+                    # Validate required fields
+                    name = row_data.get('name', '')
+                    company = row_data.get('company', '')
+                    
+                    if not name:
+                        results['failed'] += 1
+                        results['errors'].append(f"Row {row_num}: Product name is required")
+                        continue
+                    
+                    if not company:
+                        results['failed'] += 1
+                        results['errors'].append(f"Row {row_num}: Company name is required")
+                        continue
+                    
+                    # Check for duplicates
+                    existing_product = Product.objects.filter(
+                        name=name,
+                        company=company,
+                        status=ProductStatus.ACTIVE
+                    ).first()
+                    
+                    if existing_product:
+                        results['duplicates_skipped'] += 1
+                        results['errors'].append(f"Row {row_num}: Product '{name}' for company '{company}' already exists")
+                        continue
+                    
+                    # Create product data with defaults
+                    product_data = {
+                        'name': name,
+                        'company': company,
+                        'remarks': row_data.get('remarks', ''),
+                        'status': ProductStatus.ACTIVE,  # Default to active
+                    }
+                    
+                    # Handle unit of measurement
+                    unit_input = row_data.get('unit_of_measurement', '').lower()
+                    if unit_input:
+                        # Map common unit names to valid choices
+                        unit_mapping = {
+                            'nos': UnitOfMeasurement.NOS,
+                            'set': UnitOfMeasurement.SET,
+                            'kg': UnitOfMeasurement.KG,
+                            'ltr': UnitOfMeasurement.LTR,
+                            'pcs': UnitOfMeasurement.PCS,
+                            'number': UnitOfMeasurement.NOS,
+                            'numbers': UnitOfMeasurement.NOS,
+                            'piece': UnitOfMeasurement.PCS,
+                            'pieces': UnitOfMeasurement.PCS,
+                            'kilogram': UnitOfMeasurement.KG,
+                            'kilograms': UnitOfMeasurement.KG,
+                            'liter': UnitOfMeasurement.LTR,
+                            'liters': UnitOfMeasurement.LTR,
+                        }
+                        product_data['unit_of_measurement'] = unit_mapping.get(unit_input, UnitOfMeasurement.NOS)
+                    else:
+                        product_data['unit_of_measurement'] = UnitOfMeasurement.NOS
+                    
+                    # Handle status
+                    status_input = row_data.get('status', '').lower()
+                    if status_input:
+                        status_mapping = {
+                            'active': ProductStatus.ACTIVE,
+                            'bin': ProductStatus.BIN,
+                            'deleted': ProductStatus.BIN,
+                            'inactive': ProductStatus.BIN,
+                        }
+                        product_data['status'] = status_mapping.get(status_input, ProductStatus.ACTIVE)
+                    
+                    # Handle SKU - generate if not provided
+                    sku = row_data.get('sku', '')
+                    if sku:
+                        # Check if SKU already exists
+                        if Product.objects.filter(sku=sku).exists():
+                            results['failed'] += 1
+                            results['errors'].append(f"Row {row_num}: SKU '{sku}' already exists")
+                            continue
+                        product_data['sku'] = sku
+                    # If SKU not provided, it will be auto-generated in save method
+                    
+                    # Create the product
+                    product = Product.objects.create(**product_data)
+                    results['successful'] += 1
+                    
+                except Exception as e:
+                    results['failed'] += 1
+                    results['errors'].append(f"Row {row_num}: {str(e)}")
+                    continue
+            
+            # Prepare response
+            response_data = {
+                "status": "success",
+                "message": f"CSV import completed. Successful: {results['successful']}, Failed: {results['failed']}, Duplicates Skipped: {results['duplicates_skipped']}",
+                "results": results
+            }
+            
+            return Response(response_data, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            return Response(
+                {
+                    "status": "error",
+                    "message": f"Error processing CSV file: {str(e)}"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    @action(detail=False, methods=['get'])
+    def import_template(self, request):
+        """
+        Download CSV template for product import.
+        """
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="product_import_template.csv"'
+        
+        writer = csv.writer(response)
+        
+        # Write headers with descriptions
+        writer.writerow(['# Required Fields: name, company'])
+        writer.writerow(['# Optional Fields: remarks, unit_of_measurement, status, sku'])
+        writer.writerow(['# Unit of Measurement options: nos, set, kg, ltr, pcs (or common names like: number, piece, kilogram, liter)'])
+        writer.writerow(['# Status options: active, bin (default: active)'])
+        writer.writerow(['# SKU: Leave empty to auto-generate'])
+        writer.writerow([])  # Empty line
+        writer.writerow(['name', 'company', 'remarks', 'unit_of_measurement', 'status', 'sku'])
+        
+        # Write example rows
+        writer.writerow(['Laptop', 'Dell Inc', 'High performance laptop', 'nos', 'active', ''])
+        writer.writerow(['Wireless Mouse', 'Logitech', 'Wireless mouse with USB receiver', 'pcs', 'active', 'LOG-MOUSE-001'])
+        writer.writerow(['Mechanical Keyboard', 'Microsoft', 'Ergonomic mechanical keyboard', 'nos', 'active', 'MS-KB-2024'])
+        writer.writerow(['Monitor', 'Samsung', '27 inch 4K monitor', 'nos', 'active', ''])
+        writer.writerow(['Webcam', 'Logitech', 'HD webcam for video calls', 'pcs', 'active', 'LOG-WEBCAM-001'])
+        
+        return response
+
+    @action(detail=False, methods=['post'])
+    def bulk_delete(self, request):
+        """
+        Bulk delete products by IDs.
+        """
+        product_ids = request.data.get('product_ids', [])
+        
+        if not product_ids:
+            return Response(
+                {
+                    "status": "error",
+                    "message": "product_ids array is required"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            # Move products to bin
+            products = Product.objects.filter(id__in=product_ids, status=ProductStatus.ACTIVE)
+            count = products.count()
+            
+            products.update(status=ProductStatus.BIN)
+            
+            return Response(
+                {
+                    "status": "success",
+                    "message": f"Successfully moved {count} products to bin",
+                    "count": count
+                },
+                status=status.HTTP_200_OK
+            )
+            
+        except Exception as e:
+            return Response(
+                {
+                    "status": "error",
+                    "message": f"Error during bulk delete: {str(e)}"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 class DashboardViewSet(viewsets.ViewSet):
     """
@@ -446,6 +1158,30 @@ class DashboardViewSet(viewsets.ViewSet):
         serializer = DashboardSerializer(dashboard)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        """
+        Export dashboard statistics to CSV.
+        """
+        dashboard = Dashboard.get_current_stats()
+        
+        response = HttpResponse(content_type='text/csv')
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+        response['Content-Disposition'] = f'attachment; filename="dashboard_statistics_{timestamp}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow(['Statistics', 'Count'])
+        writer.writerow(['Active Products', dashboard.total_active_products])
+        writer.writerow(['Active Branches', dashboard.total_active_branches])
+        writer.writerow(['Active Offices', dashboard.total_active_offices])
+        writer.writerow(['Active Employees', dashboard.total_active_employees])
+        writer.writerow(['Total Receivers', dashboard.total_receivers])
+        writer.writerow(['Total Letters', dashboard.total_letters])
+        writer.writerow(['Draft Letters', dashboard.total_draft_letters])
+        writer.writerow(['Sent Letters', dashboard.total_sent_letters])
+        writer.writerow(['Last Updated', dashboard.last_updated.strftime('%Y-%m-%d %H:%M:%S')])
+        
+        return response
 
 class SeedDatabaseView(APIView):
     """
