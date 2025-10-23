@@ -87,3 +87,35 @@ export interface userloginResponse {
 }
 
 export interface meResponse extends user{}
+
+export interface createLetter {
+  letterCount: string
+  chalaniNo: number
+  voucherNo: number
+  gatepassNo?: number
+  date: string
+  receiverOfficeName: string
+  receiverAddress: string
+  subject: string
+  requestChalaniNumber: string
+  requestLetterCount: string
+  requestDate: string
+  items: Array<{
+    name: string
+    company: string
+    serial_number: number
+    unit_of_measurement: string
+    quantity: number
+    remarks?: string
+  }>
+  receiver: {
+    name: string
+    post: string
+    id_card_number: string
+    id_card_type: "national_id" | "citizenship" | "voter_id" | "passport" | "drivers_license" | "pan_card" | "unknown"
+    office_name: string
+    office_address: string
+    phone_number: string
+    vehicle_number: string
+  }
+}
