@@ -7,9 +7,6 @@ import axios from "axios"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
 
-
-
-
 const CreateProducts = () => {
     const { t } = useTranslation()
     const navigate = useNavigate()
@@ -21,7 +18,7 @@ const CreateProducts = () => {
         remarks: z.string().optional(),
     })
 
-    const { control, handleSubmit, formState: { isSubmitting, errors }, reset } = useForm<createProductInputs>(
+    const { control, handleSubmit, formState: { isSubmitting, errors } } = useForm<createProductInputs>(
         {
             defaultValues: {
                 name: "",
@@ -35,26 +32,26 @@ const CreateProducts = () => {
     )
 
 
-const onSubmit = async (data: createProductInputs) => {
-  try {
-    const res = await axios.post("http://127.0.0.1:8000/api/products/", data)
-    if (res.status === 201) {
-      navigate("/products/active-products")
+    const onSubmit = async (data: createProductInputs) => {
+        try {
+            const res = await axios.post("http://127.0.0.1:8000/api/products/", data)
+            if (res.status === 201) {
+                navigate("/products/active-products")
+            }
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                if (err.response) {
+                    alert(err.response.data.message)
+                } else if (err.request) {
+                    console.error("Network Error: Server not reachable")
+                } else {
+                    console.error("Axios Error:", err.message)
+                }
+            } else {
+                console.error("Unexpected Error:", err)
+            }
+        }
     }
-  } catch (err) {
-    if (axios.isAxiosError(err)) {
-      if (err.response) {
-        alert(err.response.data.message)
-      } else if (err.request) {
-        console.error("Network Error: Server not reachable")
-      } else {
-        console.error("Axios Error:", err.message)
-      }
-    } else {
-      console.error("Unexpected Error:", err)
-    }
-  }
-}
 
     return (
         <div className="flex flex-col gap-6 ">

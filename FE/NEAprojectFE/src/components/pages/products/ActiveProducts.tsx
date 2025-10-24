@@ -6,6 +6,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from 'usehooks-ts'
 import { useTranslation } from "react-i18next"
 
+
 const ActiveProducts = () => {
     const { t } = useTranslation()
     const [openDropdownId, setOpenDropdownId] = useState<number | null>(null)
@@ -54,28 +55,51 @@ const ActiveProducts = () => {
         }
     }
 
+    const handleDownload = async () => {
+        const res = await axios.get('http://127.0.0.1:8000/api/products/export_csv_simple/', {
+            responseType: 'blob',
+            params: {
+                status: "active"
+            }
+        })
+        const blob = new Blob([res.data], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `active_products_${new Date().toISOString()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+    }
+
     const totalPages = Math.ceil(productsCount / 10)
 
     return (
         <div className="flex flex-col gap-5">
-            <h1 className="text-2xl font-bold">{ t("activeProductsPage.title") }</h1>
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold">{t("activeProductsPage.title")}</h1>
+                <button onClick={handleDownload} className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5">
+                    Download
+                </button>
+            </div>
 
             <table className="w-full text-sm text-left text-gray-400">
                 <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
                     <tr>
-                        <th className="px-6 py-3"> { t("activeProductsPage.table.sn") } </th>
-                        <th className="px-6 py-3"> { t("activeProductsPage.table.sku") } </th>
-                        <th className="px-6 py-3"> { t("activeProductsPage.table.name") } </th>
-                        <th className="px-6 py-3"> { t("activeProductsPage.table.company") } </th>
-                        <th className="px-6 py-3"> { t("activeProductsPage.table.unit") } </th>
-                        <th className="px-6 py-3"> { t("activeProductsPage.table.action") } </th>
+                        <th className="px-6 py-3"> {t("activeProductsPage.table.sn")} </th>
+                        <th className="px-6 py-3"> {t("activeProductsPage.table.sku")} </th>
+                        <th className="px-6 py-3"> {t("activeProductsPage.table.name")} </th>
+                        <th className="px-6 py-3"> {t("activeProductsPage.table.company")} </th>
+                        <th className="px-6 py-3"> {t("activeProductsPage.table.unit")} </th>
+                        <th className="px-6 py-3"> {t("activeProductsPage.table.action")} </th>
                     </tr>
                 </thead>
                 <tbody>
                     {products.length === 0 ? (
                         <tr className="border-b bg-gray-800 border-gray-700">
                             <td className="px-6 py-4 font-medium text-center text-white" colSpan={6}>
-                                { t("activeProductsPage.noProducts") }
+                                {t("activeProductsPage.noProducts")}
                             </td>
                         </tr>
                     ) : (
@@ -108,7 +132,7 @@ const ActiveProducts = () => {
                                                         onClick={() => navigate(`/products/edit/${product.id}`)}
                                                         className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
                                                     >
-                                                        { t("activeProductsPage.dropdown.edit") }
+                                                        {t("activeProductsPage.dropdown.edit")}
                                                     </button>
                                                 </li>
                                                 <li>
@@ -116,7 +140,7 @@ const ActiveProducts = () => {
                                                         onClick={() => softDelete(product.id)}
                                                         className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
                                                     >
-                                                        { t("activeProductsPage.dropdown.moveToBin") }
+                                                        {t("activeProductsPage.dropdown.moveToBin")}
                                                     </button>
                                                 </li>
                                             </ul>
@@ -147,8 +171,8 @@ const ActiveProducts = () => {
                             <button
                                 onClick={() => fetchProducts(undefined, i + 1)}
                                 className={`flex items-center justify-center px-3 h-8 border bg-gray-800 border-gray-700 ${currentPage === i + 1
-                                        ? "bg-blue-600 text-white"
-                                        : "text-gray-400 hover:bg-gray-700 hover:text-white"
+                                    ? "bg-blue-600 text-white"
+                                    : "text-gray-400 hover:bg-gray-700 hover:text-white"
                                     }`}
                             >
                                 {i + 1}

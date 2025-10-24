@@ -39,7 +39,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
     };
     const toggleCollapse = () => {
         setCollapsed(!collapsed)
-        setOpenMenus({});        
+        setOpenMenus({});
     };
     const toggleMenu = (id: string) => {
         setOpenMenus((prev) => ({ ...prev, [id]: !prev[id] }));

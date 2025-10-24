@@ -23,22 +23,20 @@ const Profile = () => {
           <div className="flex justify-center gap-3">
             <button
               onClick={() => changeLanguage("en")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition ${
-                i18n.language === "en"
+              className={`px-4 py-2 rounded-md text-sm font-medium transition ${i18n.language === "en"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-900 hover:bg-gray-950 text-gray-300"
-              }`}
+                }`}
             >
               🇬🇧 English
             </button>
 
             <button
               onClick={() => changeLanguage("np")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition ${
-                i18n.language === "np"
+              className={`px-4 py-2 rounded-md text-sm font-medium transition ${i18n.language === "np"
                   ? "bg-green-600 text-white"
                   : "bg-gray-900 hover:bg-gray-950 text-gray-300"
-              }`}
+                }`}
             >
               🇳🇵 नेपाली
             </button>

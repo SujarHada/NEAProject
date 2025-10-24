@@ -56,11 +56,44 @@ const AllEmployees = () => {
         }
     }, [params.id])
 
+    const handleDownload = async () => {
+        let apiUrl: string
+        let fileName: string
+        if (params.id) {
+            apiUrl = `http://127.0.0.1:8000/api/employees/export-by-organization/${params.id}/`
+            fileName = `employees_${employees[0].branch_name}_${new Date().toISOString()}.csv`
+        } else {
+            apiUrl = 'http://127.0.0.1:8000/api/employees/export_csv/'
+            fileName = `employees_${new Date().toISOString()}.csv`
+        }
+        const res = await axios.get(apiUrl, {
+            responseType: 'blob',
+            params: {
+                status: "active"
+            }
+        })
+        const blob = new Blob([res.data], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+    }
+
+
     const totalPages = Math.ceil(employeesCount / 10)
 
     return (
         <div className="flex flex-col gap-5">
-            <h1 className="text-2xl font-bold">{t("allEmployees.title")}</h1>
+            <div className="flex justify-between items-center" >
+                <h1 className="text-2xl font-bold">{t("allEmployees.title")}</h1>
+                <button onClick={handleDownload} className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5">
+                    Download
+                </button>
+            </div>
 
             <table className="w-full text-sm text-left text-gray-400">
                 <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
