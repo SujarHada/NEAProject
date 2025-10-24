@@ -1,9 +1,8 @@
 from django.core.management.base import BaseCommand
-from django.contrib.auth import get_user_model
 from myapp.models import (
     Office, Branch, Employee, Receiver, Letter, Product, Dashboard,
     LetterStatus, ProductStatus, BranchStatus, OfficeStatus,
-    UnitOfMeasurement, EmployeeRole, EmployeeStatus
+    UnitOfMeasurement, EmployeeRole, EmployeeStatus, User, UserRole
 )
 from faker import Faker
 import random
@@ -14,11 +13,23 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         fake = Faker()
         
-        # Create superuser if not exists
-        User = get_user_model()
-        if not User.objects.filter(username='admin').exists():
-            User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
-            self.stdout.write(self.style.SUCCESS('Created admin user (username: admin, password: admin123)'))
+        # Create users for authentication (separate from employees)
+        if not User.objects.filter(email='admin@example.com').exists():
+            # Create admin user
+            admin_user = User.objects.create_user(
+                email='admin@example.com',
+                password='admin123',
+                role=UserRole.ADMIN
+            )
+            self.stdout.write(self.style.SUCCESS('Created admin user (email: admin@example.com, password: admin123)'))
+            
+            # Create viewer user
+            viewer_user = User.objects.create_user(
+                email='viewer@example.com',
+                password='viewer123',
+                role=UserRole.VIEWER
+            )
+            self.stdout.write(self.style.SUCCESS('Created viewer user (email: viewer@example.com, password: viewer123)'))
         
         # Create offices
         offices = []
@@ -48,80 +59,93 @@ class Command(BaseCommand):
 
         # Create Employees
         employees = []
+        valid_roles = [role[0] for role in EmployeeRole.choices]  # ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+        
         for branch in branches:
-            for _ in range(3):
+            for _ in range(2):  # Create 2 employees per branch
                 employee = Employee.objects.create(
                     branch=branch,
                     first_name=fake.first_name(),
-                    middle_name=fake.first_name() if random.random() > 0.5 else None,
+                    middle_name=fake.first_name() if random.random() > 0.5 else '',
                     last_name=fake.last_name(),
                     email=fake.unique.email(),
-                    role=random.choice([EmployeeRole.ADMIN, EmployeeRole.VIEWER]),
-                    status=random.choice([EmployeeStatus.ACTIVE, EmployeeStatus.BIN]),
+                    role=random.choice(valid_roles),  # Random role from 1-9
+                    status=EmployeeStatus.ACTIVE,
                 )
                 employees.append(employee)
         self.stdout.write(self.style.SUCCESS(f'Created {len(employees)} employees'))
 
-        # Create Products
-        products = []
-        companies = [fake.company() for _ in range(5)]  # Use limited companies to test duplicate prevention
-        for i in range(10):
-            product = Product.objects.create(
-                name=f"Product {i+1} - {fake.word().capitalize()}",
-                company=random.choice(companies),
-                status=random.choice([ProductStatus.ACTIVE, ProductStatus.BIN]),
-                remarks=fake.sentence(),
-                unit_of_measurement=random.choice([u.value for u in UnitOfMeasurement]),
-            )
-            products.append(product)
-        self.stdout.write(self.style.SUCCESS(f'Created {len(products)} products'))
-
-        # Create Receivers
-        id_card_types = [
-            Receiver.IDCardType.NATIONAL_ID,
-            Receiver.IDCardType.CITIZENSHIP,
-            Receiver.IDCardType.VOTER_ID,
-            Receiver.IDCardType.PASSPORT,
-            Receiver.IDCardType.DRIVERS_LICENSE,
-            Receiver.IDCardType.PAN_CARD
-        ]
-        
+        # Create receivers
         receivers = []
-        for _ in range(5):
+        id_card_types = [card_type[0] for card_type in Receiver.IDCardType.choices]
+        
+        for _ in range(10):
             receiver = Receiver.objects.create(
                 name=fake.name(),
                 post=fake.job(),
-                id_card_number=f"{random.randint(100000, 999999)}",
+                id_card_number=fake.unique.uuid4()[:20],
                 id_card_type=random.choice(id_card_types),
                 office_name=fake.company(),
                 office_address=fake.address(),
                 phone_number=fake.phone_number(),
-                vehicle_number=f"BA-{random.randint(1, 9)}-{random.randint(1000, 9999)}"
+                vehicle_number=fake.license_plate()
             )
             receivers.append(receiver)
         self.stdout.write(self.style.SUCCESS(f'Created {len(receivers)} receivers'))
 
         # Create letters
+        letters = []
         for _ in range(15):
-            Letter.objects.create(
-                title=f"Letter: {fake.sentence()}",
-                content='\n\n'.join(fake.paragraphs(nb=3)),
-                status=random.choice([LetterStatus.DRAFT, LetterStatus.SENT, LetterStatus.BIN]),
-                receiver=random.choice(receivers) if random.random() > 0.3 else None
+            letter = Letter.objects.create(
+                title=fake.sentence(nb_words=6),
+                content=fake.paragraph(nb_sentences=5),
+                receiver=random.choice(receivers) if receivers else None,
+                status=random.choice([LetterStatus.DRAFT, LetterStatus.SENT])
             )
-        self.stdout.write(self.style.SUCCESS('Created 15 letters'))
+            letters.append(letter)
+        self.stdout.write(self.style.SUCCESS(f'Created {len(letters)} letters'))
 
-        # Create Dashboard statistics
+        # Create products
+        products = []
+        measurement_units = [unit[0] for unit in UnitOfMeasurement.choices]
+        
+        for _ in range(20):
+            product = Product.objects.create(
+                name=fake.word().title() + " " + fake.word().title(),
+                company=fake.company(),
+                status=ProductStatus.ACTIVE,
+                remarks=fake.sentence(),
+                unit_of_measurement=random.choice(measurement_units)
+            )
+            products.append(product)
+        self.stdout.write(self.style.SUCCESS(f'Created {len(products)} products'))
+
+        # Create dashboard statistics
         dashboard = Dashboard.get_current_stats()
-        self.stdout.write(self.style.SUCCESS('Created dashboard statistics'))
+        self.stdout.write(self.style.SUCCESS('Created/Updated dashboard statistics'))
 
-        self.stdout.write(self.style.SUCCESS('\nSuccessfully seeded the database!'))
-        self.stdout.write(self.style.SUCCESS('\nDashboard Statistics:'))
-        self.stdout.write(self.style.SUCCESS(f'  - Active Products: {dashboard.total_active_products}'))
-        self.stdout.write(self.style.SUCCESS(f'  - Active Branches: {dashboard.total_active_branches}'))
-        self.stdout.write(self.style.SUCCESS(f'  - Active Offices: {dashboard.total_active_offices}'))
-        self.stdout.write(self.style.SUCCESS(f'  - Active Employees: {dashboard.total_active_employees}'))
-        self.stdout.write(self.style.SUCCESS(f'  - Total Receivers: {dashboard.total_receivers}'))
-        self.stdout.write(self.style.SUCCESS(f'  - Total Letters: {dashboard.total_letters}'))
-        self.stdout.write(self.style.SUCCESS(f'  - Draft Letters: {dashboard.total_draft_letters}'))
-        self.stdout.write(self.style.SUCCESS(f'  - Sent Letters: {dashboard.total_sent_letters}'))
+        # Display sample information
+        if employees:
+            sample_employee = employees[0]
+            self.stdout.write(self.style.SUCCESS('\nSample Employee Data:'))
+            self.stdout.write(self.style.SUCCESS(f'  - Name: {sample_employee.first_name} {sample_employee.last_name}'))
+            self.stdout.write(self.style.SUCCESS(f'  - Email: {sample_employee.email}'))
+            self.stdout.write(self.style.SUCCESS(f'  - Role: {sample_employee.get_role_display()}'))
+            self.stdout.write(self.style.SUCCESS(f'  - Branch: {sample_employee.branch.name}'))
+
+        if products:
+            sample_product = products[0]
+            self.stdout.write(self.style.SUCCESS('\nSample Product Data:'))
+            self.stdout.write(self.style.SUCCESS(f'  - Name: {sample_product.name}'))
+            self.stdout.write(self.style.SUCCESS(f'  - Company: {sample_product.company}'))
+            self.stdout.write(self.style.SUCCESS(f'  - SKU: {sample_product.sku}'))
+            self.stdout.write(self.style.SUCCESS(f'  - Unit: {sample_product.get_unit_of_measurement_display()}'))
+
+        self.stdout.write(self.style.SUCCESS('\nDatabase seeding completed successfully!'))
+        self.stdout.write(self.style.SUCCESS(f'Summary:'))
+        self.stdout.write(self.style.SUCCESS(f'  - Offices: {len(offices)}'))
+        self.stdout.write(self.style.SUCCESS(f'  - Branches: {len(branches)}'))
+        self.stdout.write(self.style.SUCCESS(f'  - Employees: {len(employees)}'))
+        self.stdout.write(self.style.SUCCESS(f'  - Receivers: {len(receivers)}'))
+        self.stdout.write(self.style.SUCCESS(f'  - Letters: {len(letters)}'))
+        self.stdout.write(self.style.SUCCESS(f'  - Products: {len(products)}'))

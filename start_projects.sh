@@ -20,6 +20,7 @@ if [ ! -d "BE/venv" ]; then
     cd NEAProjectBE
     echo "Installing Python dependencies..."
     pip install -r requirements.txt
+    python manage.py create_admin
     echo "Running migrations..."
     python manage.py migrate
     cd ../..
@@ -27,6 +28,7 @@ else
     echo "venv found. Checking migrations..."
     source ./BE/venv/bin/activate
     cd ./BE/NEAProjectBE
+    python manage.py create_admin
     python manage.py migrate
     cd ../..
 fi
