@@ -1,13 +1,14 @@
 import Sidebar from "../Sidebar/Sidebar";
 import { Outlet } from "react-router";
 import { useNavigate } from "react-router";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
+import { useOnClickOutside } from "usehooks-ts";
 import { FaInfoCircle } from "react-icons/fa";
 
 const Home = () => {
   const navigate = useNavigate();
   const [showInfo, setShowInfo] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<any>(null);
 
   const renderPage = (activePage: string) => {
     switch (activePage) {
@@ -36,17 +37,7 @@ const Home = () => {
     }
   };
 
-  // Close info card if clicked outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
-        setShowInfo(false);
-      }
-    };
-    if (showInfo) document.addEventListener("mousedown", handleClickOutside);
-    else document.removeEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showInfo]);
+  useOnClickOutside(cardRef, () => setShowInfo(false));
 
   return (
     <div className="flex relative">
