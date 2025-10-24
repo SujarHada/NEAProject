@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 
 const Home = () => {
   const navigate = useNavigate();
-  const renderPage = (activePage:string) => {
+  const renderPage = (activePage: string) => {
     switch (activePage) {
       case "home": navigate("/home"); break;
       case "letters": navigate("/letters"); break;
@@ -35,7 +35,7 @@ const Home = () => {
     <div className="flex">
       <Sidebar onSelect={renderPage} />
       <main className="flex-1 max-md:ml-10 p-4 min-h-screen max-h-screen overflow-y-auto bg-[#A7B9D6] " >
-      <Outlet/>
+        <Outlet />
       </main>
     </div>
   );

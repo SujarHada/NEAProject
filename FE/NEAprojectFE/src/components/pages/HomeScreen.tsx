@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Activity, Building2, User, FileText, Inbox, Send, Edit3, RefreshCcw } from "lucide-react";
+import { Activity, Building2, User, FileText, Inbox, Send, Edit3, Download } from "lucide-react";
 import type { dashboard } from "../../interfaces/interfaces";
 import axios from "axios";
 
@@ -20,6 +20,25 @@ export default function HomeScreen() {
 
     fetchData();
   }, []);
+
+  const handleDownload = async () => {
+    const res = await axios.get('http://127.0.0.1:8000/api/dashboard/export_csv/', {
+      responseType: 'blob',
+      params: {
+        status: "active"
+      }
+    })
+    const blob = new Blob([res.data], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `dashboard_${new Date().toISOString()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+
+  }
 
   if (loading) {
     return (
@@ -50,10 +69,12 @@ export default function HomeScreen() {
 
   return (
     <div className="flex flex-col flex-1 min-h-fit h-full bg-[#1E2939] text-white p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Dashboard Overview</h1>
-        <div className="flex items-center gap-2 text-gray-400 text-sm">
-          <RefreshCcw size={16} />
+      <div className="flex justify-between items-center mb-8 flex-wrap gap-5">
+        <h1 className="text-2xl font-bold">Dashboard Overview</h1>
+        <div className="flex items-center gap-2 text-gray-400 text-sm ">
+          <div className="border-2 p-2 rounded-full cursor-pointer " onClick={handleDownload}>
+            <Download size={16} />
+          </div>
           <span>Last updated: {new Date(stats.last_updated).toLocaleString()}</span>
         </div>
       </div>

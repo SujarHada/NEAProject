@@ -45,11 +45,35 @@ const AllBranches = () => {
         fetchBranches()
     }, [])
 
+    const handleDownload = async () => {
+        const res = await axios.get('http://127.0.0.1:8000/api/branches/export_csv/', {
+            responseType: 'blob',
+            params: {
+                status: "active"
+            }
+        })
+        const blob = new Blob([res.data], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `branches_${new Date().toISOString()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+    }
+
     const totalPages = Math.ceil(branchesCount / 10)
 
     return (
         <div className="flex flex-col gap-5">
-            <h1 className="text-2xl font-bold">{t("allBranches.title")}</h1>
+            <div className="flex items-center justify-between" >
+                <h1 className="text-2xl font-bold">{t("allBranches.title")}</h1>
+                <button onClick={handleDownload} className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5">
+                    Download
+                </button>
+            </div>
             <table className="w-full text-sm text-left text-gray-400">
                 <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
                     <tr>
