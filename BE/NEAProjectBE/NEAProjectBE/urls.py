@@ -16,10 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.routers import DefaultRouter
-from rest_framework.authtoken.views import obtain_auth_token
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
-
+from rest_framework_simplejwt.views import TokenRefreshView
 from myapp.views import (
     DashboardViewSet,
     LetterViewSet,
@@ -29,6 +29,11 @@ from myapp.views import (
     BranchViewSet,
     EmployeeViewSet,
     SeedDatabaseView,
+    change_password,
+    login_view,
+    logout_view,
+    reset_password_request,
+    signup_view,
 )
 
 router = DefaultRouter()
@@ -47,6 +52,15 @@ urlpatterns = [
     path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('api/auth/token/', obtain_auth_token, name='api-token'),
+    # path('api/auth/token/', obtain_auth_token, name='api-token'),
     path('api/seed-database/', SeedDatabaseView.as_view(), name='seed-database'),
+
+     # Authentication endpoints (JWT)
+    path('api/auth/signup/', signup_view, name='signup'),
+    path('api/auth/login/', login_view, name='login'),
+    path('api/auth/logout/', logout_view, name='logout'),
+    path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/auth/change-password/', change_password, name='change_password'),
+    path('api/auth/reset-password-request/', reset_password_request, name='reset_password_request'),
+    
 ]

@@ -26,6 +26,7 @@ if not exist "BE\venv" (
     call .\venv\Scripts\activate.bat
     cd NEAProjectBE
     python manage.py migrate
+    python manage.py create_admin
     cd ..\..
 )
 
