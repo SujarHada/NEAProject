@@ -3,11 +3,12 @@ import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type Branch, type createEmployeesInputs } from "../../../interfaces/interfaces"
 import { FaChevronDown } from "react-icons/fa"
-import axios from "axios"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router"
+import api from "../../../utils/api"
+import axios from "axios"
 const CreateEmployee = () => {
     const params = useParams()
     const { t } = useTranslation()
@@ -15,11 +16,11 @@ const CreateEmployee = () => {
     const fetchAllBranches = async () => {
         try {
             let allBranches: Branch[] = [];
-            let nextUrl: string | null = "http://127.0.0.1:8000/api/branches/";
+            let nextUrl: string | null = "/api/branches/";
 
             while (nextUrl) {
                 // @ts-ignore
-                const res = await axios.get(nextUrl);
+                const res = await api.get(nextUrl);
                 // @ts-ignore
                 const data = res.data;
                 allBranches = [...allBranches, ...data.results];
@@ -52,10 +53,10 @@ const CreateEmployee = () => {
         last_name: z.string().min(1, t("createEmployee.errors.lastName")),
         email: z.email(t("createEmployee.errors.emailInvalid")).min(1, t("createEmployee.errors.emailRequired")),
         organization_id: z.number().positive(t("createEmployee.errors.branchId")),
-        role: z.string().min(1, t("createEmployee.errors.position")),
+        role: z.string().length(1, t("createEmployee.errors.position")),
     })
 
-    const { control, handleSubmit, formState: { isSubmitting, errors }, reset, setValue, watch } = useForm<createEmployeesInputs>({
+    const { control, handleSubmit, formState: { isSubmitting, errors }, reset, setValue } = useForm<createEmployeesInputs>({
         defaultValues: {
             first_name: "",
             middle_name: "",
@@ -70,10 +71,27 @@ const CreateEmployee = () => {
     const navigate = useNavigate()
 
     const onSubmit = async (data: createEmployeesInputs) => {
-        const res = await axios.post("http://127.0.0.1:8000/api/employees/", data)
-        if (res.status === 201) {
-            navigate("/employees/manage")
-            reset()
+        try {
+
+            const res = await api.post("/api/employees/", data)
+            if (res.status === 201) {
+                navigate("/employees/manage")
+                reset()
+            }
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                if (err.response) {
+                    err.response.data.role.flat().forEach((err:string) => {
+                        alert(err)
+                    })
+                } else if (err.request) {
+                    console.error("Network Error: Server not reachable")
+                } else {
+                    console.error("Axios Error:", err.message)
+                }
+            } else {
+                console.error("Unexpected Error:", err)
+            }
         }
     }
 
@@ -88,7 +106,7 @@ const CreateEmployee = () => {
                     control={control}
                     render={({ field }) => (
                         <div className="flex w-full items-center relative">
-                            <select id="position" {...field} onChange={(e)=> field.onChange(+e.target.value) }  className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                            <select id="position" {...field} onChange={(e) => field.onChange(+e.target.value)} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
                                 <option value={0} disabled hidden>{t("createEmployee.placeholders.branches")}</option>
                                 {
                                     branches.map((branch) => (
@@ -159,14 +177,15 @@ const CreateEmployee = () => {
                     name="role"
                     control={control}
                     render={({ field }) => (
-                        <div className="flex w-full items-center relative">
-                            <select id="role" {...field} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
-                                <option value="" disabled hidden>{t("createEmployee.placeholders.position")}</option>
-                                <option value="admin">{t("createEmployee.positions.admin")}</option>
-                                <option value="viewer">{t("createEmployee.positions.viewer")}</option>
-                            </select>
-                            <FaChevronDown className="absolute right-3 text-gray-500" />
-                        </div>
+                        // <div className="flex w-full items-center relative">
+                        //     <select id="role" {...field} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                        //         <option value="" disabled hidden>{t("createEmployee.placeholders.position")}</option>
+                        //         <option value="admin">{t("createEmployee.positions.admin")}</option>
+                        //         <option value="viewer">{t("createEmployee.positions.viewer")}</option>
+                        //     </select>
+                        //     <FaChevronDown className="absolute right-3 text-gray-500" />
+                        // </div>
+                        <input type="text" placeholder="1-9" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="email" />
                     )}
                 />
                 {errors.role && <p className="text-red-500">{errors.role.message}</p>}

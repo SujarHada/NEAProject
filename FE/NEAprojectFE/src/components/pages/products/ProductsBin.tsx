@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react"
-import axios from "axios"
 import type { Product } from "../../../interfaces/interfaces"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from "usehooks-ts"
 import { useTranslation } from "react-i18next"
+import api from "../../../utils/api"
 
 const ProductsBin = () => {
   const { t } = useTranslation()
@@ -21,8 +21,8 @@ const ProductsBin = () => {
 
   const fetchProducts = async (pageUrl?: string, pageNum?: number) => {
     try {
-      const apiUrl = pageUrl || `http://127.0.0.1:8000/api/products/?status=bin&page=${pageNum || currentPage}`
-      const res = await axios.get(apiUrl)
+      const apiUrl = pageUrl || `/api/products/?status=bin&page=${pageNum || currentPage}`
+      const res = await api.get(apiUrl)
 
       setProducts(res.data.results)
       setProductsCount(res.data.count)
@@ -38,13 +38,13 @@ const ProductsBin = () => {
   useEffect(() => { fetchProducts() }, [])
 
   const goLive = async (id: number) => {
-    await axios.post(`http://127.0.0.1:8000/api/products/${id}/restore/`)
+    await api.post(`/api/products/${id}/restore/`)
     fetchProducts()
     setOpenDropdownId(null)
   }
 
   const handleDownload = async () => {
-    const res = await axios.get('http://127.0.0.1:8000/api/products/export_csv_simple/', {
+    const res = await api.get('/api/products/export_csv_simple/', {
       responseType: 'blob',
       params: {
         status: "bin"

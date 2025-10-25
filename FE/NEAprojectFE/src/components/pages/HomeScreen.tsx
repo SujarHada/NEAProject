@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Activity, Building2, User, FileText, Inbox, Send, Edit3, Download } from "lucide-react";
 import type { dashboard } from "../../interfaces/interfaces";
-import axios from "axios";
+import api from "../../utils/api";
 
 export default function HomeScreen() {
   const [stats, setStats] = useState<dashboard>();
@@ -10,7 +10,7 @@ export default function HomeScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/dashboard/");
+        const response = await api.get("/api/dashboard/");
         setStats(response.data);
         setLoading(false);
       } catch (error) {
@@ -22,7 +22,7 @@ export default function HomeScreen() {
   }, []);
 
   const handleDownload = async () => {
-    const res = await axios.get('http://127.0.0.1:8000/api/dashboard/export_csv/', {
+    const res = await api.get('/api/dashboard/export_csv/', {
       responseType: 'blob',
       params: {
         status: "active"

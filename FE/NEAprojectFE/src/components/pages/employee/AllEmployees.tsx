@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router"
 import type { Employee } from "../../../interfaces/interfaces"
-import axios from "axios"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from 'usehooks-ts'
 import { useTranslation } from "react-i18next"
+import api from "../../../utils/api"
 
 const AllEmployees = () => {
     const params = useParams()
@@ -27,11 +27,11 @@ const AllEmployees = () => {
         try {
             let apiUrl: string
             if (orgId) {
-                apiUrl = pageUrl || `http://127.0.0.1:8000/api/employees/by-organization-id/${orgId}/?page=${pageNum || currentPage}`
+                apiUrl = pageUrl || `/api/employees/by-organization-id/${orgId}/?page=${pageNum || currentPage}`
             } else {
-                apiUrl = pageUrl || `http://127.0.0.1:8000/api/employees/?page=${pageNum || currentPage}`
+                apiUrl = pageUrl || `/api/employees/?page=${pageNum || currentPage}`
             }
-            const res = await axios.get(apiUrl)
+            const res = await api.get(apiUrl)
             setEmployees(res.data.results)
             setEmployeesCount(res.data.count)
             setNextPage(res.data.next)
@@ -60,13 +60,13 @@ const AllEmployees = () => {
         let apiUrl: string
         let fileName: string
         if (params.id) {
-            apiUrl = `http://127.0.0.1:8000/api/employees/export-by-organization/${params.id}/`
+            apiUrl = `/api/employees/export-by-organization/${params.id}/`
             fileName = `employees_${employees[0].branch_name}_${new Date().toISOString()}.csv`
         } else {
-            apiUrl = 'http://127.0.0.1:8000/api/employees/export_csv/'
+            apiUrl = '/api/employees/export_csv/'
             fileName = `employees_${new Date().toISOString()}.csv`
         }
-        const res = await axios.get(apiUrl, {
+        const res = await api.get(apiUrl, {
             responseType: 'blob',
             params: {
                 status: "active"
@@ -94,58 +94,59 @@ const AllEmployees = () => {
                     Download
                 </button>
             </div>
-
-            <table className="w-full text-sm text-left text-gray-400">
-                <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
-                    <tr>
-                        <th className="px-6 py-3">{t("allEmployees.headers.id")}</th>
-                        <th className="px-6 py-3">{t("allEmployees.headers.name")}</th>
-                        <th className="px-6 py-3">{t("allEmployees.headers.email")}</th>
-                        <th className="px-6 py-3">{t("allEmployees.headers.role")}</th>
-                        <th className="px-6 py-3">{t("allEmployees.headers.branch")}</th>
-                        <th className="px-6 py-3">{t("allEmployees.headers.action")}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {employees?.length === 0 && (
-                        <tr className="border-b bg-gray-800 border-gray-700">
-                            <td className="px-6 py-4 font-medium text-center text-white" colSpan={6}>
-                                {t("allEmployees.noData")}
-                            </td>
+            <div className="w-full overflow-x-auto" style={{ scrollbarWidth: 'thin' }} >
+                <table className="w-full text-sm text-left text-gray-400">
+                    <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
+                        <tr>
+                            <th className="px-6 py-3">{t("allEmployees.headers.id")}</th>
+                            <th className="px-6 py-3">{t("allEmployees.headers.name")}</th>
+                            <th className="px-6 py-3">{t("allEmployees.headers.email")}</th>
+                            <th className="px-6 py-3">{t("allEmployees.headers.role")}</th>
+                            <th className="px-6 py-3">{t("allEmployees.headers.branch")}</th>
+                            <th className="px-6 py-3">{t("allEmployees.headers.action")}</th>
                         </tr>
-                    )}
+                    </thead>
+                    <tbody>
+                        {employees?.length === 0 && (
+                            <tr className="border-b bg-gray-800 border-gray-700">
+                                <td className="px-6 py-4 font-medium text-center text-white" colSpan={6}>
+                                    {t("allEmployees.noData")}
+                                </td>
+                            </tr>
+                        )}
 
-                    {employees?.map((employee) => (
-                        <tr key={employee.id} className="border-b bg-gray-800 border-gray-700">
-                            <td className="px-6 py-4">{employee.serial_number || employee.id}</td>
-                            <td className="px-6 py-4">{employee.first_name} {employee?.middle_name} {employee.last_name}</td>
-                            <td className="px-6 py-4">{employee.email}</td>
-                            <td className="px-6 py-4">{employee.role}</td>
-                            <td className="px-6 py-4">{employee.branch_name}</td>
-                            <td className="px-6 py-4 relative">
-                                <button
-                                    onClick={() => toggleDropdown(employee.id)}
-                                    className="text-white outline-none bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-3 py-1.5 items-center"
-                                >
-                                    ⋮
-                                </button>
-                                {openDropdownId === employee.id && (
-                                    <div ref={ref} className="absolute z-10 right-0 mt-2 w-44 divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700">
-                                        <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
-                                            <li>
-                                                <button onClick={() => navigate(`/employees/edit/${employee.id}`)}
-                                                    className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
-                                                    {t("allEmployees.edit")}
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                )}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                        {employees?.map((employee) => (
+                            <tr key={employee.id} className="border-b bg-gray-800 border-gray-700">
+                                <td className="px-6 py-4">{employee.serial_number || employee.id}</td>
+                                <td className="px-6 py-4">{employee.first_name} {employee?.middle_name} {employee.last_name}</td>
+                                <td className="px-6 py-4">{employee.email}</td>
+                                <td className="px-6 py-4">{employee.role}</td>
+                                <td className="px-6 py-4">{employee.branch_name}</td>
+                                <td className="px-6 py-4 relative">
+                                    <button
+                                        onClick={() => toggleDropdown(employee.id)}
+                                        className="text-white outline-none bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-3 py-1.5 items-center"
+                                    >
+                                        ⋮
+                                    </button>
+                                    {openDropdownId === employee.id && (
+                                        <div ref={ref} className="absolute z-10 right-0 mt-2 w-44 divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700">
+                                            <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+                                                <li>
+                                                    <button onClick={() => navigate(`/employees/edit/${employee.id}`)}
+                                                        className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                                        {t("allEmployees.edit")}
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
             {employeesCount > 10 && (
                 <ul className="flex items-center justify-center h-8 text-sm">

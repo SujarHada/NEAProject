@@ -4,6 +4,7 @@ import z from "zod"
 import { FaChevronDown } from "react-icons/fa"
 import type { createProductInputs } from "../../../interfaces/interfaces"
 import axios from "axios"
+import api from "../../../utils/api"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
 
@@ -34,7 +35,7 @@ const CreateProducts = () => {
 
     const onSubmit = async (data: createProductInputs) => {
         try {
-            const res = await axios.post("http://127.0.0.1:8000/api/products/", data)
+            const res = await api.post("/api/products/", data)
             if (res.status === 201) {
                 navigate("/products/active-products")
             }

@@ -2,10 +2,10 @@ import { useForm, Controller, type SubmitHandler } from "react-hook-form"
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type Office, type OfficeFormInputs } from "../../../interfaces/interfaces"
-import axios from "axios"
 import { useParams, useNavigate } from "react-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
+import api from "../../../utils/api"
 
 const EditOffice = () => {
     const { t } = useTranslation()
@@ -37,7 +37,7 @@ const EditOffice = () => {
 
     const fetchOffice = async () => {
         try {
-            const res = await axios.get(`http://127.0.0.1:8000/api/offices/${params.id}/`)
+            const res = await api.get(`/api/offices/${params.id}/`)
             setOffice(res.data)
         } catch (err: any) {
             setErr(err?.response?.data?.detail ?? t("editOffice.fetchError"))
@@ -57,7 +57,7 @@ const EditOffice = () => {
 
     const onSubmit: SubmitHandler<OfficeFormInputs> = async (data) => {
         try {
-            const res = await axios.put(`http://127.0.0.1:8000/api/offices/${params.id}/`, data)
+            const res = await api.put(`/api/offices/${params.id}/`, data)
             if (res.status === 200) navigate("/offices/office-list")
         } catch (error) {
             setErr(t("editOffice.updateError"))

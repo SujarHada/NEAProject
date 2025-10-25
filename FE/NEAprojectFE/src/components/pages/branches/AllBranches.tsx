@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router"
 import type { Branch } from "../../../interfaces/interfaces"
-import axios from "axios"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from 'usehooks-ts'
 import { useTranslation } from "react-i18next"
+import api from "../../../utils/api"
 
 const AllBranches = () => {
     const { t } = useTranslation()
@@ -18,14 +18,27 @@ const AllBranches = () => {
     const ref = useRef(null)
     useOnClickOutside<any>(ref, () => setOpenDropdownId(null))
 
-    const toggleDropdown = (branchId: number) => {
-        setOpenDropdownId(prev => (prev === branchId ? null : branchId))
+    const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null)
+
+    const toggleDropdown = (branchId: number, e?: React.MouseEvent) => {
+        if (openDropdownId === branchId) {
+            setOpenDropdownId(null)
+            return
+        }
+
+        const rect = (e?.currentTarget as HTMLElement)?.getBoundingClientRect()
+        setDropdownPosition({
+            top: rect.bottom + window.scrollY + 5,
+            left: rect.right - 180, 
+        })
+        setOpenDropdownId(branchId)
     }
+
 
     const fetchBranches = async (pageUrl?: string, pageNum?: number) => {
         try {
-            const apiUrl = pageUrl || `http://127.0.0.1:8000/api/branches/?page=${pageNum || currentPage}`
-            const res = await axios.get(apiUrl)
+            const apiUrl = pageUrl || `/api/branches/?page=${pageNum || currentPage}`
+            const res = await api.get(apiUrl)
             setBranches(res.data.results)
             setBranchesCount(res.data.count)
             setNextPage(res.data.next)
@@ -46,7 +59,7 @@ const AllBranches = () => {
     }, [])
 
     const handleDownload = async () => {
-        const res = await axios.get('http://127.0.0.1:8000/api/branches/export_csv/', {
+        const res = await api.get('/api/branches/export_csv/', {
             responseType: 'blob',
             params: {
                 status: "active"
@@ -74,63 +87,85 @@ const AllBranches = () => {
                     Download
                 </button>
             </div>
-            <table className="w-full text-sm text-left text-gray-400">
-                <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
-                    <tr>
-                        <th className="px-6 py-3">{t("allBranches.table.id")}</th>
-                        <th className="px-6 py-3">{t("allBranches.table.name")}</th>
-                        <th className="px-6 py-3">{t("allBranches.table.email")}</th>
-                        <th className="px-6 py-3">{t("allBranches.table.phone")}</th>
-                        <th className="px-6 py-3">{t("allBranches.table.address")}</th>
-                        <th className="px-6 py-3">{t("allBranches.table.action")}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {branches.length === 0 && (
-                        <tr className="border-b bg-gray-800 border-gray-700">
-                            <td className="px-6 py-4 font-medium text-center text-white" colSpan={6}>
-                                {t("allBranches.noBranches")}
-                            </td>
+            <div className="w-full  overflow-x-auto overflow-y-visible" style={{ scrollbarWidth: 'thin' }} >
+
+                <table className="w-full text-sm text-left text-gray-400">
+                    <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
+                        <tr>
+                            <th className="px-6 py-3">{t("allBranches.table.id")}</th>
+                            <th className="px-6 py-3">{t("allBranches.table.name")}</th>
+                            <th className="px-6 py-3">{t("allBranches.table.email")}</th>
+                            <th className="px-6 py-3">{t("allBranches.table.phone")}</th>
+                            <th className="px-6 py-3">{t("allBranches.table.address")}</th>
+                            <th className="px-6 py-3">{t("allBranches.table.action")}</th>
                         </tr>
-                    )}
-                    {branches.map(branch => (
-                        <tr key={branch.id} className="border-b bg-gray-800 border-gray-700">
-                            <td className="px-6 py-4 font-medium text-white">{branch.serial_number}</td>
-                            <td className="px-6 py-4">{branch.name}</td>
-                            <td className="px-6 py-4">{branch.email}</td>
-                            <td className="px-6 py-4">{branch.phone_number}</td>
-                            <td className="px-6 py-4">{branch.address}</td>
-                            <td className="px-6 py-4 relative">
-                                <button onClick={() => toggleDropdown(branch.id)}
-                                    className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5">
-                                    ⋮
-                                </button>
-                                {openDropdownId === branch.id && (
-                                    <div ref={ref} className="absolute z-10 right-0 mt-2 w-44 divide-y divide-gray-100 rounded-lg shadow-lg bg-gray-700">
-                                        <ul className="py-2 text-sm text-gray-200">
-                                            <li>
-                                                <button onClick={() => navigate(`/branches/${branch.id}/edit`)} className="block w-full text-left px-4 py-2 hover:bg-gray-600">
-                                                    {t("allBranches.actions.edit")}
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button onClick={() => navigate(`/branches/${branch.organization_id}/employee/create-employee`)} className="block w-full text-left px-4 py-2 hover:bg-gray-600">
-                                                    {t("allBranches.actions.addEmployees")}
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button onClick={() => navigate(`/branches/${branch.organization_id}/employee/all-employees`)} className="block w-full text-left px-4 py-2 hover:bg-gray-600">
-                                                    {t("allBranches.actions.allEmployees")}
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                )}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody className="relative " >
+                        {branches.length === 0 && (
+                            <tr className="border-b bg-gray-800 border-gray-700">
+                                <td className="px-6 py-4 font-medium text-center text-white" colSpan={6}>
+                                    {t("allBranches.noBranches")}
+                                </td>
+                            </tr>
+                        )}
+                        {branches.map(branch => (
+                            <tr key={branch.id} className="border-b bg-gray-800 border-gray-700">
+                                <td className="px-6 py-4 font-medium text-white">{branch.serial_number}</td>
+                                <td className="px-6 py-4">{branch.name}</td>
+                                <td className="px-6 py-4">{branch.email}</td>
+                                <td className="px-6 py-4">{branch.phone_number}</td>
+                                <td className="px-6 py-4">{branch.address}</td>
+                                <td className="px-6 py-4 ">
+                                    <button
+                                        onClick={(e) => toggleDropdown(branch.id, e)}
+                                        className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5"
+                                    >
+                                        ⋮
+                                    </button>
+                                    {openDropdownId === branch.id && (
+                                        <div
+                                            ref={ref}
+                                            className="fixed z-[99999] w-44 divide-y divide-gray-100 rounded-lg shadow-lg bg-gray-700"
+                                            style={{
+                                                top: dropdownPosition?.top ?? 0,
+                                                left: dropdownPosition?.left ?? 0,
+                                            }}
+                                        >
+                                            <ul className="py-2 text-sm text-gray-200">
+                                                <li>
+                                                    <button
+                                                        onClick={() => navigate(`/branches/${branch.id}/edit`)}
+                                                        className="block w-full text-left px-4 py-2 hover:bg-gray-600"
+                                                    >
+                                                        {t("allBranches.actions.edit")}
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button
+                                                        onClick={() => navigate(`/branches/${branch.organization_id}/employee/create-employee`)}
+                                                        className="block w-full text-left px-4 py-2 hover:bg-gray-600"
+                                                    >
+                                                        {t("allBranches.actions.addEmployees")}
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button
+                                                        onClick={() => navigate(`/branches/${branch.organization_id}/employee/all-employees`)}
+                                                        className="block w-full text-left px-4 py-2 hover:bg-gray-600"
+                                                    >
+                                                        {t("allBranches.actions.allEmployees")}
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
             {branchesCount > 10 && (
                 <ul className="flex items-center justify-center h-8 text-sm">

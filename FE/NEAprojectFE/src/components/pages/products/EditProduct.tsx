@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import type { Product, createProductInputs } from '../../../interfaces/interfaces'
 import axios from 'axios'
 import { useTranslation } from "react-i18next"
+import api from '../../../utils/api'
 
 const EditProduct = () => {
     const { t } = useTranslation()
@@ -16,7 +17,7 @@ const EditProduct = () => {
     const [err, setErr] = useState<string | null>(null)
     const fetchProduct = async () => {
         try {
-            const res = await axios.get(`http://127.0.0.1:8000/api/products/${param.id}/`)
+            const res = await api.get(`/api/products/${param.id}/`)
             setProduct(res.data)
         } catch (err: any) {
             setErr(err?.response.data.detail)
@@ -49,7 +50,7 @@ const EditProduct = () => {
 
     const onSubmit = async (data: createProductInputs) => {
         try {
-            const res = await axios.put(`http://127.0.0.1:8000/api/products/${param.id}/`, data)
+            const res = await api.put(`/api/products/${param.id}/`, data)
             if (res.status === 200) {
                 navigate("/products/active-products")
             }

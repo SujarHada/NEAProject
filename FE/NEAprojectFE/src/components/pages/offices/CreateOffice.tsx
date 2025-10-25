@@ -2,9 +2,9 @@ import { useForm, Controller, type SubmitHandler } from "react-hook-form"
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type OfficeFormInputs } from "../../../interfaces/interfaces"
-import axios from "axios"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
+import api from "../../../utils/api"
 const CreateOffice = () => {
     const { t } = useTranslation()
     const navigate = useNavigate()
@@ -31,7 +31,7 @@ const CreateOffice = () => {
     })
 
     const onSubmit: SubmitHandler<OfficeFormInputs> = async (data) => {
-        const res = await axios.post("http://127.0.0.1:8000/api/offices/", data)
+        const res = await api.post("/api/offices/", data)
         if (res.status === 201) navigate("/offices/office-list")
         reset()
     }

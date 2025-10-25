@@ -3,11 +3,11 @@ import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type createEmployeesInputs, type Employee } from "../../../interfaces/interfaces"
 import { FaChevronDown } from "react-icons/fa"
-import axios from "axios"
 import { useNavigate, useParams } from "react-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { type Branch } from "../../../interfaces/interfaces"
+import api from "../../../utils/api"
 
 const EditEmployee = () => {
     const { t } = useTranslation()
@@ -18,11 +18,11 @@ const EditEmployee = () => {
     const fetchAllBranches = async () => {
         try {
             let allBranches: Branch[] = [];
-            let nextUrl: string | null = "http://127.0.0.1:8000/api/branches/";
+            let nextUrl: string | null = "/api/branches/";
 
             while (nextUrl) {
                 // @ts-ignore
-                const res = await axios.get(nextUrl);
+                const res = await api.get(nextUrl);
                 // @ts-ignore
                 const data = res.data;
                 allBranches = [...allBranches, ...data.results];
@@ -74,7 +74,7 @@ const EditEmployee = () => {
 
     const fetchEmployee = async () => {
         try {
-            const res = await axios.get(`http://127.0.0.1:8000/api/employees/${param.id}/`)
+            const res = await api.get(`/api/employees/${param.id}/`)
             setEmployee(res.data)
         } catch (err: any) {
             setErr(err?.response?.data?.detail)
@@ -95,7 +95,7 @@ const EditEmployee = () => {
     }, [param, employee])
 
     const onSubmit = async (data: createEmployeesInputs) => {
-        const res = await axios.put(`http://127.0.0.1:8000/api/employees/${param.id}/`, data)
+        const res = await api.put(`/api/employees/${param.id}/`, data)
         if (res.status === 200) {
             navigate("/employees/manage")
             reset()

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router"
 import type { Product } from "../../../interfaces/interfaces"
-import axios from "axios"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from 'usehooks-ts'
 import { useTranslation } from "react-i18next"
+import api from "../../../utils/api"
 
 
 const ActiveProducts = () => {
@@ -27,8 +27,8 @@ const ActiveProducts = () => {
 
     const fetchProducts = async (pageUrl?: string, pageNum?: number) => {
         try {
-            const apiUrl = pageUrl || `http://127.0.0.1:8000/api/products/?page=${pageNum || currentPage}`
-            const res = await axios.get(apiUrl)
+            const apiUrl = pageUrl || `/api/products/?page=${pageNum || currentPage}`
+            const res = await api.get(apiUrl)
 
             setProducts(res.data.results)
             setProductsCount(res.data.count)
@@ -47,7 +47,7 @@ const ActiveProducts = () => {
 
     const softDelete = async (id: number) => {
         try {
-            await axios.delete(`http://127.0.0.1:8000/api/products/${id}/`)
+            await api.delete(`/api/products/${id}/`)
             await fetchProducts()
             setOpenDropdownId(null)
         } catch (err) {
@@ -56,7 +56,7 @@ const ActiveProducts = () => {
     }
 
     const handleDownload = async () => {
-        const res = await axios.get('http://127.0.0.1:8000/api/products/export_csv_simple/', {
+        const res = await api.get('/api/products/export_csv_simple/', {
             responseType: 'blob',
             params: {
                 status: "active"

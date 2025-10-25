@@ -2,11 +2,11 @@ import { useForm, Controller, type SubmitHandler } from "react-hook-form"
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type createReceiverInputs } from "../../../interfaces/interfaces"
-import axios from "axios"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
 import { FaChevronDown } from "react-icons/fa"
 import { id_types } from "../../../enum/id_types"
+import api from "../../../utils/api"
 const CreateReceiver = () => {
     const { t } = useTranslation()
     const navigate = useNavigate()
@@ -41,7 +41,7 @@ const CreateReceiver = () => {
     )
 
     const onSubmit: SubmitHandler<createReceiverInputs> = async (data) => {
-        const res = await axios.post("http://127.0.0.1:8000/api/receivers/", data)
+        const res = await api.post("/api/receivers/", data)
         if (res.status === 201) {
             navigate("/receiver/receiver-list")
         }

@@ -2,13 +2,13 @@ import { useForm, Controller, type SubmitHandler } from "react-hook-form"
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type createReceiverInputs } from "../../../interfaces/interfaces"
-import axios from "axios"
 import { useNavigate, useParams } from "react-router"
 import { useTranslation } from "react-i18next"
 import { FaChevronDown } from "react-icons/fa"
 import { id_types } from "../../../enum/id_types"
 import { type Receiver } from "../../../interfaces/interfaces"
 import { useEffect, useState } from "react"
+import api from "../../../utils/api"
 const EditReceiver = () => {
     const { t } = useTranslation()
     const param = useParams()
@@ -17,7 +17,7 @@ const EditReceiver = () => {
     const navigate = useNavigate()
     const fetchReceiver = async () => {
         try {
-            const res = await axios.get(`http://127.0.0.1:8000/api/receivers/${param.id}/`)
+            const res = await api.get(`/api/receivers/${param.id}/`)
             setReceiver(res.data)
         } catch (err: any) {
             setErr(err?.response.data.detail)
@@ -63,7 +63,7 @@ const EditReceiver = () => {
 
 
     const onSubmit: SubmitHandler<createReceiverInputs> = async (data) => {
-        const res = await axios.put(`http://127.0.0.1:8000/api/receivers/${param.id}/`, data)
+        const res = await api.put(`/api/receivers/${param.id}/`, data)
         if (res.status === 200) {
             navigate("/receiver/receiver-list")
         }

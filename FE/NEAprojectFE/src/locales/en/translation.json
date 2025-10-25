@@ -294,7 +294,7 @@
       "id": "Id",
       "name": "Name",
       "email": "Email",
-      "role": "Role",
+      "role": "Level",
       "branch": "Branch",
       "action": "Action"
     },
