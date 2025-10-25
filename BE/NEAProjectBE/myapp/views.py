@@ -22,6 +22,7 @@ from .models import (
     UnitOfMeasurement, EmployeeRole, User, UserRole
 )
 from .serializers import (
+    CurrentUserSerializer,
     OfficeSerializer,
     BranchSerializer,
     EmployeeSerializer,
@@ -56,11 +57,12 @@ def get_tokens_for_user(user):
             'type': 'object',
             'properties': {
                 'email': {'type': 'string', 'format': 'email', 'example': 'user@example.com'},
+                'name': {'type': 'string', 'example': 'John Doe'},
                 'password': {'type': 'string', 'example': 'password123'},
                 'password_confirm': {'type': 'string', 'example': 'password123'},
                 'role': {'type': 'string', 'enum': ['admin', 'viewer'], 'example': 'viewer'}
             },
-            'required': ['email', 'password', 'password_confirm', 'role']
+            'required': ['email', 'name', 'password', 'password_confirm', 'role']
         }
     },
     responses={
@@ -76,6 +78,7 @@ def get_tokens_for_user(user):
                         'user': {
                             'id': 'uuid-string',
                             'email': 'user@example.com',
+                            'name': 'John Doe',
                             'role': 'viewer',
                             'is_active': True,
                             'created_at': '2024-01-01T00:00:00Z'
@@ -437,6 +440,45 @@ def reset_password_request(request):
     return Response({
         'message': 'If an account with this email exists, a password reset link has been sent.'
     })
+@extend_schema(
+    responses={
+        200: OpenApiResponse(
+            response=OpenApiTypes.OBJECT,
+            description='Current user details',
+            examples=[
+                OpenApiExample(
+                    'Success Response',
+                    value={
+                        'id': 'uuid-string',
+                        'email': 'user@example.com',
+                        'name': 'John Doe',
+                        'role': 'viewer'
+                    }
+                )
+            ]
+        ),
+        401: OpenApiResponse(
+            response=OpenApiTypes.OBJECT,
+            description='Unauthorized',
+            examples=[
+                OpenApiExample(
+                    'Error Response',
+                    value={
+                        'detail': 'Authentication credentials were not provided.'
+                    }
+                )
+            ]
+        )
+    },
+    description='Get current logged in user details',
+    summary='Get Current User'
+)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_me_view(request):
+    """Get current logged in user details"""
+    serializer = CurrentUserSerializer(request.user)
+    return Response(serializer.data)
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by("-created_at")
     serializer_class = UserSerializer

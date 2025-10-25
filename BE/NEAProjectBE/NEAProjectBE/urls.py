@@ -34,6 +34,7 @@ from myapp.views import (
     logout_view,
     reset_password_request,
     signup_view,
+    get_me_view
 )
 
 router = DefaultRouter()
@@ -62,5 +63,6 @@ urlpatterns = [
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/auth/change-password/', change_password, name='change_password'),
     path('api/auth/reset-password-request/', reset_password_request, name='reset_password_request'),
+    path('api/auth/me/', get_me_view, name='get-me'),
     
 ]

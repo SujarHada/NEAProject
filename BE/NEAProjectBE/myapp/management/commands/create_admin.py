@@ -10,6 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         admin_email = 'masteradmin@gmail.com'
         admin_password = 'masteradmin@12345'
+        admin_name = 'Master Admin'  # Added name field
 
         # Check if master admin already exists
         if User.objects.filter(email=admin_email).exists():
@@ -22,6 +23,7 @@ class Command(BaseCommand):
             # Create the master admin user
             admin_user = User.objects.create_user(
                 email=admin_email,
+                name=admin_name,  # Added name parameter
                 password=admin_password,
                 role=UserRole.ADMIN,
                 is_staff=True,
@@ -41,10 +43,13 @@ class Command(BaseCommand):
                 self.style.SUCCESS(f'📧 Email: {admin_email}')
             )
             self.stdout.write(
+                self.style.SUCCESS(f'👤 Name: {admin_name}')  # Added name display
+            )
+            self.stdout.write(
                 self.style.SUCCESS(f'🔑 Password: {admin_password}')
             )
             self.stdout.write(
-                self.style.SUCCESS(f'👤 Role: {UserRole.ADMIN.label}')
+                self.style.SUCCESS(f'🎯 Role: {UserRole.ADMIN.label}')
             )
             self.stdout.write(
                 self.style.SUCCESS('=' * 60)

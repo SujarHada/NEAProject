@@ -18,18 +18,20 @@ class Command(BaseCommand):
             # Create admin user
             admin_user = User.objects.create_user(
                 email='admin@example.com',
+                name='System Administrator',  # Added name
                 password='admin123',
                 role=UserRole.ADMIN
             )
-            self.stdout.write(self.style.SUCCESS('Created admin user (email: admin@example.com, password: admin123)'))
+            self.stdout.write(self.style.SUCCESS('Created admin user (email: admin@example.com, name: System Administrator, password: admin123)'))
             
             # Create viewer user
             viewer_user = User.objects.create_user(
                 email='viewer@example.com',
+                name='Sample Viewer',  # Added name
                 password='viewer123',
                 role=UserRole.VIEWER
             )
-            self.stdout.write(self.style.SUCCESS('Created viewer user (email: viewer@example.com, password: viewer123)'))
+            self.stdout.write(self.style.SUCCESS('Created viewer user (email: viewer@example.com, name: Sample Viewer, password: viewer123)'))
         
         # Create offices
         offices = []
@@ -141,6 +143,11 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f'  - SKU: {sample_product.sku}'))
             self.stdout.write(self.style.SUCCESS(f'  - Unit: {sample_product.get_unit_of_measurement_display()}'))
 
+        # Display sample user information
+        self.stdout.write(self.style.SUCCESS('\nSample User Accounts:'))
+        self.stdout.write(self.style.SUCCESS(f'  - Admin: admin@example.com (System Administrator) - Role: Admin'))
+        self.stdout.write(self.style.SUCCESS(f'  - Viewer: viewer@example.com (Sample Viewer) - Role: Viewer'))
+
         self.stdout.write(self.style.SUCCESS('\nDatabase seeding completed successfully!'))
         self.stdout.write(self.style.SUCCESS(f'Summary:'))
         self.stdout.write(self.style.SUCCESS(f'  - Offices: {len(offices)}'))
@@ -149,3 +156,4 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f'  - Receivers: {len(receivers)}'))
         self.stdout.write(self.style.SUCCESS(f'  - Letters: {len(letters)}'))
         self.stdout.write(self.style.SUCCESS(f'  - Products: {len(products)}'))
+        self.stdout.write(self.style.SUCCESS(f'  - Users: 2 (admin@example.com, viewer@example.com)'))
