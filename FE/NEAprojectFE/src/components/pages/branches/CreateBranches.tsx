@@ -2,7 +2,7 @@ import { Controller, useForm, type SubmitHandler } from "react-hook-form"
 import * as z from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { BranchFormInputs } from "../../../interfaces/interfaces"
-import axios from "axios"
+import api from "../../../utils/api"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
 
@@ -32,7 +32,7 @@ const CreateBranches = () => {
     })
 
     const onSubmit: SubmitHandler<BranchFormInputs> = async (data) => {
-        const res = await axios.post("http://127.0.0.1:8000/api/branches/", data)
+        const res = await api.post("/api/branches/", data)
         if(res.status === 201){
             navigate("/branches/all-branches")
         }

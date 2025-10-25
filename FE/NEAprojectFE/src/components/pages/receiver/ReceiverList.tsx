@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router"
 import type { Receiver } from "../../../interfaces/interfaces"
-import axios from "axios"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from 'usehooks-ts'
 import { useTranslation } from "react-i18next"
+import api from "../../../utils/api"
 
 const ReceiverList = () => {
     const { t } = useTranslation()
@@ -24,8 +24,8 @@ const ReceiverList = () => {
 
     const fetchreceivers = async (pageUrl?: string, pageNum?: number) => {
         try {
-            const apiUrl = pageUrl || `http://127.0.0.1:8000/api/receivers/?page=${pageNum || currentPage}`
-            const res = await axios.get(apiUrl)
+            const apiUrl = pageUrl || `/api/receivers/?page=${pageNum || currentPage}`
+            const res = await api.get(apiUrl)
             setReceivers(res.data.results)
             setReceiversCount(res.data.count)
             setNextPage(res.data.next)
@@ -43,7 +43,7 @@ const ReceiverList = () => {
 
     const handleDelete = async (id: number) => {
         try {
-            await axios.delete(`http://127.0.0.1:8000/api/receivers/${id}/`)
+            await api.delete(`/api/receivers/${id}/`)
             fetchreceivers()
         } catch (err) {
             console.error("Error deleting receiver:", err)
@@ -54,7 +54,7 @@ const ReceiverList = () => {
     }, [])
 
     const handleDownload = async () => {
-        const res = await axios.get('http://127.0.0.1:8000/api/receivers/export_csv/', {
+        const res = await api.get('/api/receivers/export_csv/', {
             responseType: 'blob',
             params: {
                 status: "active"

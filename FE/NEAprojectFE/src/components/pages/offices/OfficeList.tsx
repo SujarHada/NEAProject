@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router"
 import type { Office } from "../../../interfaces/interfaces"
-import axios from "axios"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from 'usehooks-ts'
-import { useTranslation } from 'react-i18next' // <-- for dynamic translation
+import { useTranslation } from 'react-i18next'
+import api from "../../../utils/api"
 
 const OfficeList = () => {
     const { t } = useTranslation()
@@ -24,8 +24,8 @@ const OfficeList = () => {
 
     const fetchOffices = async (pageUrl?: string, pageNum?: number) => {
         try {
-            const apiUrl = pageUrl || `http://127.0.0.1:8000/api/offices/?page=${pageNum || currentPage}`
-            const res = await axios.get(apiUrl)
+            const apiUrl = pageUrl || `/api/offices/?page=${pageNum || currentPage}`
+            const res = await api.get(apiUrl)
             setOffices(res.data.results)
             setOfficesCount(res.data.count)
             setNextPage(res.data.next)
@@ -46,7 +46,7 @@ const OfficeList = () => {
 
     const handleDelete = async (id: number) => {
         try {
-            await axios.delete(`http://127.0.0.1:8000/api/offices/${id}/`)
+            await api.delete(`/api/offices/${id}/`)
             fetchOffices()
         } catch (err) {
             console.error("Error deleting office:", err)
@@ -54,7 +54,7 @@ const OfficeList = () => {
     }
 
     const handleDownload = async () => {
-        const res = await axios.get('http://127.0.0.1:8000/api/offices/export_csv/', {
+        const res = await api.get('/api/offices/export_csv/', {
             responseType: 'blob',
             params: {
                 status: "active"
