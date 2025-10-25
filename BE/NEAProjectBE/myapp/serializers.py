@@ -51,10 +51,11 @@ class UserSignupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'password_confirm', 'role']
+        fields = ['email', 'name', 'password', 'password_confirm', 'role']
         extra_kwargs = {
             'email': {'required': True},
-            'role': {'required': True}
+            'name' : {'required': True},
+            'role': {'required': True},
         }
 
     def validate_email(self, value):
@@ -82,8 +83,15 @@ class UserLoginSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'email', 'role', 'is_active', 'created_at']
+        fields = ['id', 'email', 'name', 'role', 'is_active', 'created_at']
         read_only_fields = ['id', 'is_active', 'created_at']
+
+#serializer for the "get me" endpoint
+class CurrentUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'name', 'role']
+        read_only_fields = ['id', 'email', 'role']
 class EmployeeSerializer(serializers.ModelSerializer):
     serial_number = serializers.SerializerMethodField()
     branch_name = serializers.CharField(source="branch.name", read_only=True)
