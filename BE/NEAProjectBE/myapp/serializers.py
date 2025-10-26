@@ -206,7 +206,7 @@ class LetterItemSerializer(serializers.ModelSerializer):
 
 class LetterSerializer(serializers.ModelSerializer):
     items = LetterItemSerializer(many=True, required=False)
-    receiver = ReceiverSerializer(required=False, read_only=True)  # Make it read-only for output
+    receiver = ReceiverSerializer(required=False)
     
     class Meta:
         model = Letter
