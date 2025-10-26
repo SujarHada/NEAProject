@@ -7,55 +7,58 @@ import { FaChevronDown } from "react-icons/fa";
 import type { Receiver } from "../../../interfaces/interfaces";
 import NepaliDatePicker from '@zener/nepali-datepicker-react';
 import '@zener/nepali-datepicker-react/index.css';
+import api from "../../../utils/api";
 const createLetterSchema = z.object({
-    letterCount: z.string({ error: "Letter Count is required" }).regex(/^[0-9]+$/, "Incorrect format"),
-    chalaniNo: z.number({ error: "Chalani No must be a number" }),
-    voucherNo: z.number({ error: "Voucher No must be a number" }),
-    gatepassNo: z.number({ error: "Gatepass No must be a number" }).optional(),
-    date: z.string().min(1, "Date is required"),
-    receiverOfficeName: z.string().min(1, "Receiver Office Name is required"),
-    receiverAddress: z.string().min(1, "Receiver Address is required"),
-    subject: z.string().min(1, "Subject is required"),
-    requestChalaniNumber: z.string().min(1, "Request Chalani Number is required"),
-    requestLetterCount: z.string().min(1, "Request Letter Count is required"),
-    requestDate: z.string().min(1, "Request Date is required"),
-    items: z.array(
-        z.object({
-            name: z.string().min(1, "Item Name is required"),
-            company: z.string().min(1, "Company is required"),
-            serial_number: z.number({ error: "Serial Number must be a number" }),
-            unit_of_measurement: z.string().min(1, "Unit is required"),
-            quantity: z.number({ error: "Quantity must be a number" }),
-            remarks: z.string().optional(),
-        })
-    ).min(1, "At least one item is required"),
-    receiver: z.object({
-        name: z.string().min(1, "Receiver Name is required"),
-        post: z.string().min(1, "Receiver Post is required"),
-        id_card_number: z.string().min(1, "ID Card Number is required"),
-        id_card_type: z.enum([
-            "national_id",
-            "citizenship",
-            "voter_id",
-            "passport",
-            "drivers_license",
-            "pan_card",
-            "unknown",
-        ]),
-        office_name: z.string().min(1, "Office Name is required"),
-        office_address: z.string().min(1, "Office Address is required"),
-        phone_number: z.string().min(1, "Phone Number is required"),
-        vehicle_number: z.string().min(1, "Vehicle Number is required"),
-    }),
-}).refine((data) => {
-    const sameOffice = data.receiver.office_name === data.receiverOfficeName
-    return sameOffice
+  id: z.number().optional(),
+  letter_count: z.string().regex(/^[0-9]+$/, "Letter count must be numeric"),
+  chalani_no: z.string().min(1, "Chalani number is required"),
+  voucher_no: z.string().min(1, "Voucher number is required"),
+  date: z.string().min(1, "Date is required"),
+  receiver_office_name: z.string().min(1, "Receiver office name is required"),
+  receiver_address: z.string().min(1, "Receiver address is required"),
+  subject: z.string().min(1, "Subject is required"),
+  request_chalani_number: z.string().min(1, "Request chalani number is required"),
+  request_letter_count: z.string().regex(/^[0-9]+$/, "Request letter count must be numeric"),
+  request_date: z.string().min(1, "Request date is required"),
+  gatepass_no: z.string().optional(),
 
+  items: z.array(
+    z.object({
+      id: z.number().optional(),
+      name: z.string().min(1, "Item name is required"),
+      company: z.string().min(1, "Company name is required"),
+      serial_number: z.string().min(1, "Serial number is required"),
+      unit_of_measurement: z.string().min(1, "Unit of measurement is required"),
+      quantity: z.string().regex(/^[0-9]+$/, "Quantity must be numeric"),
+      remarks: z.string().optional(),
+    })
+  ).min(1, "At least one item is required"),
+
+  receiver: z.object({
+    name: z.string().min(1, "Receiver name is required"),
+    post: z.string().min(1, "Receiver post is required"),
+    id_card_number: z.string().min(1, "ID card number is required"),
+    id_card_type: z.enum([
+      "national_id",
+      "citizenship",
+      "voter_id",
+      "passport",
+      "drivers_license",
+      "pan_card",
+      "unknown",
+    ]),
+    office_name: z.string().min(1, "Office name is required"),
+    office_address: z.string().min(1, "Office address is required"),
+    phone_number: z.string().min(1, "Phone number is required"),
+    vehicle_number: z.string().min(1, "Vehicle number is required"),
+  }),
+}).refine((data) => {
+  // Office name consistency check
+  return data.receiver.office_name === data.receiver_office_name;
 }, {
-    error: "Receiver Office Name and Address must be the same as the Receiver",
-    path: ["receiver"],
-}
-).refine((data) => {
+  message: "Receiver office name must match the selected office",
+  path: ["receiver.office_name"],
+}).refine((data) => {
     return data.items.every((item) => item.name && item.company && item.serial_number && item.unit_of_measurement)
 }, {
     error: "All items must be filled",
@@ -66,13 +69,13 @@ const CreateLetter = () => {
     const { control, handleSubmit, formState: { isSubmitting, errors }, setValue } = useForm<CreateLetter>({
         resolver: zodResolver(createLetterSchema),
         defaultValues: {
-            letterCount: "",
+            letter_count: "",
             items: [{
                 name: "",
                 company: "",
-                serial_number: "" as unknown as number,
+                serial_number: "",
                 unit_of_measurement: "",
-                quantity: "" as unknown as number,
+                quantity: "",
                 remarks: "",
             }],
             receiver: {
@@ -86,15 +89,15 @@ const CreateLetter = () => {
                 vehicle_number: "",
             },
             date: '',
-            chalaniNo: '' as unknown as number,
-            voucherNo: '' as unknown as number,
-            gatepassNo: '' as unknown as number,
-            receiverOfficeName: '',
-            receiverAddress: '',
+            chalani_no: '',
+            voucher_no: '',
+            gatepass_no: '',
+            receiver_office_name: '',
+            receiver_address: '',
             subject: '',
-            requestChalaniNumber: '',
-            requestLetterCount: '',
-            requestDate: '',
+            request_chalani_number: '',
+            request_letter_count: '',
+            request_date: '',
 
         },
         mode: 'onSubmit'
@@ -110,16 +113,16 @@ const CreateLetter = () => {
     const handleOfficeChange = (officeId: string) => {
         const selectedOffice = Offices?.find((o) => o.id.toString() === officeId);
         if (selectedOffice) {
-            setValue("receiverOfficeName", selectedOffice.name);
-            setValue("receiverAddress", selectedOffice.address);
+            setValue("receiver_office_name", selectedOffice.name);
+            setValue("receiver_address", selectedOffice.address);
             StoreMethods.getReceivers();
             const filtered = Receivers?.filter(
                 (r) => r.office_name === selectedOffice.name
             );
             setFilteredReceivers(filtered || []);
         } else {
-            setValue("receiverOfficeName", "");
-            setValue("receiverAddress", "");
+            setValue("receiver_office_name", "");
+            setValue("receiver_address", "");
             setFilteredReceivers([]);
         }
     };
@@ -146,8 +149,10 @@ const CreateLetter = () => {
     };
 
     const { fields, append, remove } = useFieldArray({ control, name: "items" });
-    const onSubmit = (data: CreateLetter) => {
+    const onSubmit = async(data: CreateLetter) => {
         console.log("Submitted Data:", data);
+        const res = await api.post('/api/letters/', data);
+        console.log(res)
     };
     return (
         <div className="flex flex-col gap-6  ">
@@ -169,48 +174,48 @@ const CreateLetter = () => {
                 <div className="flex flex-1 w-full flex-col">
                     <label htmlFor="lettercount"> Letter count * </label>
                     <Controller
-                        name="letterCount"
+                        name="letter_count"
                         control={control}
                         render={({ field }) => (
                             <input {...field} id="lettercount" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />
                         )}
                     />
-                    {errors.letterCount && <span className="text-red-500">{errors.letterCount.message}</span>}
+                    {errors.letter_count && <span className="text-red-500">{errors.letter_count.message}</span>}
                 </div>
                 <div className="flex flex-1 w-full flex-col">
                     <label htmlFor="chalani"> Chalani No *</label>
                     <Controller
-                        name="chalaniNo"
+                        name="chalani_no"
                         control={control}
                         render={({ field }) => (
-                            <input {...field} onChange={(e) => field.onChange(Number(e.target.value))} id="chalani" type="number" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />
+                            <input {...field} onChange={(e) => field.onChange(e.target.value)} id="chalani" type="number" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />
                         )}
                     />
-                    {errors.chalaniNo && <span className="text-red-500">{errors.chalaniNo.message}</span>}
+                    {errors.chalani_no && <span className="text-red-500">{errors.chalani_no.message}</span>}
                 </div>
 
                 <div className="flex flex-1 w-full flex-col ">
-                    <label htmlFor="voucherno"> Voucher No * </label>
+                    <label htmlFor="voucher_no"> Voucher No * </label>
                     <Controller
-                        name="voucherNo"
+                        name="voucher_no"
                         control={control}
                         render={({ field }) => (
-                            <input {...field} onChange={(e) => field.onChange(Number(e.target.value))} id="voucherno" type="number" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />
+                            <input {...field} onChange={(e) => field.onChange((e.target.value))} id="voucher_no" type="number" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />
                         )}
                     />
-                    {errors.voucherNo && <span className="text-red-500">{errors.voucherNo.message}</span>}
+                    {errors.voucher_no && <span className="text-red-500">{errors.voucher_no.message}</span>}
                 </div>
 
                 <div className="flex max-md:flex-1 max-md:w-full flex-col ">
-                    <label htmlFor="gatepassno"> GatePass No</label>
+                    <label htmlFor="gatepass_no"> GatePass No</label>
                     <Controller
-                        name="gatepassNo"
+                        name="gatepass_no"
                         control={control}
                         render={({ field }) => (
-                            <input {...field} id="gatepassno" onChange={(e) => field.onChange(Number(e.target.value))} type="number" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />
+                            <input {...field} id="gatepass_no" onChange={(e) => field.onChange((e.target.value))} type="number" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />
                         )}
                     />
-                    {errors.gatepassNo && <span className="text-red-500">{errors.gatepassNo.message}</span>}
+                    {errors.gatepass_no && <span className="text-red-500">{errors.gatepass_no.message}</span>}
                 </div>
 
 
@@ -250,38 +255,38 @@ const CreateLetter = () => {
                 </div>
                 <div className="flex flex-row w-full gap-2 flex-wrap">
                     <div className="flex flex-col w-full flex-1">
-                        <label htmlFor="requestDate">Request date * </label>
+                        <label htmlFor="request_date">Request date * </label>
                         <Controller
-                            name="requestDate"
+                            name="request_date"
                             control={control}
                             render={({ field }) => (
                                 <div className="bg-[#B5C9DC] border-2 h-10 outline-none z-50 rounded-md border-gray-600">
                                     <NepaliDatePicker {...field} onChange={(e) => { field.onChange(e!.toString()) }} className={'h-10 px-3 cursor-pointer'} placeholder="YYYY-MM-DD" />
                                 </div>)}
                         />
-                        {errors.requestDate && <span className="text-red-500">{errors.requestDate.message}</span>}
+                        {errors.request_date && <span className="text-red-500">{errors.request_date.message}</span>}
                     </div>
                     <div className="flex flex-col w-full  flex-1">
-                        <label htmlFor="requestChalaniNumber"> Request chalani number * </label>
+                        <label htmlFor="request_chalani_number"> Request chalani number * </label>
                         <Controller
-                            name="requestChalaniNumber"
+                            name="request_chalani_number"
                             control={control}
                             render={({ field }) => (
-                                <input {...field} id="requestChalaniNumber" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />
+                                <input {...field} id="request_chalani_number" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />
                             )}
                         />
-                        {errors.requestChalaniNumber && <span className="text-red-500">{errors.requestChalaniNumber.message}</span>}
+                        {errors.request_chalani_number && <span className="text-red-500">{errors.request_chalani_number.message}</span>}
                     </div>
                     <div className="flex flex-col w-full flex-1">
-                        <label htmlFor="requestLetterCount"> Request letter count * </label>
+                        <label htmlFor="request_letter_count"> Request letter count * </label>
                         <Controller
-                            name="requestLetterCount"
+                            name="request_letter_count"
                             control={control}
                             render={({ field }) => (
-                                <input {...field} id="requestLetterCount" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />
+                                <input {...field} id="request_letter_count" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />
                             )}
                         />
-                        {errors.requestLetterCount && <span className="text-red-500">{errors.requestLetterCount.message}</span>}
+                        {errors.request_letter_count && <span className="text-red-500">{errors.request_letter_count.message}</span>}
                     </div>
 
                 </div>
@@ -314,7 +319,7 @@ const CreateLetter = () => {
                                                     setValue(`items.${index}.company`, selected.company);
                                                     setValue(
                                                         `items.${index}.serial_number`,
-                                                        Number(selected.serial_number)
+                                                        selected.serial_number.toString()
                                                     );
                                                     setValue(
                                                         `items.${index}.unit_of_measurement`,
@@ -322,9 +327,9 @@ const CreateLetter = () => {
                                                     );
                                                 } else {
                                                     setValue(`items.${index}.company`, "");
-                                                    setValue(`items.${index}.serial_number`, 0);
+                                                    setValue(`items.${index}.serial_number`, '');
                                                     setValue(`items.${index}.unit_of_measurement`, "");
-                                                    setValue(`items.${index}.quantity`, 0);
+                                                    setValue(`items.${index}.quantity`, '');
                                                 }
                                             }}
                                             className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600"                                        >
@@ -349,7 +354,7 @@ const CreateLetter = () => {
                                 render={({ field: f }) => (
                                     <input
                                         {...f}
-                                        onChange={(e) => f.onChange(Number(e.target.value))}
+                                        onChange={(e) => f.onChange((e.target.value))}
                                         id='quantity'
                                         type='number'
                                         className="bg-[#B5C9DC] border-1 h-10 outline-none pl-3 rounded-md border-gray-600"
@@ -384,7 +389,7 @@ const CreateLetter = () => {
                 <button
                     type="button"
                     className="bg-blue-500 text-white px-4 py-2 rounded"
-                    onClick={() => append({ name: "", company: "", serial_number: 0, unit_of_measurement: "", quantity: '' as unknown as number, remarks: "" })}
+                    onClick={() => append({ name: "", company: "", serial_number: '', unit_of_measurement: "", quantity: '', remarks: "" })}
                 >
                     Add Item
                 </button>

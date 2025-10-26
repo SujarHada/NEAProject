@@ -57,7 +57,7 @@ const router = createBrowserRouter([
                 element: createElement(Letters),
                 children: [
                     { path: "all-letters", element: createElement(AllLetters) },
-                    { path: "view-letter", element: createElement(ShowLetter) },
+                    { path: "view-letter/:id", element: createElement(ShowLetter) },
                     { path: "letter-bin", element: createElement(LettersBin) },
                     {
                         element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),

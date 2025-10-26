@@ -409,7 +409,8 @@
     },
     "actions": {
       "delete": "Delete",
-      "edit": "Edit"
+      "edit": "Edit",
+      "view": "View"
     },
     "messages": {
       "deleteSuccess": "Letter deleted successfully!",

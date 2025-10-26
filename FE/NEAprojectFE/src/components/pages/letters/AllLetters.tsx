@@ -60,7 +60,6 @@ const AllLetters = () => {
     }, [])
 
     const handleDelete = async (letterId: number) => {
-        console.log(letterId)
         try {
             const res = await api.delete(`/api/letters/${letterId}/`)
             if (res.status === 200) {
@@ -77,7 +76,7 @@ const AllLetters = () => {
         const res = await api.get('/api/letters/export_csv/', {
             responseType: 'blob',
             params: {
-                status: "active"
+                status: "draft"
             }
         })
         const blob = new Blob([res.data], { type: "text/csv" });
@@ -157,22 +156,6 @@ const AllLetters = () => {
                                             <ul className="py-2 text-sm text-gray-200">
                                                 <li>
                                                     <button
-                                                        onClick={() => handleDelete(letter.id)}
-                                                        className="block w-full text-left px-4 py-2 hover:bg-gray-600"
-                                                    >
-                                                        {t("allletters.actions.delete")}
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button
-                                                        onClick={() => navigate(`/letters/${letter.id}/edit`)}
-                                                        className="block w-full text-left px-4 py-2 hover:bg-gray-600"
-                                                    >
-                                                        {t("allletters.actions.delete")}
-                                                    </button>
-                                                </li>
-                                                {/* <li>
-                                                    <button
                                                         onClick={() => navigate(`/letters/${letter.id}/edit`)}
                                                         className="block w-full text-left px-4 py-2 hover:bg-gray-600"
                                                     >
@@ -181,20 +164,20 @@ const AllLetters = () => {
                                                 </li>
                                                 <li>
                                                     <button
-                                                        onClick={() => navigate(`/letters/${letter.organization_id}/employee/create-employee`)}
+                                                        onClick={() => handleDelete(letter.id)}
                                                         className="block w-full text-left px-4 py-2 hover:bg-gray-600"
                                                     >
-                                                        {t("allletters.actions.addEmployees")}
+                                                        {t("allletters.actions.delete")}
                                                     </button>
                                                 </li>
                                                 <li>
                                                     <button
-                                                        onClick={() => navigate(`/letters/${letter.organization_id}/employee/all-employees`)}
+                                                        onClick={() => navigate(`/letters/view-letter/${letter.id}`)}
                                                         className="block w-full text-left px-4 py-2 hover:bg-gray-600"
                                                     >
-                                                        {t("allletters.actions.allEmployees")}
+                                                        {t("allletters.actions.view")}
                                                     </button>
-                                                </li> */}
+                                                </li>
                                             </ul>
                                         </div>
                                     )}
