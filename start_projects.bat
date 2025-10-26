@@ -26,12 +26,11 @@ if not exist "BE\venv" (
     call .\venv\Scripts\activate.bat
     cd NEAProjectBE
     python manage.py migrate
-    python manage.py create_admin
     cd ..\..
 )
 
 REM Start Django backend in a new minimized window
-start "Django Backend" /min cmd /k "cd BE && call .\venv\Scripts\activate.bat && cd NEAProjectBE && python manage.py runserver 0.0.0.0:8000"
+start "Django Backend" /min cmd /k "cd BE && call .\venv\Scripts\activate.bat && cd NEAProjectBE && python manage.py create_admin && python manage.py runserver 0.0.0.0:8000"
 
 REM Start React frontend in a new minimized window
 start "React Frontend" /min cmd /k "cd .\FE\NEAprojectFE && npm run dev"
