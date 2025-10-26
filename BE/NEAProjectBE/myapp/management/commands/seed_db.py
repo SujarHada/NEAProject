@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from myapp.models import (
-    Office, Branch, Employee, Receiver, Letter, Product, Dashboard,
+    Office, Branch, Employee, Letter, LetterItem, Dashboard,
     LetterStatus, ProductStatus, BranchStatus, OfficeStatus,
     UnitOfMeasurement, EmployeeRole, EmployeeStatus, User, UserRole
 )
@@ -18,7 +18,7 @@ class Command(BaseCommand):
             # Create admin user
             admin_user = User.objects.create_user(
                 email='admin@example.com',
-                name='System Administrator',  # Added name
+                name='System Administrator',
                 password='admin123',
                 role=UserRole.ADMIN
             )
@@ -27,7 +27,7 @@ class Command(BaseCommand):
             # Create viewer user
             viewer_user = User.objects.create_user(
                 email='viewer@example.com',
-                name='Sample Viewer',  # Added name
+                name='Sample Viewer',
                 password='viewer123',
                 role=UserRole.VIEWER
             )
@@ -61,7 +61,7 @@ class Command(BaseCommand):
 
         # Create Employees
         employees = []
-        valid_roles = [role[0] for role in EmployeeRole.choices]  # ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+        valid_roles = [role[0] for role in EmployeeRole.choices]
         
         for branch in branches:
             for _ in range(2):  # Create 2 employees per branch
@@ -71,60 +71,71 @@ class Command(BaseCommand):
                     middle_name=fake.first_name() if random.random() > 0.5 else '',
                     last_name=fake.last_name(),
                     email=fake.unique.email(),
-                    role=random.choice(valid_roles),  # Random role from 1-9
+                    role=random.choice(valid_roles),
                     status=EmployeeStatus.ACTIVE,
                 )
                 employees.append(employee)
         self.stdout.write(self.style.SUCCESS(f'Created {len(employees)} employees'))
 
-        # Create receivers
-        receivers = []
-        id_card_types = [card_type[0] for card_type in Receiver.IDCardType.choices]
-        
-        for _ in range(10):
-            receiver = Receiver.objects.create(
-                name=fake.name(),
-                post=fake.job(),
-                id_card_number=fake.unique.uuid4()[:20],
-                id_card_type=random.choice(id_card_types),
-                office_name=fake.company(),
-                office_address=fake.address(),
-                phone_number=fake.phone_number(),
-                vehicle_number=fake.license_plate()
-            )
-            receivers.append(receiver)
-        self.stdout.write(self.style.SUCCESS(f'Created {len(receivers)} receivers'))
-
-        # Create letters
+        # Create letters with new field structure
         letters = []
-        for _ in range(15):
+        id_card_types = ["unknown", "national_id", "citizenship", "voter_id", "passport", "drivers_license", "pan_card"]
+        nepali_numerals = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९']
+        
+        for i in range(15):
+            # Generate Nepali numeral for letter count
+            letter_count_nepali = ''.join(random.choice(nepali_numerals) for _ in range(2))
+            
             letter = Letter.objects.create(
-                title=fake.sentence(nb_words=6),
-                content=fake.paragraph(nb_sentences=5),
-                receiver=random.choice(receivers) if receivers else None,
+                # Main letter fields
+                letter_count=letter_count_nepali,
+                chalani_no=fake.random_number(digits=8),
+                voucher_no=fake.random_number(digits=5),
+                date="२०८२-०७-१५",
+                receiver_office_name=fake.company(),  # Main receiver office
+                receiver_address=fake.address(),
+                subject=fake.sentence(nb_words=6),
+                request_chalani_number=''.join(random.choice(nepali_numerals) for _ in range(8)),
+                request_letter_count=''.join(random.choice(nepali_numerals) for _ in range(1)),
+                request_date="२०८२-०६-३०",
+                gatepass_no=fake.random_number(digits=6),
+                
+                # Receiver information (individual receiver)
+                receiver_name=fake.name(),
+                receiver_post=fake.job(),
+                receiver_id_card_number=fake.unique.uuid4()[:15],
+                receiver_id_card_type=random.choice(id_card_types),
+                # Note: receiver_office_name is already used above, using different name for individual
+                receiver_office_address=fake.address(),
+                receiver_phone_number=''.join(random.choice(nepali_numerals) for _ in range(10)),
+                receiver_vehicle_number=f"बा {random.randint(1,9)} पा {random.randint(1000,9999)}",
+                
+                # Status
                 status=random.choice([LetterStatus.DRAFT, LetterStatus.SENT])
             )
             letters.append(letter)
-        self.stdout.write(self.style.SUCCESS(f'Created {len(letters)} letters'))
-
-        # Create products
-        products = []
-        measurement_units = [unit[0] for unit in UnitOfMeasurement.choices]
-        
-        for _ in range(20):
-            product = Product.objects.create(
-                name=fake.word().title() + " " + fake.word().title(),
-                company=fake.company(),
-                status=ProductStatus.ACTIVE,
-                remarks=fake.sentence(),
-                unit_of_measurement=random.choice(measurement_units)
-            )
-            products.append(product)
-        self.stdout.write(self.style.SUCCESS(f'Created {len(products)} products'))
+            
+            # Create letter items for each letter
+            items_count = random.randint(1, 4)
+            for j in range(items_count):
+                LetterItem.objects.create(
+                    letter=letter,
+                    name=fake.word().title() + " " + fake.word().title(),
+                    company=fake.company(),
+                    serial_number=fake.random_number(digits=9),
+                    unit_of_measurement=random.choice(["वटा", "प्याक", "किलो", "लीटर", "मिटर"]),
+                    quantity=fake.random_number(digits=2),
+                    remarks=fake.sentence() if random.random() > 0.3 else ""
+                )
+            
+        self.stdout.write(self.style.SUCCESS(f'Created {len(letters)} letters with items'))
 
         # Create dashboard statistics
-        dashboard = Dashboard.get_current_stats()
-        self.stdout.write(self.style.SUCCESS('Created/Updated dashboard statistics'))
+        try:
+            dashboard = Dashboard.get_current_stats()
+            self.stdout.write(self.style.SUCCESS('Created/Updated dashboard statistics'))
+        except:
+            self.stdout.write(self.style.WARNING('Dashboard statistics update skipped'))
 
         # Display sample information
         if employees:
@@ -135,13 +146,15 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f'  - Role: {sample_employee.get_role_display()}'))
             self.stdout.write(self.style.SUCCESS(f'  - Branch: {sample_employee.branch.name}'))
 
-        if products:
-            sample_product = products[0]
-            self.stdout.write(self.style.SUCCESS('\nSample Product Data:'))
-            self.stdout.write(self.style.SUCCESS(f'  - Name: {sample_product.name}'))
-            self.stdout.write(self.style.SUCCESS(f'  - Company: {sample_product.company}'))
-            self.stdout.write(self.style.SUCCESS(f'  - SKU: {sample_product.sku}'))
-            self.stdout.write(self.style.SUCCESS(f'  - Unit: {sample_product.get_unit_of_measurement_display()}'))
+        if letters:
+            sample_letter = letters[0]
+            self.stdout.write(self.style.SUCCESS('\nSample Letter Data:'))
+            self.stdout.write(self.style.SUCCESS(f'  - Letter Count: {sample_letter.letter_count}'))
+            self.stdout.write(self.style.SUCCESS(f'  - Subject: {sample_letter.subject}'))
+            self.stdout.write(self.style.SUCCESS(f'  - Receiver Office: {sample_letter.receiver_office_name}'))
+            self.stdout.write(self.style.SUCCESS(f'  - Receiver Name: {sample_letter.receiver_name}'))
+            self.stdout.write(self.style.SUCCESS(f'  - Status: {sample_letter.get_status_display()}'))
+            self.stdout.write(self.style.SUCCESS(f'  - Items Count: {sample_letter.items.count()}'))
 
         # Display sample user information
         self.stdout.write(self.style.SUCCESS('\nSample User Accounts:'))
@@ -153,7 +166,6 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f'  - Offices: {len(offices)}'))
         self.stdout.write(self.style.SUCCESS(f'  - Branches: {len(branches)}'))
         self.stdout.write(self.style.SUCCESS(f'  - Employees: {len(employees)}'))
-        self.stdout.write(self.style.SUCCESS(f'  - Receivers: {len(receivers)}'))
         self.stdout.write(self.style.SUCCESS(f'  - Letters: {len(letters)}'))
-        self.stdout.write(self.style.SUCCESS(f'  - Products: {len(products)}'))
+        self.stdout.write(self.style.SUCCESS(f'  - Letter Items: {LetterItem.objects.count()}'))
         self.stdout.write(self.style.SUCCESS(f'  - Users: 2 (admin@example.com, viewer@example.com)'))
