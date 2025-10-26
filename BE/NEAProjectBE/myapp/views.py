@@ -597,6 +597,23 @@ class OfficeViewSet(viewsets.ModelViewSet):
                 office.updated_at.strftime('%Y-%m-%d %H:%M:%S')
             ])
         return response
+    @action(detail=False, methods=['get'], url_path='all-active')
+    def all_active(self, request):
+        """Get all active offices without pagination"""
+        queryset = Office.objects.filter(status=OfficeStatus.ACTIVE).order_by("-created_at")
+        
+        # Create index map for serial numbers
+        office_index_map = {obj.id: idx for idx, obj in enumerate(queryset)}
+        request.office_index_map = office_index_map
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            "status": "success",
+            "message": "Active offices retrieved successfully",
+            "count": queryset.count(),
+            "data": serializer.data
+        })
+
 
 class BranchViewSet(viewsets.ModelViewSet):
     queryset = Branch.objects.all().order_by("-created_at")
@@ -675,6 +692,23 @@ class BranchViewSet(viewsets.ModelViewSet):
                 branch.updated_at.strftime('%Y-%m-%d %H:%M:%S')
             ])
         return response
+ 
+    @action(detail=False, methods=['get'], url_path='all-active')
+    def all_active(self, request):
+        """Get all active branches without pagination"""
+        queryset = Branch.objects.filter(status=BranchStatus.ACTIVE).order_by("-created_at")
+        
+        # Create index map for serial numbers
+        branch_index_map = {obj.id: idx for idx, obj in enumerate(queryset)}
+        request.branch_index_map = branch_index_map
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            "status": "success",
+            "message": "Active branches retrieved successfully",
+            "count": queryset.count(),
+            "data": serializer.data
+        })
 
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all().order_by("-created_at")
@@ -973,6 +1007,23 @@ class EmployeeViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(employees, many=True)
         return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'], url_path='all-active')
+    def all_active(self, request):
+        """Get all active employees without pagination"""
+        queryset = Employee.objects.filter(status=EmployeeStatus.ACTIVE).order_by("-created_at")
+        
+        # Create index map for serial numbers
+        employee_index_map = {obj.id: idx for idx, obj in enumerate(queryset)}
+        request.employee_index_map = employee_index_map
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            "status": "success",
+            "message": "Active employees retrieved successfully",
+            "count": queryset.count(),
+            "data": serializer.data
+        })
 
 class ReceiverViewSet(viewsets.ModelViewSet):
     queryset = Receiver.objects.all().order_by("-created_at")
@@ -996,6 +1047,18 @@ class ReceiverViewSet(viewsets.ModelViewSet):
                 receiver.updated_at.strftime('%Y-%m-%d %H:%M:%S')
             ])
         return response
+    @action(detail=False, methods=['get'], url_path='all-active')
+    def all_active(self, request):
+        """Get all receivers without pagination (receivers don't have status field)"""
+        queryset = Receiver.objects.all().order_by("-created_at")
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            "status": "success",
+            "message": "All receivers retrieved successfully",
+            "count": queryset.count(),
+            "data": serializer.data
+        })
 
 class LetterViewSet(viewsets.ModelViewSet):
     queryset = Letter.objects.all().order_by("-created_at")
@@ -1460,6 +1523,23 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response({"status": "success", "message": f"Successfully moved {count} products to bin", "count": count}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"status": "error", "message": f"Error during bulk delete: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False, methods=['get'], url_path='all-active')
+    def all_active(self, request):
+        """Get all active products without pagination"""
+        queryset = Product.objects.filter(status=ProductStatus.ACTIVE).order_by("-created_at")
+        
+        # Create index map for serial numbers
+        product_index_map = {obj.id: idx for idx, obj in enumerate(queryset)}
+        request.product_index_map = product_index_map
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            "status": "success",
+            "message": "Active products retrieved successfully",
+            "count": queryset.count(),
+            "data": serializer.data
+        })
 
 class DashboardViewSet(viewsets.ViewSet):
     permission_classes = [IsViewerOrAdmin]
