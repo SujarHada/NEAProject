@@ -8,6 +8,7 @@ import Letters from "../components/pages/letters/Letters";
 import CreateLetter from "../components/pages/letters/CreateLetter";
 import AllLetters from "../components/pages/letters/AllLetters";
 import LettersBin from "../components/pages/letters/LettersBin";
+import ShowLetter from "../components/pages/letters/ShowLetter";
 
 import Product from "../components/pages/products/Product";
 import CreateProducts from "../components/pages/products/CreateProducts";
@@ -55,6 +56,7 @@ const router = createBrowserRouter([
                 element: createElement(Letters),
                 children: [
                     { path: "all-letters", element: createElement(AllLetters) },
+                    { path: "view-letter", element: createElement(ShowLetter) },
                     { path: "letter-bin", element: createElement(LettersBin) },
                     {
                         element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),

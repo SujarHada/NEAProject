@@ -1,10 +1,8 @@
-import React from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { id_types } from "../../../enum/id_types";
 
-// --- Zod Schema ---
 const createLetterSchema = z.object({
     letterCount: z.string({error: "Letter Count is required"}).regex(/^[0-9]+$/, "Incorrect format"),
     chalaniNo: z.number({ error: "Chalani No must be a number" }),
@@ -48,9 +46,7 @@ const createLetterSchema = z.object({
 });
 
 export type CreateLetter = z.infer<typeof createLetterSchema>;
-
-// --- Form Component ---
-const CreateLetter: React.FC = () => {
+const CreateLetter = () => {
     const { control, handleSubmit, formState: { isSubmitting, errors } } = useForm<CreateLetter>({
         resolver: zodResolver(createLetterSchema),
         defaultValues: {
@@ -92,7 +88,6 @@ const CreateLetter: React.FC = () => {
 
     const onSubmit = (data: CreateLetter) => {
         console.log("Submitted Data:", data);
-        alert("Form submitted! Check console.");
     };
 
     return (
