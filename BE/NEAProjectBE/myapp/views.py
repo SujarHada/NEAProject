@@ -10,11 +10,11 @@ from datetime import datetime
 from django.db.models import Count, Q
 from django.http import HttpResponse
 import csv
-from datetime import datetime 
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, update_session_auth_hash
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
+from django.db import transaction
 
 from .models import (
     EmployeeStatus, Office, Branch, Employee, Receiver, Letter, Product, 
@@ -1067,8 +1067,14 @@ class LetterViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["status"]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        # Prefetch related items for better performance
+        return queryset.prefetch_related('items')
+    
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
-        """Create a new letter with proper response"""
+        """Create a new letter with items"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         letter = serializer.save()
@@ -1109,8 +1115,9 @@ class LetterViewSet(viewsets.ModelViewSet):
             "data": serializer.data
         })
 
+    @transaction.atomic
     def update(self, request, *args, **kwargs):
-        """Update a letter"""
+        """Update a letter with items"""
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
@@ -1130,13 +1137,13 @@ class LetterViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         """Move letter to bin (soft delete)"""
         instance = self.get_object()
-        letter_title = instance.title
+        letter_subject = instance.subject or f"Letter {instance.id}"
         instance.status = LetterStatus.BIN
         instance.save(update_fields=["status", "updated_at"])
         
         return Response({
             "status": "success",
-            "message": f"Letter '{letter_title}' has been moved to bin",
+            "message": f"Letter '{letter_subject}' has been moved to bin",
             "id": instance.id
         }, status=status.HTTP_200_OK)
 
@@ -1151,22 +1158,31 @@ class LetterViewSet(viewsets.ModelViewSet):
                 "message": "No letters found to export"
             }, status=status.HTTP_404_NOT_FOUND)
 
-        response = HttpResponse(content_type='text/csv')
+        # Change this line to use utf-8-sig encoding
+        response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
         response['Content-Disposition'] = f'attachment; filename="letters_export_{timestamp}.csv"'
         
         writer = csv.writer(response)
-        writer.writerow(['S.N.', 'ID', 'Title', 'Content Preview', 'Receiver Name', 'Receiver Post', 'Status', 'Created At', 'Updated At'])
+        
+        # Write headers
+        writer.writerow([
+            'S.N.', 'ID', 'Letter Count', 'Chalani No', 'Voucher No', 'Date', 
+            'Subject', 'Receiver Office', 'Receiver Address', 'Status', 
+            'Created At', 'Updated At'
+        ])
         
         for index, letter in enumerate(queryset, start=1):
-            content_preview = letter.content[:100] + "..." if len(letter.content) > 100 else letter.content
             writer.writerow([
                 index, 
                 letter.id, 
-                letter.title, 
-                content_preview,
-                letter.receiver.name if letter.receiver else 'N/A',
-                letter.receiver.post if letter.receiver else 'N/A',
+                letter.letter_count,
+                letter.chalani_no or 'N/A',
+                letter.voucher_no or 'N/A',
+                letter.date,
+                letter.subject,
+                letter.receiver_office_name,
+                letter.receiver_address,
                 letter.get_status_display(),
                 letter.created_at.strftime('%Y-%m-%d %H:%M:%S'),
                 letter.updated_at.strftime('%Y-%m-%d %H:%M:%S')
@@ -1180,17 +1196,19 @@ class LetterViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         
         if instance.status == LetterStatus.SENT:
+            letter_subject = instance.subject or f"Letter {instance.id}"
             return Response({
                 "status": "error",
-                "message": f"Letter '{instance.title}' is already sent"
+                "message": f"Letter '{letter_subject}' is already sent"
             }, status=status.HTTP_400_BAD_REQUEST)
         
         instance.status = LetterStatus.SENT
         instance.save(update_fields=["status", "updated_at"])
         
+        letter_subject = instance.subject or f"Letter {instance.id}"
         return Response({
             "status": "success",
-            "message": f"Letter '{instance.title}' has been marked as sent",
+            "message": f"Letter '{letter_subject}' has been marked as sent",
             "data": LetterSerializer(instance).data
         })
 
@@ -1200,17 +1218,19 @@ class LetterViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         
         if instance.status == LetterStatus.DRAFT:
+            letter_subject = instance.subject or f"Letter {instance.id}"
             return Response({
                 "status": "error",
-                "message": f"Letter '{instance.title}' is already in draft"
+                "message": f"Letter '{letter_subject}' is already in draft"
             }, status=status.HTTP_400_BAD_REQUEST)
         
         instance.status = LetterStatus.DRAFT
         instance.save(update_fields=["status", "updated_at"])
         
+        letter_subject = instance.subject or f"Letter {instance.id}"
         return Response({
             "status": "success",
-            "message": f"Letter '{instance.title}' has been marked as draft",
+            "message": f"Letter '{letter_subject}' has been marked as draft",
             "data": LetterSerializer(instance).data
         })
 
@@ -1220,17 +1240,19 @@ class LetterViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         
         if instance.status != LetterStatus.BIN:
+            letter_subject = instance.subject or f"Letter {instance.id}"
             return Response({
                 "status": "error",
-                "message": f"Letter '{instance.title}' is not in bin"
+                "message": f"Letter '{letter_subject}' is not in bin"
             }, status=status.HTTP_400_BAD_REQUEST)
         
         instance.status = LetterStatus.DRAFT
         instance.save(update_fields=["status", "updated_at"])
         
+        letter_subject = instance.subject or f"Letter {instance.id}"
         return Response({
             "status": "success",
-            "message": f"Letter '{instance.title}' has been restored from bin",
+            "message": f"Letter '{letter_subject}' has been restored from bin",
             "data": LetterSerializer(instance).data
         })
 
@@ -1252,39 +1274,6 @@ class LetterViewSet(viewsets.ModelViewSet):
                 "bin_letters": bin_letters
             }
         })
-
-    @action(detail=False, methods=['get'])
-    def search(self, request):
-        """Search letters by title or content"""
-        search_query = request.query_params.get('q', '')
-        
-        if not search_query:
-            return Response({
-                "status": "error",
-                "message": "Search query parameter 'q' is required"
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
-        queryset = Letter.objects.filter(
-            Q(title__icontains=search_query) | 
-            Q(content__icontains=search_query)
-        ).order_by("-created_at")
-        
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response({
-                "status": "success",
-                "message": f"Search results for '{search_query}'",
-                "data": serializer.data
-            })
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response({
-            "status": "success",
-            "message": f"Search results for '{search_query}'",
-            "data": serializer.data
-        })
-
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all().order_by("-created_at")
     serializer_class = ProductSerializer
