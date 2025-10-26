@@ -5,38 +5,18 @@ import { type Branch, type createEmployeesInputs } from "../../../interfaces/int
 import { FaChevronDown } from "react-icons/fa"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useParams } from "react-router"
 import api from "../../../utils/api"
 import axios from "axios"
+import useDataStore from "../../../store/useDataStore"
 const CreateEmployee = () => {
     const params = useParams()
     const { t } = useTranslation()
-    const [branches, setBranches] = useState<Branch[]>([])
-    const fetchAllBranches = async () => {
-        try {
-            let allBranches: Branch[] = [];
-            let nextUrl: string | null = "/api/branches/";
-
-            while (nextUrl) {
-                // @ts-ignore
-                const res = await api.get(nextUrl);
-                // @ts-ignore
-                const data = res.data;
-                allBranches = [...allBranches, ...data.results];
-                nextUrl = data.next;
-            }
-
-            setBranches(allBranches);
-        } catch (err) {
-            console.error("Failed to fetch branches:", err);
-        }
-    };
+    const { Branches: branches, getBranches } = useDataStore()
 
     useEffect(() => {
-        if (!branches.length) {
-            fetchAllBranches();
-        }
+        getBranches();
     }, []);
 
     useEffect(() => {
@@ -81,7 +61,7 @@ const CreateEmployee = () => {
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 if (err.response) {
-                    err.response.data.role.flat().forEach((err:string) => {
+                    err.response.data.role.flat().forEach((err: string) => {
                         alert(err)
                     })
                 } else if (err.request) {

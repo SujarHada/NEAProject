@@ -9,6 +9,7 @@ import CreateLetter from "../components/pages/letters/CreateLetter";
 import AllLetters from "../components/pages/letters/AllLetters";
 import LettersBin from "../components/pages/letters/LettersBin";
 import ShowLetter from "../components/pages/letters/ShowLetter";
+import EditLetter from "../components/pages/letters/EditLetter";
 
 import Product from "../components/pages/products/Product";
 import CreateProducts from "../components/pages/products/CreateProducts";
@@ -60,7 +61,9 @@ const router = createBrowserRouter([
                     { path: "letter-bin", element: createElement(LettersBin) },
                     {
                         element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
-                        children: [{ path: "create-letter", element: createElement(CreateLetter) }],
+                        children: [{ path: "create-letter", element: createElement(CreateLetter) },
+                            {path: ":id/edit", element: createElement(EditLetter)}
+                        ],
                     },
                 ],
             },

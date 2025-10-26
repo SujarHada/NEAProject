@@ -76,7 +76,7 @@ export interface dashboard {
 
 export interface user {
   id: string,
-  name:string,
+  name: string,
   email: string,
   role: string
 }
@@ -86,7 +86,7 @@ export interface userloginResponse {
   user: user
 }
 
-export interface meResponse extends user{}
+export interface meResponse extends user { }
 
 export interface createLetter {
   letterCount: string
@@ -118,4 +118,30 @@ export interface createLetter {
     phone_number: string
     vehicle_number: string
   }
+}
+
+
+export interface Letter {
+  id: number
+  letter_count: string
+  chalani_no: string
+  voucher_no: string
+  date: string
+  receiver_office_name: string
+  receiver_address: string
+  subject: string
+  request_chalani_number: string
+  request_letter_count: string
+  request_date: string
+  items: {
+    id: number
+    name: string
+    company: string
+    serial_number: string
+    unit_of_measurement: string
+    quantity: string
+    remarks: string
+  }
+  gatepass_no: string
+  receiver: Omit<Receiver, 'id'>
 }
