@@ -177,7 +177,13 @@ class LetterItemSerializer(serializers.ModelSerializer):
         model = LetterItem
         fields = ['id', 'name', 'company', 'serial_number', 'unit_of_measurement', 'quantity', 'remarks']
 
-class ReceiverSerializer(serializers.Serializer):
+class ReceiverSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Receiver
+        fields = "__all__"
+
+class LetterReceiverSerializer(serializers.Serializer):
+    """Serializer for receiver data inside letters"""
     name = serializers.CharField(max_length=200, required=False, allow_blank=True)
     post = serializers.CharField(max_length=100, required=False, allow_blank=True)
     id_card_number = serializers.CharField(max_length=100, required=False, allow_blank=True)
@@ -199,6 +205,18 @@ class ReceiverSerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=50, required=False, allow_blank=True)
     vehicle_number = serializers.CharField(max_length=50, required=False, allow_blank=True)
 
+    def create(self, validated_data):
+        """Implement create method for the non-ModelSerializer"""
+        # This serializer is only used for nested data in letters, not for creating standalone receivers
+        return validated_data
+
+    def update(self, instance, validated_data):
+        """Implement update method for the non-ModelSerializer"""
+        # This serializer is only used for nested data in letters
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        return instance
+
 class LetterItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = LetterItem
@@ -206,7 +224,7 @@ class LetterItemSerializer(serializers.ModelSerializer):
 
 class LetterSerializer(serializers.ModelSerializer):
     items = LetterItemSerializer(many=True, required=False)
-    receiver = ReceiverSerializer(required=False)
+    receiver = LetterReceiverSerializer(required=False)
     
     class Meta:
         model = Letter
