@@ -141,7 +141,7 @@ export interface Letter {
     unit_of_measurement: string
     quantity: string
     remarks: string
-  }
+  }[]
   gatepass_no: string
   receiver: Omit<Receiver, 'id'>
 }

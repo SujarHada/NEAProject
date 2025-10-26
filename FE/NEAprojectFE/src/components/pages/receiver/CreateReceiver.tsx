@@ -41,17 +41,17 @@ const CreateReceiver = () => {
             mode: "onSubmit"
         }
     )
-    const { Offices, getBranches } = useDataStore()
+    const { Offices, getOffices } = useDataStore()
     useEffect(() => {
-        getBranches()
+        getOffices()
     }, [])
 
-    const handleBranchSelect = (branchId: string) => {
-        // console.log("Selected Branch ID:", branchId);
-        const branch = Offices.find(b => b.id === parseInt(branchId));
-        if (branch) {
-            setValue("office_name", branch.name);
-            setValue("office_address", branch.address);
+    const handleOfficeSelect = (officeId: string) => {
+        // console.log("Selected office ID:", officeId);
+        const office = Offices.find(b => b.id === parseInt(officeId));
+        if (office) {
+            setValue("office_name", office.name);
+            setValue("office_address", office.address);
         }
     }
 
@@ -125,11 +125,11 @@ const CreateReceiver = () => {
             {/* <div className="flex gap-4 w-1/2 flex-wrap"> */}
                 <div className="sm:w-1/2 flex flex-1 flex-col gap-2 ">
                     <label htmlFor="office_name"> Office *</label>
-                    <select onChange={(e) => handleBranchSelect(e.target.value)} className="bg-[#B5C9DC]  w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                    <select onChange={(e) => handleOfficeSelect(e.target.value)} className="bg-[#B5C9DC]  w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
                         <option value="" hidden> Select Office </option>
                         {
-                            Offices.map((branch) => (
-                                <option key={branch.id} value={branch.id}>{branch.name}</option>
+                            Offices.map((office) => (
+                                <option key={office.id} value={office.id}>{office.name}</option>
                             ))
                         }
                     </select>

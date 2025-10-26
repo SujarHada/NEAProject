@@ -185,7 +185,7 @@ const EditLetter = () => {
                         name="date"
                         control={control}
                         render={({ field }) => (
-                            <div className="bg-[#B5C9DC] border-2 h-10 outline-none z-50 rounded-md border-gray-600">
+                            <div className="bg-[#B5C9DC] border-2 h-10 outline-none z-0 rounded-md border-gray-600">
                                 <NepaliDatePicker {...field} onChange={(e) => { field.onChange(e!.toString()) }} className={'h-10 px-3 cursor-pointer'} placeholder="YYYY-MM-DD" />
                             </div>
                         )}

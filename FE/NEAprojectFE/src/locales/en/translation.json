@@ -390,5 +390,36 @@
       "post": "Post is required",
       "vehicleNo": "Vehicle No is required"
     }
+  },
+    "allletters": {
+    "title": "All Letters",
+    "download": "Download",
+    "noletters": "No letters found.",
+    "table": {
+      "receiver_office_name": "Receiver Office",
+      "voucher_no": "Voucher No",
+      "chalani_no": "Chalani No",
+      "gatepass_no": "Gatepass No",
+      "subject": "Subject",
+      "request_date": "Request Date",
+      "receiver_name": "Receiver Name",
+      "receiver_id_card_number": "Receiver ID Card No",
+      "receiver_phone_number": "Receiver Phone",
+      "action": "Actions"
+    },
+    "actions": {
+      "delete": "Delete",
+      "edit": "Edit"
+    },
+    "messages": {
+      "deleteSuccess": "Letter deleted successfully!",
+      "deleteError": "Failed to delete letter.",
+      "fetchError": "Unable to fetch letters.",
+      "downloadError": "Failed to download CSV file."
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next"
+    }
   }
 }

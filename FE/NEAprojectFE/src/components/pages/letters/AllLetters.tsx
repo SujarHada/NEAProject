@@ -107,18 +107,22 @@ const AllLetters = () => {
                 <table className="w-full text-sm text-left text-gray-400">
                     <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
                         <tr>
-                            <th className="px-6 py-3">{t("allletters.table.id")}</th>
-                            <th className="px-6 py-3">{t("allletters.table.name")}</th>
-                            <th className="px-6 py-3">{t("allletters.table.email")}</th>
-                            <th className="px-6 py-3">{t("allletters.table.phone")}</th>
-                            <th className="px-6 py-3">{t("allletters.table.address")}</th>
-                            <th className="px-6 py-3">{t("allletters.table.action")}</th>
+                            <th className="px-6 py-3" >{t("allletters.table.receiver_office_name")}</th>
+                            <th className="px-6 py-3" >{t("allletters.table.voucher_no")}</th>
+                            <th className="px-6 py-3" >{t("allletters.table.chalani_no")}</th>
+                            <th className="px-6 py-3" >{t("allletters.table.gatepass_no")}</th>
+                            <th className="px-6 py-3" >{t("allletters.table.subject")}</th>
+                            <th className="px-6 py-3" >{t("allletters.table.request_date")}</th>
+                            <th className="px-6 py-3" >{t("allletters.table.receiver_name")}</th>
+                            <th className="px-6 py-3" >{t("allletters.table.receiver_id_card_number")}</th>
+                            <th className="px-6 py-3" >{t("allletters.table.receiver_phone_number")}</th>
+                            <th className="px-6 py-3" >{t("allletters.table.action")}</th>
                         </tr>
                     </thead>
                     <tbody className="relative " >
                         {letters?.length === 0 && (
-                            <tr className="border-b bg-gray-800 border-gray-700">
-                                <td className="px-6 py-4 font-medium text-center text-white" colSpan={6}>
+                            <tr className="border-b w-full bg-gray-800 border-gray-700">
+                                <td className="px-6 py-4 font-medium text-center text-white" colSpan={10}>
                                     {t("allletters.noletters")}
                                 </td>
                             </tr>

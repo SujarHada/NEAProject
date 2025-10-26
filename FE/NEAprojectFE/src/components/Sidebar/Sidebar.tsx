@@ -119,7 +119,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 
     return (
         <div
-            className={`flex max-h-screen flex-col ${collapsed ? "w-10" : "w-55"} bg-gray-800 text-white min-h-screen max-md:absolute z-50`}
+            className={`flex max-h-screen flex-col ${collapsed ? "w-10" : "w-55"} bg-gray-800 text-white min-h-screen max-md:absolute z-[99999]`}
         >
             <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"} p-4`}>
                 {!collapsed && (
