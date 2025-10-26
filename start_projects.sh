@@ -28,7 +28,6 @@ else
     echo "venv found. Checking migrations..."
     source ./BE/venv/bin/activate
     cd ./BE/NEAProjectBE
-    python manage.py create_admin
     python manage.py migrate
     cd ../..
 fi
@@ -48,8 +47,10 @@ source ./BE/venv/bin/activate
 
 # Start Django backend in background
 cd ./BE/NEAProjectBE
+python manage.py create_admin
 python manage.py runserver 0.0.0.0:8000 &
 DJANGO_PID=$!
+
 
 # Start React frontend in background
 cd ../../FE/NEAprojectFE
