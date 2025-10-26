@@ -16,7 +16,7 @@ const CreateBranches = () => {
         address: z.string().min(1, t("createBranch.validation.address")),
         phone_number: z.string()
             .min(1, t("createBranch.validation.phone"))
-            .regex(/^\d+$/, t("createBranch.validation.phoneNum"))
+            .regex(/^[\d\u0966-\u096F]{10}$/, t("createBranch.validation.phoneNum"))
             .max(10, t("createBranch.validation.phoneMax"))
     })
 
@@ -33,7 +33,7 @@ const CreateBranches = () => {
 
     const onSubmit: SubmitHandler<BranchFormInputs> = async (data) => {
         const res = await api.post("/api/branches/", data)
-        if(res.status === 201){
+        if (res.status === 201) {
             navigate("/branches/all-branches")
         }
     }
@@ -79,7 +79,7 @@ const CreateBranches = () => {
                     {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
                 </div>
             </div>
-             <div className="lg:w-1/2 flex flex-col gap-2">
+            <div className="lg:w-1/2 flex flex-col gap-2">
                 <label htmlFor="phone_number">{t("createBranch.form.phone")} *</label>
                 <Controller
                     name="phone_number"
