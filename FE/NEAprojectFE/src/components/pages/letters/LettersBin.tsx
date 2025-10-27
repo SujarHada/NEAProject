@@ -60,7 +60,6 @@ const LettersBin = () => {
     }, [])
 
     const handleDelete = async (letterId: number) => {
-        console.log(letterId)
         try {
             const res = await api.delete(`/api/letters/${letterId}/`)
             if (res.status === 200) {
@@ -77,7 +76,7 @@ const LettersBin = () => {
         const res = await api.get('/api/letters/export_csv/', {
             responseType: 'blob',
             params: {
-                status: "active"
+                status: "bin"
             }
         })
         const blob = new Blob([res.data], { type: "text/csv" });
@@ -97,7 +96,7 @@ const LettersBin = () => {
     return (
         <div className="flex flex-col gap-5">
             <div className="flex items-center justify-between" >
-                <h1 className="text-2xl font-bold">{t("allletters.title")}</h1>
+                <h1 className="text-2xl font-bold">Letters Bin</h1>
                 <button onClick={handleDownload} className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5">
                     Download
                 </button>

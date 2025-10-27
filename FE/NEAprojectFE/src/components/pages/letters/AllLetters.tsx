@@ -37,8 +37,12 @@ const AllLetters = () => {
 
     const fetchletters = async (pageUrl?: string, pageNum?: number) => {
         try {
-            const apiUrl = pageUrl || `/api/letters/?page=${pageNum || currentPage}&status=draft`
-            const res = await api.get(apiUrl)
+            const apiUrl = pageUrl || `/api/letters/?page=${pageNum || currentPage}`
+            const res = await api.get(apiUrl,{
+                params: {
+                    status: "draft"
+                }
+            })
             console.log(res.data)
             setLetters(res.data.results.data)
             setLetterCount(res.data.count)

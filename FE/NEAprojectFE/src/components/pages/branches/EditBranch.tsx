@@ -20,7 +20,7 @@ const EditBranch = () => {
         address: z.string().min(1, t("editBranch.validation.address")),
         phone_number: z.string()
             .min(1, t("editBranch.validation.phone"))
-            .regex(/^\d+$/, t("editBranch.validation.phoneNum"))
+            .regex(/^[\d\u0966-\u096F]+$/, t("editBranch.validation.phoneNum"))
             .max(10, t("editBranch.validation.phoneMax"))
     })
 

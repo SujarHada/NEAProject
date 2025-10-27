@@ -52,7 +52,7 @@ const EditLetterSchema = z.object({
         ]),
         office_name: z.string().min(1, "Office name is required"),
         office_address: z.string().min(1, "Office address is required"),
-        phone_number: z.string().min(1, "Phone number is required"),
+        phone_number: z.string().regex(/^[\d\u0966-\u096F]+$/, "Phone number must be numeric").min(1, "Phone number is required"),
         vehicle_number: z.string().min(1, "Vehicle number is required"),
     }),
 });

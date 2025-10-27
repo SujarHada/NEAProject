@@ -32,7 +32,7 @@ const EditReceiver = () => {
         id_card_type: z.enum(["national_id", "citizenship", "voter_id", "passport", "drivers_license", "pan_card", "unknown"], t("editReceiver.errors.idType")),
         phone_number: z.string()
             .min(1, t("editReceiver.errors.phone"))
-            .regex(/^\d+$/, t("editReceiver.errors.phoneNum"))
+            .regex(/^[\d\u0966-\u096F]+$/, t("editReceiver.errors.phoneNum"))
             .max(10, t("editReceiver.errors.phoneMax")),
         post: z.string().min(1, t("editReceiver.errors.post")),
         vehicle_number: z.string().min(1, t("editReceiver.errors.vehicleNo")),

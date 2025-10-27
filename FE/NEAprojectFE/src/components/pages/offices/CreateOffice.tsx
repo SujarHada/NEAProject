@@ -15,7 +15,7 @@ const CreateOffice = () => {
         address: z.string().min(1, t("createOffice.errors.addressRequired")),
         phone_number: z.string()
             .min(1, t("createOffice.errors.phoneRequired"))
-            .regex(/^\d+$/, t("createOffice.errors.phoneNumber"))
+            .regex(/^[\d\u0966-\u096F]+$/, t("createOffice.errors.phoneNumber"))
             .max(10, t("createOffice.errors.phoneMax"))
     })
 
