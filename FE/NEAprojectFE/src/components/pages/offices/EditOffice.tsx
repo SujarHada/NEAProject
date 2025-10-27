@@ -1,11 +1,11 @@
 import { useForm, Controller, type SubmitHandler } from "react-hook-form"
-import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type Office, type OfficeFormInputs } from "../../../interfaces/interfaces"
 import { useParams, useNavigate } from "react-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import api from "../../../utils/api"
+import { updateOfficeFormschema } from "../../../schemas/office"
 
 const EditOffice = () => {
     const { t } = useTranslation()
@@ -14,15 +14,7 @@ const EditOffice = () => {
     const [office, setOffice] = useState<Office | null>(null)
     const [err, setErr] = useState<string | null>(null)
 
-    const EditOfficeFormschema = z.object({
-        name: z.string().min(1, t("editOffice.validation.name")),
-        email: z.email({ message: t("editOffice.validation.emailInvalid") }).min(1, t("editOffice.validation.email")),
-        address: z.string().min(1, t("editOffice.validation.address")),
-        phone_number: z.string()
-            .min(1, t("editOffice.validation.phone"))
-            .regex(/^[\d\u0966-\u096F]+$/, t("editOffice.validation.phoneNumber"))
-            .max(10, t("editOffice.validation.phoneMax"))
-    })
+    const EditOfficeFormschema = updateOfficeFormschema(t)
 
     const { control, handleSubmit, formState: { isSubmitting, errors }, setValue } = useForm<OfficeFormInputs>({
         defaultValues: {

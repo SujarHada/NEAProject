@@ -1,5 +1,4 @@
 import { useForm, Controller } from "react-hook-form"
-import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type createEmployeesInputs, type Employee } from "../../../interfaces/interfaces"
 import { FaChevronDown } from "react-icons/fa"
@@ -8,6 +7,7 @@ import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { type Branch } from "../../../interfaces/interfaces"
 import api from "../../../utils/api"
+import { updateEmployeesFormSchema } from "../../../schemas/employee"
 
 const EditEmployee = () => {
     const { t } = useTranslation()
@@ -48,14 +48,7 @@ const EditEmployee = () => {
             }
         }
     }, [param.id, branches, employee])
-    const formSchema = z.object({
-        first_name: z.string().min(1, t("editEmployee.errors.firstName")),
-        middle_name: z.string().optional(),
-        last_name: z.string().min(1, t("editEmployee.errors.lastName")),
-        email: z.email(t("editEmployee.errors.emailInvalid")).min(1, t("editEmployee.errors.emailRequired")),
-        organization_id: z.number().positive(t("editEmployee.errors.branchId")),
-        role: z.string().min(1, t("editEmployee.errors.position")),
-    })
+    const formSchema = updateEmployeesFormSchema(t)
 
     const { control, handleSubmit, formState: { isSubmitting, errors }, setValue, reset } = useForm<createEmployeesInputs>({
         defaultValues: {
