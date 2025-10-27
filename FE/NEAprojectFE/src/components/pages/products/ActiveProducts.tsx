@@ -36,8 +36,13 @@ const ActiveProducts = () => {
             setPrevPage(res.data.previous)
 
             if (pageNum) setCurrentPage(pageNum)
-        } catch (err) {
-            console.error("Error fetching products:", err)
+        } catch (err: any) {
+            if (err.response?.status === 404 && currentPage > 1) {
+                await fetchProducts(undefined, currentPage - 1)
+                return
+            }
+            console.error("Error fetching receivers:", err)
+            return []
         }
     }
 

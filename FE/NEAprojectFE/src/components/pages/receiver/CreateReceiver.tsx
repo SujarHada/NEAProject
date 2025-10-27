@@ -7,6 +7,8 @@ import { useTranslation } from "react-i18next"
 import { FaChevronDown } from "react-icons/fa"
 import { id_types } from "../../../enum/id_types"
 import api from "../../../utils/api"
+import useDataStore from "../../../store/useDataStore"
+import { useEffect } from "react"
 const CreateReceiver = () => {
     const { t } = useTranslation()
     const navigate = useNavigate()
@@ -18,12 +20,12 @@ const CreateReceiver = () => {
         id_card_type: z.enum(["national_id", "citizenship", "voter_id", "passport", "drivers_license", "pan_card", "unknown"], t("createReceiver.errors.idType")),
         phone_number: z.string()
             .min(1, t("createReceiver.errors.phone"))
-            .regex(/^\d+$/, t("createReceiver.errors.phoneNum"))
+            .regex(/^[\d\u0966-\u096F]+$/, t("createReceiver.errors.phoneNum"))
             .max(10, t("createReceiver.errors.phoneMax")),
         post: z.string().min(1, t("createReceiver.errors.post")),
         vehicle_number: z.string().min(1, t("createReceiver.errors.vehicleNo")),
     })
-    const { control, handleSubmit, formState: { isSubmitting, errors } } = useForm<createReceiverInputs>(
+    const { control, handleSubmit, formState: { isSubmitting, errors }, setValue } = useForm<createReceiverInputs>(
         {
             defaultValues: {
                 name: "",
@@ -39,6 +41,19 @@ const CreateReceiver = () => {
             mode: "onSubmit"
         }
     )
+    const { Offices, getOffices } = useDataStore()
+    useEffect(() => {
+        getOffices()
+    }, [])
+
+    const handleOfficeSelect = (officeId: string) => {
+        // console.log("Selected office ID:", officeId);
+        const office = Offices.find(b => b.id === parseInt(officeId));
+        if (office) {
+            setValue("office_name", office.name);
+            setValue("office_address", office.address);
+        }
+    }
 
     const onSubmit: SubmitHandler<createReceiverInputs> = async (data) => {
         const res = await api.post("/api/receivers/", data)
@@ -88,14 +103,6 @@ const CreateReceiver = () => {
                 </div>
                 <div className="w-full flex flex-1 flex-col gap-2">
                     <label htmlFor="id_card_type"> {t("createReceiver.labels.idType")} </label>
-                    {/* <Controller
-                        name="id_card_type"
-                        control={control}
-                        render={({ field }) => (
-                            <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="id_card_type" />
-                        )}
-                    /> */}
-
                     <Controller
                         name="id_card_type"
                         control={control}
@@ -115,7 +122,20 @@ const CreateReceiver = () => {
                     {errors.id_card_type && <p className="text-red-500">{errors.id_card_type.message}</p>}
                 </div>
             </div>
-            <div className="flex gap-4 w-full flex-wrap">
+            {/* <div className="flex gap-4 w-1/2 flex-wrap"> */}
+                <div className="sm:w-1/2 flex flex-1 flex-col gap-2 ">
+                    <label htmlFor="office_name"> Office *</label>
+                    <select onChange={(e) => handleOfficeSelect(e.target.value)} className="bg-[#B5C9DC]  w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                        <option value="" hidden> Select Office </option>
+                        {
+                            Offices.map((office) => (
+                                <option key={office.id} value={office.id}>{office.name}</option>
+                            ))
+                        }
+                    </select>
+                    
+                </div>
+                {/* 
                 <div className="lg:w-1/2 flex flex-1 flex-col gap-2 ">
                     <label htmlFor="office_name"> {t("createReceiver.labels.deptName")} </label>
                     <Controller
@@ -137,8 +157,8 @@ const CreateReceiver = () => {
                         )}
                     />
                     {errors.office_address && <p className="text-red-500">{errors.office_address.message}</p>}
-                </div>
-            </div>
+                </div> */}
+            {/* </div> */}
             <div className="flex gap-4 w-full flex-wrap">
                 <div className="lg:w-1/2 flex flex-1 flex-col gap-2 ">
                     <label htmlFor="phone_number"> {t("createReceiver.labels.phone")} </label>

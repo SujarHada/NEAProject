@@ -16,11 +16,11 @@ const EditOffice = () => {
 
     const EditOfficeFormschema = z.object({
         name: z.string().min(1, t("editOffice.validation.name")),
-        email: z.string().email({ message: t("editOffice.validation.emailInvalid") }).min(1, t("editOffice.validation.email")),
+        email: z.email({ message: t("editOffice.validation.emailInvalid") }).min(1, t("editOffice.validation.email")),
         address: z.string().min(1, t("editOffice.validation.address")),
         phone_number: z.string()
             .min(1, t("editOffice.validation.phone"))
-            .regex(/^\d+$/, t("editOffice.validation.phoneNumber"))
+            .regex(/^[\d\u0966-\u096F]+$/, t("editOffice.validation.phoneNumber"))
             .max(10, t("editOffice.validation.phoneMax"))
     })
 

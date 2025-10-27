@@ -76,7 +76,7 @@ export interface dashboard {
 
 export interface user {
   id: string,
-  name:string,
+  name: string,
   email: string,
   role: string
 }
@@ -86,4 +86,62 @@ export interface userloginResponse {
   user: user
 }
 
-export interface meResponse extends user{}
+export interface meResponse extends user { }
+
+export interface createLetter {
+  letterCount: string
+  chalaniNo: number
+  voucherNo: number
+  gatepassNo?: number
+  date: string
+  receiverOfficeName: string
+  receiverAddress: string
+  subject: string
+  requestChalaniNumber: string
+  requestLetterCount: string
+  requestDate: string
+  items: Array<{
+    name: string
+    company: string
+    serial_number: number
+    unit_of_measurement: string
+    quantity: number
+    remarks?: string
+  }>
+  receiver: {
+    name: string
+    post: string
+    id_card_number: string
+    id_card_type: "national_id" | "citizenship" | "voter_id" | "passport" | "drivers_license" | "pan_card" | "unknown"
+    office_name: string
+    office_address: string
+    phone_number: string
+    vehicle_number: string
+  }
+}
+
+
+export interface Letter {
+  id: number
+  letter_count: string
+  chalani_no: string
+  voucher_no: string
+  date: string
+  receiver_office_name: string
+  receiver_address: string
+  subject: string
+  request_chalani_number: string
+  request_letter_count: string
+  request_date: string
+  items: {
+    id: number
+    name: string
+    company: string
+    serial_number: string
+    unit_of_measurement: string
+    quantity: string
+    remarks: string
+  }[]
+  gatepass_no: string
+  receiver: Omit<Receiver, 'id'>
+}
