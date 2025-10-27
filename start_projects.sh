@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 # Navigate to project root (same level as BE and FE)
@@ -22,7 +23,7 @@ if [ ! -d "BE/venv" ]; then
     cd NEAProjectBE
     echo "Installing Python dependencies..."
     pip install -r requirements.txt
-    python manage.py create_admin
+    # python manage.py create_admin
     echo "Running migrations..."
     python manage.py migrate
     cd ../..
@@ -70,3 +71,4 @@ minimize_terminal
 
 # Wait for both background jobs to complete
 wait $DJANGO_PID $REACT_PID
+
