@@ -6,13 +6,16 @@ import type { Receiver } from "../../../interfaces/interfaces";
 import NepaliDatePicker from "@zener/nepali-datepicker-react";
 import "@zener/nepali-datepicker-react/index.css";
 import api from "../../../utils/api";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { updateLetterSchema, type EditLetter as EditLetterI } from "../../../schemas/letter";
+import { useTranslation } from "react-i18next";
 
 const EditLetterSchema = updateLetterSchema
 
 const EditLetter = () => {
     const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+    const { t } = useTranslation();
     const {
         control,
         handleSubmit,
@@ -120,7 +123,7 @@ const EditLetter = () => {
         try {
             const res = await api.put(`/api/letters/${id}/`, data);
             if (res.status === 200) {
-                alert("Letter updated successfully!");
+                navigate(`/letters/view-letter/${res.data.data.id}`);
             }
         } catch (err) {
             console.error("Error updating letter:", err);
@@ -129,14 +132,12 @@ const EditLetter = () => {
 
     return (
         <div className="flex flex-col gap-6">
-            <h1 className="text-2xl font-bold text-gray-800">Edit Letter</h1>
-
+            <h1 className="text-2xl font-bold text-gray-800">{t("editLetter.title")}</h1>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
                 {/* --- Date and IDs --- */}
                 <div className="flex flex-1 flex-row gap-2 flex-wrap">
                     <div className="flex max-sm:w-full flex-col">
-                        <label htmlFor="date"> Date * </label>
-                        <Controller
+                        <label htmlFor="date">{t("editLetter.date")} *</label>                        <Controller
                             name="date"
                             control={control}
                             render={({ field }) => (
@@ -148,8 +149,7 @@ const EditLetter = () => {
                         {errors.date && <span className="text-red-500">{errors.date.message}</span>}
                     </div>
                     <div className="flex flex-1 w-full flex-col">
-                        <label htmlFor="letter_count"> Letter count * </label>
-                        <Controller
+                        <label htmlFor="letter_count">{t("editLetter.letter_count")} *</label>                        <Controller
                             name="letter_count"
                             control={control}
                             render={({ field }) => (
@@ -159,8 +159,7 @@ const EditLetter = () => {
                         {errors.letter_count && <span className="text-red-500">{errors.letter_count.message}</span>}
                     </div>
                     <div className="flex flex-1 w-full flex-col">
-                        <label htmlFor="chalani"> Chalani No *</label>
-                        <Controller
+                        <label htmlFor="chalani">{t("editLetter.chalani_no")} *</label>                        <Controller
                             name="chalani_no"
                             control={control}
                             render={({ field }) => (
@@ -171,8 +170,7 @@ const EditLetter = () => {
                     </div>
 
                     <div className="flex flex-1 w-full flex-col ">
-                        <label htmlFor="voucher_no"> Voucher No * </label>
-                        <Controller
+                        <label htmlFor="voucher_no">{t("editLetter.voucher_no")} *</label>                        <Controller
                             name="voucher_no"
                             control={control}
                             render={({ field }) => (
@@ -183,8 +181,7 @@ const EditLetter = () => {
                     </div>
 
                     <div className="flex max-md:flex-1 max-md:w-full flex-col ">
-                        <label htmlFor="gatepass_no"> GatePass No</label>
-                        <Controller
+                        <label htmlFor="gatepass_no">{t("editLetter.gatepass_no")}</label>                        <Controller
                             name="gatepass_no"
                             control={control}
                             render={({ field }) => (
@@ -201,8 +198,7 @@ const EditLetter = () => {
                 {/* --- Subject + Office --- */}
                 <div className="flex flex-wrap gap-2">
                     <div className="flex flex-col flex-1">
-                        <label>Select Office *</label>
-                        <select
+                        <label>{t("editLetter.select_office")} *</label>                        <select
                             onChange={(e) => handleOfficeChange(e.target.value)}
                             value={
                                 Offices?.find(
@@ -223,8 +219,7 @@ const EditLetter = () => {
                     </div>
 
                     <div className="flex flex-col flex-1">
-                        <label>Subject *</label>
-                        <Controller
+                        <label>{t("editLetter.subject")} *</label>                        <Controller
                             name="subject"
                             control={control}
                             render={({ field }) => (
@@ -238,8 +233,7 @@ const EditLetter = () => {
                     </div>
                     <div className="flex flex-row w-full gap-2 mt-4 flex-wrap">
                         <div className="flex flex-col w-full flex-1">
-                            <label htmlFor="request_date">Request date * </label>
-                            <Controller
+                            <label>{t("editLetter.request_date")} *</label>                            <Controller
                                 name="request_date"
                                 control={control}
                                 render={({ field }) => (
@@ -250,8 +244,7 @@ const EditLetter = () => {
                             {errors.request_date && <span className="text-red-500">{errors.request_date.message}</span>}
                         </div>
                         <div className="flex flex-col w-full  flex-1">
-                            <label htmlFor="request_chalani_number"> Request chalani number * </label>
-                            <Controller
+                            <label>{t("editLetter.request_chalani_number")} *</label>                            <Controller
                                 name="request_chalani_number"
                                 control={control}
                                 render={({ field }) => (
@@ -261,8 +254,7 @@ const EditLetter = () => {
                             {errors.request_chalani_number && <span className="text-red-500">{errors.request_chalani_number.message}</span>}
                         </div>
                         <div className="flex flex-col w-full flex-1">
-                            <label htmlFor="request_letter_count"> Request letter count * </label>
-                            <Controller
+                            <label>{t("editLetter.request_letter_count")} *</label>                            <Controller
                                 name="request_letter_count"
                                 control={control}
                                 render={({ field }) => (
@@ -277,15 +269,13 @@ const EditLetter = () => {
 
                 {/* --- Items Section --- */}
                 <div className="flex flex-col flex-1  gap-4 border-1  rounded-2xl p-5">
-                    <h2 className="font-semibold text-gray-700">Items</h2>
-                    {fields.map((item, index) => (
+                    <h2 className="font-semibold text-gray-700">{t("editLetter.items")}</h2>                    {fields.map((item, index) => (
                         <div
                             key={item.id}
                             className="flex flex-wrap  flex-row flex-1  border-2 items-center p-3 rounded-2xl shadow-gray-700 gap-2"
                         >
                             <div className="flex flex-col w-full gap-2">
-                                <label>Product *</label>
-                                <select
+                                <label>{t("editLetter.product")} *</label>                                <select
                                     value={
                                         Products?.find((p) => p.name === item.name)?.id || ""
                                     }
@@ -320,8 +310,7 @@ const EditLetter = () => {
                             </div>
 
                             <div className="flex flex-col flex-1">
-                                <label>Qty</label>
-                                <Controller
+                                <label>{t("editLetter.quantity")}</label>                                <Controller
                                     name={`items.${index}.quantity`}
                                     control={control}
                                     render={({ field }) => (
@@ -334,8 +323,7 @@ const EditLetter = () => {
                                 />
                             </div>
                             <div className="flex flex-col flex-1">
-                                <label>Remarks</label>
-                                <Controller
+                                <label>{t("editLetter.remarks")}</label>                                <Controller
                                     name={`items.${index}.remarks`}
                                     control={control}
                                     render={({ field }) => (
@@ -352,8 +340,7 @@ const EditLetter = () => {
                                 onClick={() => remove(index)}
                                 className="bg-red-500 text-white rounded-md px-3 h-10 self-end"
                             >
-                                Remove
-                            </button>
+                                {t("editLetter.remove")}                            </button>
                         </div>
                     ))}
 
@@ -371,13 +358,14 @@ const EditLetter = () => {
                             })
                         }
                     >
-                        Add Item
+
+                        {t("editLetter.add_item")}
                     </button>
                 </div>
 
                 {/* Receiver Section */}
                 <div className="flex flex-col w-1/2">
-                    <label>Select Receiver *</label>
+                    <label>{t("editLetter.select_receiver")}</label>
                     <select
                         onChange={(e) => handleReceiverChange(e.target.value)}
                         value={
@@ -387,9 +375,7 @@ const EditLetter = () => {
                         }
                         className="bg-[#B5C9DC] border-2 pl-3 h-10 rounded-md border-gray-600"
                     >
-                        <option value="" hidden>
-                            Select Receiver
-                        </option>
+                        <option value="" hidden>{t("editLetter.select_receiver")}</option>
                         {filteredReceivers.map((r) => (
                             <option key={r.id} value={r.id}>
                                 {r.name}
@@ -403,8 +389,7 @@ const EditLetter = () => {
                     disabled={isSubmitting}
                     className="outline-none w-full bg-[#10172A] text-white h-12 hover:bg-[#233058] active:bg-[#314379] rounded-md disabled:opacity-50"
                 >
-                    {isSubmitting ? "Saving..." : "Update Letter"}
-                </button>
+                    {isSubmitting ? t("editLetter.updating") : t("editLetter.update")}                </button>
             </form>
         </div>
     );

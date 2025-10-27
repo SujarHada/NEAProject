@@ -1,9 +1,21 @@
 import { useEffect, useState } from "react";
-import { Activity, Building2, User, FileText, Inbox, Send, Edit3, Download } from "lucide-react";
+import {
+  Activity,
+  Building2,
+  User,
+  FileText,
+  Inbox,
+  Send,
+  Edit3,
+  Download,
+  RefreshCcw,
+} from "lucide-react";
 import type { dashboard } from "../../interfaces/interfaces";
 import api from "../../utils/api";
+import { useTranslation } from "react-i18next";
 
 export default function HomeScreen() {
+  const { t } = useTranslation();
   const [stats, setStats] = useState<dashboard>();
   const [loading, setLoading] = useState(true);
 
@@ -12,22 +24,22 @@ export default function HomeScreen() {
       try {
         const response = await api.get("/api/dashboard/");
         setStats(response.data);
-        setLoading(false);
       } catch (error) {
+        console.error("Error loading dashboard:", error);
+      } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchData();
   }, []);
 
   const handleDownload = async () => {
-    const res = await api.get('/api/dashboard/export_csv/', {
-      responseType: 'blob',
-      params: {
-        status: "active"
-      }
-    })
+    const res = await api.get("/api/dashboard/export_csv/", {
+      responseType: "blob",
+      params: { status: "active" },
+    });
+
     const blob = new Blob([res.data], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -37,13 +49,12 @@ export default function HomeScreen() {
     link.click();
     link.remove();
     window.URL.revokeObjectURL(url);
-
-  }
+  };
 
   if (loading) {
     return (
       <div className="h-screen flex justify-center items-center bg-gray-900 text-white text-xl">
-        Loading dashboard…
+        {t("dashboard.loading")}
       </div>
     );
   }
@@ -51,31 +62,36 @@ export default function HomeScreen() {
   if (!stats) {
     return (
       <div className="h-screen flex justify-center items-center bg-gray-900 text-red-400 text-lg">
-        Failed to load data
+        {t("dashboard.error")}
       </div>
     );
   }
 
   const cards = [
-    { title: "Active Products", icon: <Activity />, value: stats.total_active_products },
-    { title: "Active Branches", icon: <Building2 />, value: stats.total_active_branches },
-    { title: "Active Offices", icon: <Building2 />, value: stats.total_active_offices },
-    { title: "Active Employees", icon: <User />, value: stats.total_active_employees },
-    { title: "Total Receivers", icon: <Inbox />, value: stats.total_receivers },
-    { title: "Letters", icon: <FileText />, value: stats.total_letters },
-    { title: "Draft Letters", icon: <Edit3 />, value: stats.total_draft_letters },
-    { title: "Sent Letters", icon: <Send />, value: stats.total_sent_letters },
+    { title: t("dashboard.active_products"), icon: <Activity />, value: stats.total_active_products },
+    { title: t("dashboard.active_branches"), icon: <Building2 />, value: stats.total_active_branches },
+    { title: t("dashboard.active_offices"), icon: <Building2 />, value: stats.total_active_offices },
+    { title: t("dashboard.active_employees"), icon: <User />, value: stats.total_active_employees },
+    { title: t("dashboard.total_receivers"), icon: <Inbox />, value: stats.total_receivers },
+    { title: t("dashboard.letters"), icon: <FileText />, value: stats.total_letters },
+    { title: t("dashboard.draft_letters"), icon: <Edit3 />, value: stats.total_draft_letters },
+    { title: t("dashboard.sent_letters"), icon: <Send />, value: stats.total_sent_letters },
   ];
 
   return (
     <div className="flex flex-col flex-1 min-h-fit h-full bg-[#1E2939] text-white p-8">
       <div className="flex justify-between items-center mb-8 flex-wrap gap-5">
-        <h1 className="text-2xl font-bold">Dashboard Overview</h1>
+        <h1 className="text-2xl font-bold">{t("dashboard.title")}</h1>
         <div className="flex items-center gap-2 text-gray-400 text-sm ">
-          <div className="border-2 p-2 rounded-full cursor-pointer " onClick={handleDownload}>
+          <div
+            className="border-2 p-2 rounded-full cursor-pointer"
+            onClick={handleDownload}
+          >
             <Download size={16} />
           </div>
-          <span>Last updated: {new Date(stats.last_updated).toLocaleString()}</span>
+          <span className="flex gap-2 items-center" >
+            {<RefreshCcw size={20} />}:{new Date(stats.last_updated).toLocaleString()}
+          </span>
         </div>
       </div>
 
@@ -93,7 +109,6 @@ export default function HomeScreen() {
           </div>
         ))}
       </div>
-
     </div>
   );
 }

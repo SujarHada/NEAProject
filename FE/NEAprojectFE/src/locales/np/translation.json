@@ -1,12 +1,83 @@
 {
-  "createLetterPage": {
-    "title": "यस पृष्ठमा पत्र सिर्जना गर्नुहोस्"
+   "dashboard": {
+    "title": "ड्यासबोर्ड अवलोकन",
+    "loading": "ड्यासबोर्ड लोड हुँदैछ…",
+    "error": "डेटा लोड गर्न असफल",
+    "last_updated": "अन्तिम अद्यावधिक",
+    "active_products": "सक्रिय वस्तुहरू",
+    "active_branches": "सक्रिय शाखाहरू",
+    "active_offices": "सक्रिय कार्यालयहरू",
+    "active_employees": "सक्रिय कर्मचारीहरू",
+    "total_receivers": "कुल प्राप्तकर्ताहरू",
+    "letters": "पत्रहरू",
+    "draft_letters": "ड्राफ्ट पत्रहरू",
+    "sent_letters": "पठाइएका पत्रहरू"
   },
-  "allLettersPage": {
-    "title": "तपाईंका सबै पत्रहरूको सूची"
+  "profile": {
+  "title": "प्रोफाइल ड्यासबोर्ड",
+  "changePassword": "पासवर्ड परिवर्तन गर्नुहोस्",
+  "createUser": "प्रयोगकर्ता बनाउनुहोस्",
+  "currentPassword": "पुरानो पासवर्ड",
+  "newPassword": "नयाँ पासवर्ड",
+  "confirmPassword": "पासवर्ड पुष्टि गर्नुहोस्",
+  "updatePassword": "पासवर्ड अपडेट गर्नुहोस्",
+  "name": "नाम",
+  "email": "इमेल",
+  "password": "पासवर्ड",
+  "viewer": "हेर्ने प्रयोगकर्ता",
+  "admin": "प्रशासक",
+  "createAccount": "खाता बनाउनुहोस्",
+  "logout": "लगआउट गर्नुहोस्"
+  },  
+  "createLetter": {
+    "title": "पत्र सिर्जना गर्नुहोस्",
+    "date": "मिति",
+    "letter_count": "पत्र संख्या",
+    "chalani_no": "चलानी नं",
+    "voucher_no": "भौचर नं",
+    "gatepass_no": "गेटपास नं",
+    "select_office": "कार्यालय छान्नुहोस्",
+    "subject": "विषय",
+    "request_date": "अनुरोध मिति",
+    "request_chalani_number": "अनुरोध चलानी नं",
+    "request_letter_count": "अनुरोध पत्र संख्या",
+    "items": "सामग्रीहरू",
+    "product": "उत्पादन",
+    "quantity": "मात्रा",
+    "remarks": "टिप्पणीहरू",
+    "select_receiver": "प्राप्तकर्ता छान्नुहोस्",
+    "no_receiver_found": "हाल चयन गरिएको कार्यालयमा कुनै प्राप्तकर्ता छैन",
+    "submit": "पत्र सिर्जना गर्नुहोस्",
+    "creating": "सिर्जना हुँदैछ..."
   },
   "lettersBinPage": {
-    "title": "यो पत्र बिन पृष्ठ हो"
+    "title": "पत्र बिन"
+  },
+  "editLetter": {
+    "title": "पत्र सम्पादन",
+    "date": "मिति",
+    "letter_count": "पत्र संख्या",
+    "chalani_no": "चलानी नं",
+    "voucher_no": "भौचर नं",
+    "gatepass_no": "गेट पास नं",
+    "subject": "विषय",
+    "select_office": "कार्यालय चयन गर्नुहोस्",
+    "select_receiver": "प्राप्तकर्ता चयन गर्नुहोस्",
+    "request_date": "अनुरोध मिति",
+    "request_chalani_number": "अनुरोध चलानी नं",
+    "request_letter_count": "अनुरोध पत्र संख्या",
+    "items": "वस्तुहरू",
+    "product": "वस्तु",
+    "quantity": "परिमाण",
+    "remarks": "कैफियत",
+    "add_item": "वस्तु थप्नुहोस्",
+    "remove": "हटाउनुहोस्",
+    "update": "पत्र अद्यावधिक गर्नुहोस्",
+    "updating": "सुरक्षित गर्दै...",
+    "validation": {
+      "required": "यो फिल्ड आवश्यक छ",
+      "invalid": "अवैध मान"
+    }
   },
   "createProductPage": {
     "title": "उत्पादन सिर्जना गर्नुहोस्",
@@ -232,7 +303,7 @@
       "middleName": "मध्य नाम",
       "lastName": "थर",
       "email": "इमेल",
-      "position": "पद"
+      "position": "तह"
     },
     "placeholders": {
       "position": "भूमिका छान्नुहोस् *",
@@ -252,7 +323,7 @@
       "emailInvalid": "इमेल अमान्य छ",
       "emailRequired": "इमेल आवश्यक छ",
       "branchId": "शाखा आईडी आवश्यक छ",
-      "position": "पद आवश्यक छ"
+      "position": "तह आवश्यक छ"
     }
   },
   "editEmployee": {
@@ -263,10 +334,10 @@
       "middleName": "मध्य नाम",
       "lastName": "थर",
       "email": "इमेल",
-      "position": "पद"
+      "position": "तह"
     },
     "placeholders": {
-      "position": "पद छान्नुहोस् *"
+      "position": "तह छान्नुहोस् *"
     },
     "positions": {
       "admin": "प्रशासक",
@@ -292,7 +363,7 @@
       "id": "आईडी",
       "name": "नाम",
       "email": "इमेल",
-      "role": "पद",
+      "role": "तह",
       "branch": "शाखा",
       "action": "कार्य"
     },

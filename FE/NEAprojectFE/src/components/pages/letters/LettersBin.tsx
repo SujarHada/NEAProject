@@ -4,6 +4,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from 'usehooks-ts'
 import { useTranslation } from "react-i18next"
 import api from "../../../utils/api"
+import { useNavigate } from "react-router"
 
 const LettersBin = () => {
     const { t } = useTranslation()
@@ -54,19 +55,7 @@ const LettersBin = () => {
     useEffect(() => {
         fetchletters()
     }, [])
-
-    const handleDelete = async (letterId: number) => {
-        try {
-            const res = await api.delete(`/api/letters/${letterId}/`)
-            if (res.status === 200) {
-                await fetchletters()
-                setOpenDropdownId(null)
-
-            }
-        } catch (err) {
-            console.error("Error deleting letter:", err)
-        }
-    }
+    const navigate = useNavigate()
 
     const handleDownload = async () => {
         const res = await api.get('/api/letters/export_csv/', {
@@ -92,7 +81,7 @@ const LettersBin = () => {
     return (
         <div className="flex flex-col gap-5">
             <div className="flex items-center justify-between" >
-                <h1 className="text-2xl font-bold">Letters Bin</h1>
+                <h1 className="text-2xl font-bold">{t("lettersBinPage.title")}</h1>
                 <button onClick={handleDownload} className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5">
                     Download
                 </button>
@@ -150,12 +139,12 @@ const LettersBin = () => {
                                             }}
                                         >
                                             <ul className="py-2 text-sm text-gray-200">
-                                                <li>
+                                               <li>
                                                     <button
-                                                        onClick={() => handleDelete(letter.id)}
+                                                        onClick={() => navigate(`/letters/view-letter/${letter.id}`)}
                                                         className="block w-full text-left px-4 py-2 hover:bg-gray-600"
                                                     >
-                                                        {t("allletters.actions.delete")}
+                                                        {t("allletters.actions.view")}
                                                     </button>
                                                 </li>
                                                 {/* <li>
