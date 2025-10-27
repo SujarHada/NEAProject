@@ -1,7 +1,7 @@
 import { useForm, Controller } from "react-hook-form"
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { type Branch, type createEmployeesInputs } from "../../../interfaces/interfaces"
+import { type createEmployeesInputs } from "../../../interfaces/interfaces"
 import { FaChevronDown } from "react-icons/fa"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
@@ -157,14 +157,6 @@ const CreateEmployee = () => {
                     name="role"
                     control={control}
                     render={({ field }) => (
-                        // <div className="flex w-full items-center relative">
-                        //     <select id="role" {...field} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
-                        //         <option value="" disabled hidden>{t("createEmployee.placeholders.position")}</option>
-                        //         <option value="admin">{t("createEmployee.positions.admin")}</option>
-                        //         <option value="viewer">{t("createEmployee.positions.viewer")}</option>
-                        //     </select>
-                        //     <FaChevronDown className="absolute right-3 text-gray-500" />
-                        // </div>
                         <input type="text" placeholder="1-9" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="email" />
                     )}
                 />

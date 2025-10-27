@@ -47,7 +47,6 @@ const CreateReceiver = () => {
     }, [])
 
     const handleOfficeSelect = (officeId: string) => {
-        // console.log("Selected office ID:", officeId);
         const office = Offices.find(b => b.id === parseInt(officeId));
         if (office) {
             setValue("office_name", office.name);

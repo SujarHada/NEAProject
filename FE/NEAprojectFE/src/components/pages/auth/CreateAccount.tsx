@@ -1,7 +1,5 @@
-// src/components/pages/CreateAccount.tsx
 import { useState } from "react";
-// import useAuthStore from "../../store/useAuthStore";
-import axios from "axios";
+import api from "../../../utils/api";
 
 const CreateAccount = () => {
   const [name, setName] = useState("");
@@ -10,7 +8,6 @@ const CreateAccount = () => {
   const [role, setRole] = useState<"admin" | "viewer">("viewer");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-//   const accessToken = useAuthStore((state) => state.accessToken);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,25 +15,19 @@ const CreateAccount = () => {
     setMessage("");
 
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/users/create/", // your BE endpoint
+      await api.post(
+        "/api/users/create/",
         { name, email, password, role },
-        {
-          headers: {
-            // Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        }
       );
 
-      setMessage("User created successfully ✅");
+      setMessage("User created successfully ");
       setName("");
       setEmail("");
       setPassword("");
       setRole("viewer");
     } catch (err: any) {
       console.error(err);
-      setMessage("Failed to create user ❌");
+      setMessage("Failed to create user ");
     } finally {
       setLoading(false);
     }

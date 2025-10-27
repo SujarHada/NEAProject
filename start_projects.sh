@@ -7,7 +7,9 @@ cd "$(dirname "$0")"
 if [ ! -d "FE/NEAprojectFE/node_modules" ]; then
     echo "node_modules not found. Running npm install..."
     cd FE/NEAprojectFE
-    npm install
+    touch .env
+    echo "VITE_API_URL=http://localhost:8000" > .env
+    npm install --legacy-peer-deps
     cd ../..
 fi
 

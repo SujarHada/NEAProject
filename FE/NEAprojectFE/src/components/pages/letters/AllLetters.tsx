@@ -43,7 +43,6 @@ const AllLetters = () => {
                     status: "draft"
                 }
             })
-            console.log(res.data)
             setLetters(res.data.results.data)
             setLetterCount(res.data.count)
             setNextPage(res.data.next)

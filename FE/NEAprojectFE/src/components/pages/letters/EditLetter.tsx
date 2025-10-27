@@ -102,14 +102,12 @@ const EditLetter = () => {
         name: "items",
     });
 
-    // Fetch all store data first
     useEffect(() => {
         StoreMethods.getOffices();
         StoreMethods.getReceivers();
         StoreMethods.getProducts();
     }, []);
 
-    // Fetch the letter data and populate form
     useEffect(() => {
         const fetchLetter = async () => {
             try {
@@ -117,13 +115,11 @@ const EditLetter = () => {
                 if (res.status === 200) {
                     const letter = res.data.data;
 
-                    // Filter receivers based on the fetched office
                     const officeReceivers = Receivers?.filter(
                         (r) => r.office_name === letter.receiver_office_name
                     );
                     setFilteredReceivers(officeReceivers || []);
 
-                    // Set the entire form with backend data
                     reset({
                         ...letter,
                         receiver: {
@@ -138,7 +134,6 @@ const EditLetter = () => {
             }
         };
 
-        // Wait until store data is available
         if (Receivers && Offices && Products) {
             fetchLetter();
         }
