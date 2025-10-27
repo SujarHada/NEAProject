@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react"
-import { useNavigate } from "react-router"
 import type { Letter } from "../../../interfaces/interfaces"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from 'usehooks-ts'
@@ -14,7 +13,6 @@ const LettersBin = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [nextPage, setNextPage] = useState<string | null>(null)
     const [prevPage, setPrevPage] = useState<string | null>(null)
-    const navigate = useNavigate()
     const ref = useRef(null)
     useOnClickOutside<any>(ref, () => setOpenDropdownId(null))
 
@@ -34,12 +32,10 @@ const LettersBin = () => {
         setOpenDropdownId(branchId)
     }
 
-
     const fetchletters = async (pageUrl?: string, pageNum?: number) => {
         try {
             const apiUrl = pageUrl || `/api/letters/?page=${pageNum || currentPage}&status=bin`
             const res = await api.get(apiUrl)
-            console.log(res.data)
             setLetters(res.data.results.data)
             setLetterCount(res.data.count)
             setNextPage(res.data.next)

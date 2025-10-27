@@ -4,7 +4,13 @@ REM Check if node_modules exists in FE/NEAprojectFE
 if not exist "FE\NEAprojectFE\node_modules" (
     echo node_modules not found. Running npm install...
     cd FE\NEAprojectFE
-    call npm install
+    if not exist .env (
+      echo Creating .env file...
+      (
+          echo VITE_API_URL=http://localhost:8000
+      ) > .env
+    )
+    call npm install --legacy-peer-deps
     cd ..\..
 )
 

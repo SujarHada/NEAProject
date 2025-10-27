@@ -1,4 +1,3 @@
-// src/pages/NotFoundPage.tsx
 import { useNavigate } from "react-router";
 
 const NotFoundPage = () => {
