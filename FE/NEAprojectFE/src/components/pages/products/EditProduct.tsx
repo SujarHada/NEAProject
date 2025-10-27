@@ -1,4 +1,3 @@
-import * as z from 'zod'
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate, useParams } from "react-router"
@@ -8,6 +7,7 @@ import type { Product, createProductInputs } from '../../../interfaces/interface
 import axios from 'axios'
 import { useTranslation } from "react-i18next"
 import api from '../../../utils/api'
+import { updateProductFormschema } from '../../../schemas/product'
 
 const EditProduct = () => {
     const { t } = useTranslation()
@@ -24,12 +24,7 @@ const EditProduct = () => {
         }
     }
 
-    const editproductFormschema = z.object({
-        name: z.string().min(1, t("editProductPage.errors.productNameRequired")),
-        company: z.string().min(1, t("editProductPage.errors.companyNameRequired")),
-        unit_of_measurement: z.string().min(1, t("editProductPage.errors.unitRequired")),
-        remarks: z.string().optional(),
-    })
+    const editproductFormschema = updateProductFormschema(t)
 
     const { control, handleSubmit, formState: { isSubmitting, errors }, setValue } = useForm<createProductInputs>({
         defaultValues: { name: "", company: "", remarks: "", unit_of_measurement: "" },

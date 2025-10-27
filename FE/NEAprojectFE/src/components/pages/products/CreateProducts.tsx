@@ -1,23 +1,18 @@
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import z from "zod"
 import { FaChevronDown } from "react-icons/fa"
 import type { createProductInputs } from "../../../interfaces/interfaces"
 import axios from "axios"
 import api from "../../../utils/api"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
+import { createProductFormschema } from "../../../schemas/product"
 
 const CreateProducts = () => {
     const { t } = useTranslation()
     const navigate = useNavigate()
 
-    const createproductFormschema = z.object({
-        name: z.string().min(1, t("editProductPage.errors.productNameRequired")),
-        company: z.string().min(1, t("editProductPage.errors.companyNameRequired")),
-        unit_of_measurement: z.string().min(1, t("editProductPage.errors.unitRequired")),
-        remarks: z.string().optional(),
-    })
+    const createproductForm = createProductFormschema(t)
 
     const { control, handleSubmit, formState: { isSubmitting, errors } } = useForm<createProductInputs>(
         {
@@ -27,7 +22,7 @@ const CreateProducts = () => {
                 unit_of_measurement: "",
                 remarks: ""
             },
-            resolver: zodResolver(createproductFormschema),
+            resolver: zodResolver(createproductForm),
             mode: "onChange"
         }
     )

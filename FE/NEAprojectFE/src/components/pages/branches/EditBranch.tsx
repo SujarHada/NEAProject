@@ -1,11 +1,11 @@
 import { Controller, useForm, type SubmitHandler } from "react-hook-form"
-import * as z from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { Branch, BranchFormInputs } from "../../../interfaces/interfaces"
 import api from "../../../utils/api"
 import { useNavigate, useParams } from "react-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
+import { branchUpdateSchema } from "../../../schemas/branch"
 
 const EditBranch = () => {
     const { t } = useTranslation()
@@ -14,15 +14,7 @@ const EditBranch = () => {
     const [branch, setBranch] = useState<Branch>()
     const [err, setErr] = useState<string | null>(null)
 
-    const formSchema = z.object({
-        name: z.string().min(1, t("editBranch.validation.name")),
-        email: z.email({ message: t("editBranch.validation.emailInvalid") }).min(1, t("editBranch.validation.email")),
-        address: z.string().min(1, t("editBranch.validation.address")),
-        phone_number: z.string()
-            .min(1, t("editBranch.validation.phone"))
-            .regex(/^[\d\u0966-\u096F]+$/, t("editBranch.validation.phoneNum"))
-            .max(10, t("editBranch.validation.phoneMax"))
-    })
+    const formSchema = branchUpdateSchema(t)
 
     const { control, handleSubmit, formState: { errors, isSubmitting }, setValue } = useForm<BranchFormInputs>({
         defaultValues: {

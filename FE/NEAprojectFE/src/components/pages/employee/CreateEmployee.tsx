@@ -1,15 +1,14 @@
 import { useForm, Controller } from "react-hook-form"
-import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type createEmployeesInputs } from "../../../interfaces/interfaces"
 import { FaChevronDown } from "react-icons/fa"
-import { useNavigate } from "react-router"
+import { useParams, useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
 import { useEffect } from "react"
-import { useParams } from "react-router"
 import api from "../../../utils/api"
 import axios from "axios"
 import useDataStore from "../../../store/useDataStore"
+import { createEmployeesFormSchema } from "../../../schemas/employee"
 const CreateEmployee = () => {
     const params = useParams()
     const { t } = useTranslation()
@@ -27,14 +26,7 @@ const CreateEmployee = () => {
             }
         }
     }, [params.id, branches]);
-    const createEmployeesFormschema = z.object({
-        first_name: z.string().min(1, t("createEmployee.errors.firstName")),
-        middle_name: z.string().optional(),
-        last_name: z.string().min(1, t("createEmployee.errors.lastName")),
-        email: z.email(t("createEmployee.errors.emailInvalid")).min(1, t("createEmployee.errors.emailRequired")),
-        organization_id: z.number().positive(t("createEmployee.errors.branchId")),
-        role: z.string().length(1, t("createEmployee.errors.position")),
-    })
+    const createEmployeesFormschema = createEmployeesFormSchema(t)
 
     const { control, handleSubmit, formState: { isSubmitting, errors }, reset, setValue } = useForm<createEmployeesInputs>({
         defaultValues: {

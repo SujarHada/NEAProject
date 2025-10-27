@@ -1,23 +1,15 @@
 import { useForm, Controller, type SubmitHandler } from "react-hook-form"
-import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type OfficeFormInputs } from "../../../interfaces/interfaces"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
 import api from "../../../utils/api"
+import { createOfficeFormschema } from "../../../schemas/office"
 const CreateOffice = () => {
     const { t } = useTranslation()
     const navigate = useNavigate()
 
-    const createOfficeFormschema = z.object({
-        name: z.string().min(1, t("createOffice.errors.nameRequired")),
-        email: z.string().min(1, t("createOffice.errors.emailRequired")).email(t("createOffice.errors.emailInvalid")),
-        address: z.string().min(1, t("createOffice.errors.addressRequired")),
-        phone_number: z.string()
-            .min(1, t("createOffice.errors.phoneRequired"))
-            .regex(/^[\d\u0966-\u096F]+$/, t("createOffice.errors.phoneNumber"))
-            .max(10, t("createOffice.errors.phoneMax"))
-    })
+    const createOfficeForm = createOfficeFormschema(t)
 
     const { control, handleSubmit, formState: { isSubmitting, errors }, reset } = useForm<OfficeFormInputs>({
         defaultValues: {
@@ -26,7 +18,7 @@ const CreateOffice = () => {
             address: "",
             phone_number: ""
         },
-        resolver: zodResolver(createOfficeFormschema),
+        resolver: zodResolver(createOfficeForm),
         mode: "onSubmit"
     })
 

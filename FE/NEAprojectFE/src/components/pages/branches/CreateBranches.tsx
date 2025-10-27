@@ -1,25 +1,15 @@
 import { Controller, useForm, type SubmitHandler } from "react-hook-form"
-import * as z from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { BranchFormInputs } from "../../../interfaces/interfaces"
 import api from "../../../utils/api"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
+import { branchCreationSchema } from "../../../schemas/branch"
 
 const CreateBranches = () => {
     const { t } = useTranslation()
     const navigate = useNavigate()
-
-    const formSchema = z.object({
-        name: z.string().min(1, t("createBranch.validation.name")),
-        email: z.email({ message: t("createBranch.validation.emailInvalid") }).min(1, t("createBranch.validation.email")),
-        address: z.string().min(1, t("createBranch.validation.address")),
-        phone_number: z.string()
-            .min(1, t("createBranch.validation.phone"))
-            .regex(/^[\d\u0966-\u096F]{10}$/, t("createBranch.validation.phoneNum"))
-            .max(10, t("createBranch.validation.phoneMax"))
-    })
-
+    const formSchema = branchCreationSchema(t)
     const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm<BranchFormInputs>({
         defaultValues: {
             name: "",

@@ -1,5 +1,4 @@
 import { useForm, Controller, type SubmitHandler } from "react-hook-form"
-import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type createReceiverInputs } from "../../../interfaces/interfaces"
 import { useNavigate } from "react-router"
@@ -9,22 +8,11 @@ import { id_types } from "../../../enum/id_types"
 import api from "../../../utils/api"
 import useDataStore from "../../../store/useDataStore"
 import { useEffect } from "react"
+import { createReceiverSchema } from "../../../schemas/receiver"
 const CreateReceiver = () => {
     const { t } = useTranslation()
     const navigate = useNavigate()
-    const CreateReceiversFormschema = z.object({
-        name: z.string().min(1, t("createReceiver.errors.nameRequired")),
-        office_name: z.string().min(1, t("createReceiver.errors.deptRequired")),
-        office_address: z.string().min(1, t("createReceiver.errors.deptAddressRequired")),
-        id_card_number: z.string().min(1, t("createReceiver.errors.idNo")),
-        id_card_type: z.enum(["national_id", "citizenship", "voter_id", "passport", "drivers_license", "pan_card", "unknown"], t("createReceiver.errors.idType")),
-        phone_number: z.string()
-            .min(1, t("createReceiver.errors.phone"))
-            .regex(/^[\d\u0966-\u096F]+$/, t("createReceiver.errors.phoneNum"))
-            .max(10, t("createReceiver.errors.phoneMax")),
-        post: z.string().min(1, t("createReceiver.errors.post")),
-        vehicle_number: z.string().min(1, t("createReceiver.errors.vehicleNo")),
-    })
+    const CreateReceiversFormschema = createReceiverSchema(t)
     const { control, handleSubmit, formState: { isSubmitting, errors }, setValue } = useForm<createReceiverInputs>(
         {
             defaultValues: {

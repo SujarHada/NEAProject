@@ -1,14 +1,13 @@
 import { useForm, Controller, type SubmitHandler } from "react-hook-form"
-import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { type createReceiverInputs } from "../../../interfaces/interfaces"
+import { type createReceiverInputs, type Receiver } from "../../../interfaces/interfaces"
 import { useNavigate, useParams } from "react-router"
 import { useTranslation } from "react-i18next"
 import { FaChevronDown } from "react-icons/fa"
 import { id_types } from "../../../enum/id_types"
-import { type Receiver } from "../../../interfaces/interfaces"
 import { useEffect, useState } from "react"
 import api from "../../../utils/api"
+import { updateReceiverSchema } from "../../../schemas/receiver"
 const EditReceiver = () => {
     const { t } = useTranslation()
     const param = useParams()
@@ -24,19 +23,7 @@ const EditReceiver = () => {
         }
     }
 
-    const EditReceiversFormschema = z.object({
-        name: z.string().min(1, t("editReceiver.errors.nameRequired")),
-        office_name: z.string().min(1, t("editReceiver.errors.deptRequired")),
-        office_address: z.string().min(1, t("editReceiver.errors.deptAddressRequired")),
-        id_card_number: z.string().min(1, t("editReceiver.errors.idNo")),
-        id_card_type: z.enum(["national_id", "citizenship", "voter_id", "passport", "drivers_license", "pan_card", "unknown"], t("editReceiver.errors.idType")),
-        phone_number: z.string()
-            .min(1, t("editReceiver.errors.phone"))
-            .regex(/^[\d\u0966-\u096F]+$/, t("editReceiver.errors.phoneNum"))
-            .max(10, t("editReceiver.errors.phoneMax")),
-        post: z.string().min(1, t("editReceiver.errors.post")),
-        vehicle_number: z.string().min(1, t("editReceiver.errors.vehicleNo")),
-    })
+    const EditReceiversFormschema = updateReceiverSchema(t)
     const { control, handleSubmit, formState: { isSubmitting, errors }, setValue } = useForm<createReceiverInputs>(
         {
             resolver: zodResolver(EditReceiversFormschema),
