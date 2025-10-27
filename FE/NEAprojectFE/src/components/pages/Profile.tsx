@@ -100,56 +100,61 @@ const Profile = () => {
     }
   };
 
-  return (
+   return (
     <div className="relative h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#0b132b] via-[#1c2541] to-[#3a506b] text-gray-100 overflow-hidden p-4 sm:p-10">
-
-      <div className="absolute top-4  sm:top-6 right-4 sm:right-8 flex items-center bg-white/10  border border-white/20 rounded-full px-2 sm:px-3 py-1 z-50">
+      {/* 🌐 Language Switcher */}
+      <div className="absolute top-4 sm:top-6 right-4 sm:right-8 flex items-center bg-white/10 border border-white/20 rounded-full px-2 sm:px-3 py-1 z-50">
         <button
           onClick={() => changeLanguage("en")}
-          className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition ${i18n.language === "en"
-            ? "bg-blue-600 text-white shadow-md"
-            : "text-gray-300 hover:text-white"
-            }`}
+          className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition ${
+            i18n.language === "en"
+              ? "bg-blue-600 text-white shadow-md"
+              : "text-gray-300 hover:text-white"
+          }`}
         >
           🇬🇧 EN
         </button>
         <button
           onClick={() => changeLanguage("np")}
-          className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition ${i18n.language === "np"
-            ? "bg-green-600 text-white shadow-md"
-            : "text-gray-300 hover:text-white"
-            }`}
+          className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition ${
+            i18n.language === "np"
+              ? "bg-green-600 text-white shadow-md"
+              : "text-gray-300 hover:text-white"
+          }`}
         >
           🇳🇵 NP
         </button>
       </div>
 
       {/* 🧑‍💼 Main Card */}
-      <div className="w-full relative h-full max-w-xl overflow-auto sm:max-w-2xl bg-white/10  border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl sm:p-10 text-center" style={{ scrollbarWidth: 'none' }} >
-        <h1 className="text-xl sm:text-4xl font-bold text-blue-300 mb-6 ">
-          {t("profilePageTitle", { defaultValue: "Profile Dashboard" })}
+      <div className="w-full relative h-full max-w-xl overflow-auto sm:max-w-2xl bg-white/10 border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl sm:p-10 text-center" style={{ scrollbarWidth: "none" }}>
+        <h1 className="text-xl sm:text-4xl font-bold text-blue-300 mb-6">
+          {t("profile.title")}
         </h1>
+
         {/* Tabs */}
         <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8">
           <button
             onClick={() => setActiveTab("password")}
-            className={`px-4 sm:px-6 py-2 rounded-lg  sm:text-base font-semibold transition ${activeTab === "password"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-800 hover:bg-gray-700 text-gray-300"
-              }`}
+            className={`px-4 sm:px-6 py-2 rounded-lg sm:text-base font-semibold transition ${
+              activeTab === "password"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-800 hover:bg-gray-700 text-gray-300"
+            }`}
           >
-            Change Password
+            {t("profile.changePassword")}
           </button>
 
           {user?.role === "admin" && (
             <button
               onClick={() => setActiveTab("createUser")}
-              className={`px-4 sm:px-6 py-2 rounded-lg text-sm sm:text-base font-semibold transition ${activeTab === "createUser"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-800 hover:bg-gray-700 text-gray-300"
-                }`}
+              className={`px-4 sm:px-6 py-2 rounded-lg sm:text-base font-semibold transition ${
+                activeTab === "createUser"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-800 hover:bg-gray-700 text-gray-300"
+              }`}
             >
-              Create User
+              {t("profile.createUser")}
             </button>
           )}
         </div>
@@ -161,17 +166,38 @@ const Profile = () => {
               onSubmit={handlePasswordSubmit(onChangePassword)}
               className="space-y-4 sm:space-y-5 max-w-sm sm:max-w-md mx-auto"
             >
-              <input {...registerPassword("old_password")} type="password" placeholder="Current Password" className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600" />
-              {passwordErrors.old_password && <p className="text-red-400 text-sm">{passwordErrors.old_password.message}</p>}
+              <input
+                {...registerPassword("old_password")}
+                type="password"
+                placeholder={t("profile.currentPassword")}
+                className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              {passwordErrors.old_password && (
+                <p className="text-red-400 text-sm">{passwordErrors.old_password.message}</p>
+              )}
 
-              <input {...registerPassword("new_password")} type="password" placeholder="New Password" className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2  text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600" />
-              {passwordErrors.new_password && <p className="text-red-400 text-sm">{passwordErrors.new_password.message}</p>}
+              <input
+                {...registerPassword("new_password")}
+                type="password"
+                placeholder={t("profile.newPassword")}
+                className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              {passwordErrors.new_password && (
+                <p className="text-red-400 text-sm">{passwordErrors.new_password.message}</p>
+              )}
 
-              <input {...registerPassword("confirmPassword")} type="password" placeholder="Confirm Password" className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2  text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600" />
-              {passwordErrors.confirmPassword && <p className="text-red-400 text-sm">{passwordErrors.confirmPassword.message}</p>}
+              <input
+                {...registerPassword("confirmPassword")}
+                type="password"
+                placeholder={t("profile.confirmPassword")}
+                className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              {passwordErrors.confirmPassword && (
+                <p className="text-red-400 text-sm">{passwordErrors.confirmPassword.message}</p>
+              )}
 
-              <button type="submit" className="w-full mt-3 sm:mt-4 bg-blue-600 hover:bg-blue-700 transition text-white font-semibold py-2  rounded-md">
-                Update Password
+              <button type="submit" className="w-full mt-3 sm:mt-4 bg-blue-600 hover:bg-blue-700 transition text-white font-semibold py-2 rounded-md">
+                {t("profile.updatePassword")}
               </button>
             </form>
           )}
@@ -181,22 +207,42 @@ const Profile = () => {
               onSubmit={handleUserSubmit(onCreateUser)}
               className="space-y-4 sm:space-y-5 max-w-sm sm:max-w-md mx-auto"
             >
-              <input {...registerUser("name")} type="text" placeholder="Name" className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 sm:py-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+              <input
+                {...registerUser("name")}
+                type="text"
+                placeholder={t("profile.name")}
+                className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
               {userErrors.name && <p className="text-red-400 text-sm">{userErrors.name.message}</p>}
 
-              <input {...registerUser("email")} type="email" placeholder="Email" className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 sm:py-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+              <input
+                {...registerUser("email")}
+                type="email"
+                placeholder={t("profile.email")}
+                className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
               {userErrors.email && <p className="text-red-400 text-sm">{userErrors.email.message}</p>}
 
-              <input {...registerUser("password")} type="password" placeholder="Password" className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 sm:py-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600" />
-              {userErrors.password && <p className="text-red-400 text-sm">{userErrors.password.message}</p>}
+              <input
+                {...registerUser("password")}
+                type="password"
+                placeholder={t("profile.password")}
+                className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              {userErrors.password && (
+                <p className="text-red-400 text-sm">{userErrors.password.message}</p>
+              )}
 
-              <select {...registerUser("role")} className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 sm:py-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600">
-                <option value="viewer">Viewer</option>
-                <option value="admin">Admin</option>
+              <select
+                {...registerUser("role")}
+                className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              >
+                <option value="viewer">{t("profile.viewer")}</option>
+                <option value="admin">{t("profile.admin")}</option>
               </select>
 
-              <button type="submit" className="w-full mt-3 sm:mt-4 bg-green-600 hover:bg-green-700 transition text-white font-semibold py-2 sm:py-3 rounded-md">
-                Create Account
+              <button type="submit" className="w-full mt-3 sm:mt-4 bg-green-600 hover:bg-green-700 transition text-white font-semibold py-2 rounded-md">
+                {t("profile.createAccount")}
               </button>
             </form>
           )}
@@ -210,9 +256,8 @@ const Profile = () => {
              border border-white/10"
         >
           <LogOut size={16} />
-          <span className="hidden md:inline">Logout</span>
+          <span className="hidden md:inline">{t("profile.logout")}</span>
         </button>
-
       </div>
     </div>
   );

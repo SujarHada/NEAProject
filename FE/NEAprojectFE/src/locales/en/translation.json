@@ -1,12 +1,86 @@
 {
-  "createLetterPage": {
-    "title": "Create a letter in this page"
+  "dashboard": {
+    "title": "Dashboard Overview",
+    "loading": "Loading dashboard…",
+    "error": "Failed to load data",
+    "last_updated": "Last updated",
+    "active_products": "Active Products",
+    "active_branches": "Active Branches",
+    "active_offices": "Active Offices",
+    "active_employees": "Active Employees",
+    "total_receivers": "Total Receivers",
+    "letters": "Letters",
+    "draft_letters": "Draft Letters",
+    "sent_letters": "Sent Letters"
   },
+  "profile": {
+  "title": "Profile Dashboard",
+  "changePassword": "Change Password",
+  "createUser": "Create User",
+  "currentPassword": "Current Password",
+  "newPassword": "New Password",
+  "confirmPassword": "Confirm Password",
+  "updatePassword": "Update Password",
+  "name": "Name",
+  "email": "Email",
+  "password": "Password",
+  "viewer": "Viewer",
+  "admin": "Admin",
+  "createAccount": "Create Account",
+  "logout": "Logout"
+},
+  "createLetter": {
+    "title": "Create Letter",
+    "date": "Date",
+    "letter_count": "Letter count",
+    "chalani_no": "Chalani No",
+    "voucher_no": "Voucher No",
+    "gatepass_no": "GatePass No",
+    "select_office": "Select Office",
+    "subject": "Subject",
+    "request_date": "Request date",
+    "request_chalani_number": "Request chalani number",
+    "request_letter_count": "Request letter count",
+    "items": "Items",
+    "product": "Product",
+    "quantity": "Quantity",
+    "remarks": "Remarks",
+    "select_receiver": "Select Receiver",
+    "no_receiver_found": "No receivers found in current selected office",
+    "submit": "Create Letter",
+    "creating": "Creating..."
+},
   "allLettersPage": {
     "title": "List your all letters"
   },
   "lettersBinPage": {
-    "title": "This is the Letters Bin Page"
+    "title": "Letters Bin"
+  },
+  "editLetter": {
+    "title": "Edit Letter",
+    "date": "Date",
+    "letter_count": "Letter count",
+    "chalani_no": "Chalani No",
+    "voucher_no": "Voucher No",
+    "gatepass_no": "GatePass No",
+    "subject": "Subject",
+    "select_office": "Select Office",
+    "select_receiver": "Select Receiver",
+    "request_date": "Request date",
+    "request_chalani_number": "Request chalani number",
+    "request_letter_count": "Request letter count",
+    "items": "Items",
+    "product": "Product",
+    "quantity": "Quantity",
+    "remarks": "Remarks",
+    "add_item": "Add Item",
+    "remove": "Remove",
+    "update": "Update Letter",
+    "updating": "Saving...",
+    "validation": {
+      "required": "This field is required",
+      "invalid": "Invalid value"
+    }
   },
   "createProductPage": {
     "title": "Create Product",
