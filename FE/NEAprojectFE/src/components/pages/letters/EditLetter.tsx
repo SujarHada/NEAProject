@@ -7,7 +7,7 @@ import NepaliDatePicker from "@zener/nepali-datepicker-react";
 import "@zener/nepali-datepicker-react/index.css";
 import api from "../../../utils/api";
 import { useParams } from "react-router";
-import { updateLetterSchema, type EditLetter } from "../../../schemas/letter";
+import { updateLetterSchema, type EditLetter as EditLetterI } from "../../../schemas/letter";
 
 const EditLetterSchema = updateLetterSchema
 
@@ -19,7 +19,7 @@ const EditLetter = () => {
         formState: { isSubmitting, errors },
         setValue,
         reset,
-    } = useForm<EditLetter>({
+    } = useForm<EditLetterI>({
         resolver: zodResolver(EditLetterSchema),
         defaultValues: {
             letter_count: "",
@@ -116,7 +116,7 @@ const EditLetter = () => {
         }
     };
 
-    const onSubmit = async (data: EditLetter) => {
+    const onSubmit = async (data: EditLetterI) => {
         try {
             const res = await api.put(`/api/letters/${id}/`, data);
             if (res.status === 200) {

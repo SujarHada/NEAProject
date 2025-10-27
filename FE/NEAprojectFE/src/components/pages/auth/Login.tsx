@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import api from "../../../utils/api";
 import useAuthStore from "../../../store/useAuthStore";
@@ -6,9 +6,25 @@ import useAuthStore from "../../../store/useAuthStore";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  useEffect(() => {
+    setLoading(true);
+    const fetchUser = async () => {
+      try {
+        const data = await useAuthStore.getState().getUser();
+        if (data) {
+          navigate("/", { replace: true });
+        }
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,6 +47,14 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="loading-overlay h-screen w-full fixed top-0 left-0 flex items-center justify-center bg-black z-50">
+        <div className='border-4 animate-spin rounded-full h-24 z-[9999] w-24 border-t-white' ></div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300">

@@ -8,9 +8,9 @@ import NepaliDatePicker from '@zener/nepali-datepicker-react';
 import '@zener/nepali-datepicker-react/index.css';
 import api from "../../../utils/api";
 import { useNavigate } from "react-router";
-import { type CreateLetter, createLetterSchema } from "../../../schemas/letter";
+import { type CreateLetter as CreateLetterI, createLetterSchema } from "../../../schemas/letter";
 const CreateLetter = () => {
-    const { control, handleSubmit, formState: { isSubmitting, errors }, setValue } = useForm<CreateLetter>({
+    const { control, handleSubmit, formState: { isSubmitting, errors }, setValue } = useForm<CreateLetterI>({
         resolver: zodResolver(createLetterSchema),
         defaultValues: {
             letter_count: "",
@@ -93,7 +93,7 @@ const CreateLetter = () => {
     };
 
     const { fields, append, remove } = useFieldArray({ control, name: "items" });
-    const onSubmit = async(data: CreateLetter) => {
+    const onSubmit = async(data: CreateLetterI) => {
         const res = await api.post('/api/letters/', data);
         if(res.status===201){
             navigate(`/letters/view-letter/${res.data.data.id}`)
