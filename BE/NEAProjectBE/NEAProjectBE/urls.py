@@ -28,13 +28,15 @@ from myapp.views import (
     ReceiverViewSet,
     BranchViewSet,
     EmployeeViewSet,
+    UserViewSet ,
     SeedDatabaseView,
     change_password,
     login_view,
     logout_view,
     reset_password_request,
     signup_view,
-    get_me_view
+    get_me_view,
+    
 )
 
 router = DefaultRouter()
@@ -44,6 +46,7 @@ router.register('offices', OfficeViewSet)
 router.register('receivers', ReceiverViewSet)
 router.register('branches', BranchViewSet)
 router.register('employees', EmployeeViewSet)
+router.register('users', UserViewSet)
 router.register('dashboard', DashboardViewSet, basename='dashboard')
 
 
