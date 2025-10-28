@@ -5,6 +5,8 @@ import api from "../../../utils/api"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
 import { branchCreationSchema } from "../../../schemas/branch"
+import type { AxiosError } from "axios"
+import axios from "axios"
 
 const CreateBranches = () => {
     const { t } = useTranslation()
@@ -21,10 +23,45 @@ const CreateBranches = () => {
         mode: "onSubmit"
     })
 
+    function parseError(errors: AxiosError, path: any[] = []) {
+        const messages: string[] = [];
+
+        if (!errors || typeof errors !== "object") return messages;
+        if (Array.isArray(errors)) {
+            errors.forEach((msg) => {
+                if (typeof msg === "string") {
+                    messages.push(`${path.join(" ")}: ${msg}`);
+                } else if (typeof msg === "object") {
+                    messages.push(...parseError(msg, path));
+                }
+            });
+            return messages;
+        }
+
+        if (errors.message) {
+            messages.push(`${path.join(" ")}: ${errors.message}`);
+            return messages;
+        }
+        Object.entries(errors).forEach(([key, value]) => {
+            if (value) {
+                messages.push(...parseError(value, [...path, key]));
+            }
+        });
+
+        return messages;
+    }
     const onSubmit: SubmitHandler<BranchFormInputs> = async (data) => {
-        const res = await api.post("/api/branches/", data)
-        if (res.status === 201) {
-            navigate("/branches/all-branches")
+        try {
+            const res = await api.post("/api/branches/", data)
+            if (res.status === 201) {
+                navigate("/branches/all-branches")
+            }
+
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                const errors = parseError(err.response?.data)
+                alert(errors[0])
+            }
         }
     }
 

@@ -19,9 +19,22 @@ const AllEmployees = () => {
     const ref = useRef(null)
     useOnClickOutside<any>(ref, () => setOpenDropdownId(null))
 
-    const toggleDropdown = (employeeId: number) => {
-        setOpenDropdownId(prev => (prev === employeeId ? null : employeeId))
+    const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null)
+
+    const toggleDropdown = (serial_number: number, e?: React.MouseEvent) => {
+        if (openDropdownId === serial_number) {
+            setOpenDropdownId(null)
+            return
+        }
+
+        const rect = (e?.currentTarget as HTMLElement)?.getBoundingClientRect()
+        setDropdownPosition({
+            top: rect.bottom + window.scrollY + 5,
+            left: rect.right - 180,
+        })
+        setOpenDropdownId(serial_number)
     }
+
 
     const fetchEmployees = async (pageUrl?: string, pageNum?: number, orgId?: string) => {
         try {
@@ -124,13 +137,20 @@ const AllEmployees = () => {
                                 <td className="px-6 py-4">{employee.branch_name}</td>
                                 <td className="px-6 py-4 relative">
                                     <button
-                                        onClick={() => toggleDropdown(employee.id)}
+                                        onClick={(e) => toggleDropdown(employee.id, e)}
                                         className="text-white outline-none bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-3 py-1.5 items-center"
                                     >
                                         ⋮
                                     </button>
                                     {openDropdownId === employee.id && (
-                                        <div ref={ref} className="absolute z-10 right-0 mt-2 w-44 divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700">
+                                        <div ref={ref}
+                                            className="fixed z-[99999] w-44 divide-y divide-gray-100 rounded-lg shadow-lg bg-gray-700"
+                                            style={{
+                                                top: dropdownPosition?.top ?? 0,
+                                                left: dropdownPosition?.left ?? 0,
+                                            }}
+
+                                        >
                                             <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
                                                 <li>
                                                     <button onClick={() => navigate(`/employees/edit/${employee.id}`)}

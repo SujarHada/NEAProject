@@ -20,10 +20,22 @@ const ActiveProducts = () => {
     useOnClickOutside<any>(ref, () => {
         setOpenDropdownId(null)
     })
+    const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null)
 
-    const toggleDropdown = (productId: number) => {
-        setOpenDropdownId(prev => (prev === productId ? null : productId))
+    const toggleDropdown = (serial_number: number, e?: React.MouseEvent) => {
+        if (openDropdownId === serial_number) {
+            setOpenDropdownId(null)
+            return
+        }
+
+        const rect = (e?.currentTarget as HTMLElement)?.getBoundingClientRect()
+        setDropdownPosition({
+            top: rect.bottom + window.scrollY + 5,
+            left: rect.right - 180,
+        })
+        setOpenDropdownId(serial_number)
     }
+
 
     const fetchProducts = async (pageUrl?: string, pageNum?: number) => {
         try {
@@ -88,7 +100,7 @@ const ActiveProducts = () => {
                     Download
                 </button>
             </div>
-
+            <div className="w-full  overflow-x-auto overflow-y-visible" style={{ scrollbarWidth: 'thin' }} >
             <table className="w-full text-sm text-left text-gray-400">
                 <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
                     <tr>
@@ -117,7 +129,7 @@ const ActiveProducts = () => {
                                 <td className="px-6 py-4">{product.unit_of_measurement}</td>
                                 <td className="px-6 py-4 relative">
                                     <button
-                                        onClick={() => toggleDropdown(product.serial_number)}
+                                        onClick={(e) => toggleDropdown(product.serial_number,e)}
                                         className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5"
                                     >
                                         ⋮
@@ -126,9 +138,10 @@ const ActiveProducts = () => {
                                     {openDropdownId === product.serial_number && (
                                         <div
                                             ref={ref}
-                                            className="absolute z-10 right-5 mt-2 w-44 rounded-lg shadow-lg dark:bg-gray-700"
+                                            className="fixed z-[99999] w-44 divide-y divide-gray-100 rounded-lg shadow-lg bg-gray-700"
                                             style={{
-                                                transform: window.innerHeight - (window.scrollY + 200) < 150 ? "translateY(-100%)" : "none",
+                                                top: dropdownPosition?.top ?? 0,
+                                                left: dropdownPosition?.left ?? 0,
                                             }}
                                         >
                                             <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
@@ -157,6 +170,7 @@ const ActiveProducts = () => {
                     )}
                 </tbody>
             </table>
+</div>
 
             {productsCount > 10 && (
                 <ul className="flex items-center justify-center h-8 text-sm">
