@@ -18,8 +18,20 @@ const ReceiverList = () => {
     const ref = useRef(null)
     useOnClickOutside<any>(ref, () => setOpenDropdownId(null))
 
-    const toggleDropdown = (receiverId: number) => {
-        setOpenDropdownId(prev => (prev === receiverId ? null : receiverId))
+    const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null)
+
+    const toggleDropdown = (serial_number: number, e?: React.MouseEvent) => {
+        if (openDropdownId === serial_number) {
+            setOpenDropdownId(null)
+            return
+        }
+
+        const rect = (e?.currentTarget as HTMLElement)?.getBoundingClientRect()
+        setDropdownPosition({
+            top: rect.bottom + window.scrollY + 5,
+            left: rect.right - 180,
+        })
+        setOpenDropdownId(serial_number)
     }
 
     const fetchreceivers = async (pageUrl?: string, pageNum?: number) => {
@@ -83,57 +95,65 @@ const ReceiverList = () => {
                     Download
                 </button>
             </div>
-            <table className="w-full text-sm text-left text-gray-400">
-                <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
-                    <tr>
-                        <th className="px-6 py-3">{t("allreceivers.table.name")}</th>
-                        <th className="px-6 py-3">{t("allreceivers.table.post")}</th>
-                        <th className="px-6 py-3">{t("allreceivers.table.idcardNumber")}</th>
-                        <th className="px-6 py-3">{t("allreceivers.table.phoneNumber")}</th>
-                        <th className="px-6 py-3">{t("allreceivers.table.action")}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {receivers.length === 0 && (
-                        <tr className="border-b bg-gray-800 border-gray-700">
-                            <td className="px-6 py-4 font-medium text-center text-white" colSpan={6}>
-                                {t("allreceivers.noData")}
-                            </td>
-                        </tr>
-                    )}
-                    {receivers.map(receiver => (
-                        <tr key={receiver.id} className="border-b bg-gray-800 border-gray-700">
-                            <td className="px-6 py-4">{receiver.name}</td>
-                            <td className="px-6 py-4">{receiver.post}</td>
-                            <td className="px-6 py-4">{receiver.id_card_number}</td>
-                            <td className="px-6 py-4">{receiver.phone_number}</td>
-                            <td className="px-6 py-4 relative">
-                                <button onClick={() => toggleDropdown(receiver.id)}
-                                    className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5">
-                                    ⋮
-                                </button>
-                                {openDropdownId === receiver.id && (
-                                    <div ref={ref} className="absolute z-10 right-0 mt-2 w-44 divide-y divide-gray-100 rounded-lg shadow-lg bg-gray-700">
-                                        <ul className="py-2 text-sm text-gray-200">
-                                            <li>
-                                                <button onClick={() => navigate(`/receiver/edit/${receiver.id}`)} className="block w-full text-left px-4 py-2 hover:bg-gray-600">
-                                                    {t("allreceivers.actions.edit")}
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button onClick={() => handleDelete(receiver.id)} className="block w-full text-left px-4 py-2 hover:bg-gray-600">
-                                                    {t("allreceivers.actions.delete")}
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                )}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <div className="w-full  overflow-x-auto overflow-y-visible" style={{ scrollbarWidth: 'thin' }} >
 
+                <table className="w-full text-sm text-left text-gray-400">
+                    <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
+                        <tr>
+                            <th className="px-6 py-3">{t("allreceivers.table.name")}</th>
+                            <th className="px-6 py-3">{t("allreceivers.table.post")}</th>
+                            <th className="px-6 py-3">{t("allreceivers.table.idcardNumber")}</th>
+                            <th className="px-6 py-3">{t("allreceivers.table.phoneNumber")}</th>
+                            <th className="px-6 py-3">{t("allreceivers.table.action")}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {receivers.length === 0 && (
+                            <tr className="border-b bg-gray-800 border-gray-700">
+                                <td className="px-6 py-4 font-medium text-center text-white" colSpan={6}>
+                                    {t("allreceivers.noData")}
+                                </td>
+                            </tr>
+                        )}
+                        {receivers.map(receiver => (
+                            <tr key={receiver.id} className="border-b bg-gray-800 border-gray-700">
+                                <td className="px-6 py-4">{receiver.name}</td>
+                                <td className="px-6 py-4">{receiver.post}</td>
+                                <td className="px-6 py-4">{receiver.id_card_number}</td>
+                                <td className="px-6 py-4">{receiver.phone_number}</td>
+                                <td className="px-6 py-4 relative">
+                                    <button onClick={(e) => toggleDropdown(receiver.id,e)}
+                                        className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5">
+                                        ⋮
+                                    </button>
+                                    {openDropdownId === receiver.id && (
+                                        <div ref={ref}
+                                            style={{
+                                                top: dropdownPosition?.top ?? 0,
+                                                left: dropdownPosition?.left ?? 0,
+                                            }}
+                                            className="fixed z-[99999] w-44 divide-y divide-gray-100 rounded-lg shadow-lg bg-gray-700"
+                                        >
+                                            <ul className="py-2 text-sm text-gray-200">
+                                                <li>
+                                                    <button onClick={() => navigate(`/receiver/edit/${receiver.id}`)} className="block w-full text-left px-4 py-2 hover:bg-gray-600">
+                                                        {t("allreceivers.actions.edit")}
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button onClick={() => handleDelete(receiver.id)} className="block w-full text-left px-4 py-2 hover:bg-gray-600">
+                                                        {t("allreceivers.actions.delete")}
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
             {receiversCount > 10 && (
                 <ul className="flex items-center justify-center h-8 text-sm">
                     <li>

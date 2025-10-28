@@ -9,8 +9,7 @@ export const branchCreationSchema = (t: (key: string) => string) => {
             address: z.string().min(1, t("createBranch.validation.address")),
             phone_number: z.string()
                 .min(1, t("createBranch.validation.phone"))
-                .regex(/^[\d\u0966-\u096F]{10}$/, t("createBranch.validation.phoneNum"))
-                .max(10, t("createBranch.validation.phoneMax"))
+                .regex(/^[\d\u0966-\u096F]+$/, t("createBranch.validation.phoneNum"))
         })
 
     )

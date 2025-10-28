@@ -17,7 +17,21 @@ const ProductsBin = () => {
 
   useOnClickOutside<any>(ref, () => setOpenDropdownId(null))
 
-  const toggleDropdown = (productId: number) => setOpenDropdownId(prev => (prev === productId ? null : productId))
+  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null)
+
+  const toggleDropdown = (serial_number: number, e?: React.MouseEvent) => {
+    if (openDropdownId === serial_number) {
+      setOpenDropdownId(null)
+      return
+    }
+
+    const rect = (e?.currentTarget as HTMLElement)?.getBoundingClientRect()
+    setDropdownPosition({
+      top: rect.bottom + window.scrollY + 5,
+      left: rect.right - 180,
+    })
+    setOpenDropdownId(serial_number)
+  }
 
   const fetchProducts = async (pageUrl?: string, pageNum?: number) => {
     try {
@@ -71,63 +85,73 @@ const ProductsBin = () => {
         <h1 className="text-2xl font-bold">{t("productsBinPage.title")}</h1>
         <button onClick={handleDownload} className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5">
           Download
-        </button>      </div>
+        </button>
+      </div>
 
-      <table className="w-full text-sm text-left text-gray-400">
-        <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
-          <tr>
-            <th className="px-6 py-3">{t("productsBinPage.table.sn")}</th>
-            <th className="px-6 py-3">{t("productsBinPage.table.sku")}</th>
-            <th className="px-6 py-3">{t("productsBinPage.table.name")}</th>
-            <th className="px-6 py-3">{t("productsBinPage.table.company")}</th>
-            <th className="px-6 py-3">{t("productsBinPage.table.unit")}</th>
-            <th className="px-6 py-3">{t("productsBinPage.table.action")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products?.length === 0 ? (
-            <tr className="border-b bg-gray-800 border-gray-700">
-              <td className="px-6 py-4 font-medium text-center text-white" colSpan={6}>
-                {t("productsBinPage.noProducts")}
-              </td>
+      <div className="w-full  overflow-x-auto overflow-y-visible" style={{ scrollbarWidth: 'thin' }} >
+
+        <table className="w-full text-sm text-left text-gray-400">
+          <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
+            <tr>
+              <th className="px-6 py-3">{t("productsBinPage.table.sn")}</th>
+              <th className="px-6 py-3">{t("productsBinPage.table.sku")}</th>
+              <th className="px-6 py-3">{t("productsBinPage.table.name")}</th>
+              <th className="px-6 py-3">{t("productsBinPage.table.company")}</th>
+              <th className="px-6 py-3">{t("productsBinPage.table.unit")}</th>
+              <th className="px-6 py-3">{t("productsBinPage.table.action")}</th>
             </tr>
-          ) : (
-            products.map((product: Product) => (
-              <tr key={product.serial_number} className="border-b bg-gray-800 border-gray-700">
-                <td className="px-6 py-4 font-medium text-white">{product.serial_number}</td>
-                <td className="px-6 py-4">{product.sku}</td>
-                <td className="px-6 py-4">{product.name}</td>
-                <td className="px-6 py-4">{product.company}</td>
-                <td className="px-6 py-4">{product.unit_of_measurement}</td>
-                <td className="px-6 py-4 relative">
-                  <button
-                    onClick={() => toggleDropdown(product.serial_number)}
-                    className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5"
-                  >
-                    ⋮
-                  </button>
-
-                  {openDropdownId === product.serial_number && (
-                    <div ref={ref} className="absolute z-10 right-5 mt-2 w-44 divide-y rounded-lg shadow-lg dark:bg-gray-700">
-                      <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
-                        <li>
-                          <button
-                            onClick={() => goLive(product.id)}
-                            className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
-                          >
-                            {t("productsBinPage.dropdown.goLive")}
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                  )}
+          </thead>
+          <tbody>
+            {products?.length === 0 ? (
+              <tr className="border-b bg-gray-800 border-gray-700">
+                <td className="px-6 py-4 font-medium text-center text-white" colSpan={6}>
+                  {t("productsBinPage.noProducts")}
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              products.map((product: Product) => (
+                <tr key={product.serial_number} className="border-b bg-gray-800 border-gray-700">
+                  <td className="px-6 py-4 font-medium text-white">{product.serial_number}</td>
+                  <td className="px-6 py-4">{product.sku}</td>
+                  <td className="px-6 py-4">{product.name}</td>
+                  <td className="px-6 py-4">{product.company}</td>
+                  <td className="px-6 py-4">{product.unit_of_measurement}</td>
+                  <td className="px-6 py-4 relative">
+                    <button
+                      onClick={(e) => toggleDropdown(product.serial_number, e)}
+                      className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5"
+                    >
+                      ⋮
+                    </button>
 
+                    {openDropdownId === product.serial_number && (
+                      <div ref={ref}
+                        className="fixed z-[99999] w-44 divide-y divide-gray-100 rounded-lg shadow-lg bg-gray-700"
+
+                        style={{
+                          top: dropdownPosition?.top ?? 0,
+                          left: dropdownPosition?.left ?? 0,
+                        }}
+                      >
+                        <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+                          <li>
+                            <button
+                              onClick={() => goLive(product.id)}
+                              className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                            >
+                              {t("productsBinPage.dropdown.goLive")}
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
       {productsCount > 10 && (
         <ul className="flex items-center justify-center h-8 text-sm">
           <li>

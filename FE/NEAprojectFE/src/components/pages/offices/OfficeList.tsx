@@ -20,8 +20,21 @@ const OfficeList = () => {
         setOpenDropdownId(null)
     })
 
-    const toggleDropdown = (id: number) => setOpenDropdownId(prev => (prev === id ? null : id))
+    const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null)
 
+    const toggleDropdown = (serial_number: number, e?: React.MouseEvent) => {
+        if (openDropdownId === serial_number) {
+            setOpenDropdownId(null)
+            return
+        }
+
+        const rect = (e?.currentTarget as HTMLElement)?.getBoundingClientRect()
+        setDropdownPosition({
+            top: rect.bottom + window.scrollY + 5,
+            left: rect.right - 180,
+        })
+        setOpenDropdownId(serial_number)
+    }
     const fetchOffices = async (pageUrl?: string, pageNum?: number) => {
         try {
             const apiUrl = pageUrl || `/api/offices/?page=${pageNum || currentPage}`
@@ -84,59 +97,67 @@ const OfficeList = () => {
                     Download
                 </button>
             </div>
-            <table className="w-full text-sm text-left text-gray-400">
-                <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
-                    <tr>
-                        <th className="px-6 py-3">{t('officeList.table.id')}</th>
-                        <th className="px-6 py-3">{t('officeList.table.name')}</th>
-                        <th className="px-6 py-3">{t('officeList.table.address')}</th>
-                        <th className="px-6 py-3">{t('officeList.table.email')}</th>
-                        <th className="px-6 py-3">{t('officeList.table.contact')}</th>
-                        <th className="px-6 py-3">{t('officeList.table.action')}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {offices.length === 0 ? (
-                        <tr className="border-b bg-gray-800 border-gray-700">
-                            <td className="px-6 py-4 font-medium text-center text-white" colSpan={6}>
-                                {t('officeList.noData')}
-                            </td>
+            <div className="w-full  overflow-x-auto overflow-y-visible" style={{ scrollbarWidth: 'thin' }} >
+
+                <table className="w-full text-sm text-left text-gray-400">
+                    <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
+                        <tr>
+                            <th className="px-6 py-3">{t('officeList.table.id')}</th>
+                            <th className="px-6 py-3">{t('officeList.table.name')}</th>
+                            <th className="px-6 py-3">{t('officeList.table.address')}</th>
+                            <th className="px-6 py-3">{t('officeList.table.email')}</th>
+                            <th className="px-6 py-3">{t('officeList.table.contact')}</th>
+                            <th className="px-6 py-3">{t('officeList.table.action')}</th>
                         </tr>
-                    ) : (
-                        offices.map(office => (
-                            <tr key={office.id} className="border-b bg-gray-800 border-gray-700">
-                                <td className="px-6 py-4 font-medium text-white">{office.serial_number}</td>
-                                <td className="px-6 py-4">{office.name}</td>
-                                <td className="px-6 py-4">{office.address}</td>
-                                <td className="px-6 py-4">{office.email}</td>
-                                <td className="px-6 py-4">{office.phone_number}</td>
-                                <td className="px-6 py-4 relative">
-                                    <button onClick={() => toggleDropdown(office.id)} className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5">
-                                        ⋮
-                                    </button>
-                                    {openDropdownId === office.id && (
-                                        <div ref={ref} className="absolute z-10 right-0 mt-2 w-44 divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700">
-                                            <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
-                                                <li>
-                                                    <button onClick={() => navigate(`/offices/edit/${office.id}`)} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
-                                                        {t('officeList.actions.edit')}
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onClick={() => handleDelete(office.id)} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
-                                                        {t('officeList.actions.delete')}
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    )}
+                    </thead>
+                    <tbody>
+                        {offices.length === 0 ? (
+                            <tr className="border-b bg-gray-800 border-gray-700">
+                                <td className="px-6 py-4 font-medium text-center text-white" colSpan={6}>
+                                    {t('officeList.noData')}
                                 </td>
                             </tr>
-                        ))
-                    )}
-                </tbody>
-            </table>
-
+                        ) : (
+                            offices.map(office => (
+                                <tr key={office.id} className="border-b bg-gray-800 border-gray-700">
+                                    <td className="px-6 py-4 font-medium text-white">{office.serial_number}</td>
+                                    <td className="px-6 py-4">{office.name}</td>
+                                    <td className="px-6 py-4">{office.address}</td>
+                                    <td className="px-6 py-4">{office.email}</td>
+                                    <td className="px-6 py-4">{office.phone_number}</td>
+                                    <td className="px-6 py-4 relative">
+                                        <button onClick={(e) => toggleDropdown(office.id, e)} className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5">
+                                            ⋮
+                                        </button>
+                                        {openDropdownId === office.id && (
+                                            <div ref={ref}
+                                                style={{
+                                                    top: dropdownPosition?.top ?? 0,
+                                                    left: dropdownPosition?.left ?? 0,
+                                                }}
+                                                className="fixed z-[99999] w-44 divide-y divide-gray-100 rounded-lg shadow-lg bg-gray-700"
+                                            >
+                                                <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+                                                    <li>
+                                                        <button onClick={() => navigate(`/offices/edit/${office.id}`)} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                                            {t('officeList.actions.edit')}
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onClick={() => handleDelete(office.id)} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                                            {t('officeList.actions.delete')}
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
             {officesCount > 10 && (
                 <ul className="flex items-center justify-center h-8 text-sm">
                     <li>
