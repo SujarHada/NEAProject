@@ -5,7 +5,9 @@ from .auth import (
     logout_view,
     change_password,
     reset_password_request,
-    get_me_view
+    get_me_view,
+    employee_signup_view,
+    verify_email_view
 )
 from .user import UserViewSet
 from .office import OfficeViewSet
@@ -25,6 +27,8 @@ __all__ = [
     'change_password',
     'reset_password_request',
     'get_me_view',
+    'employee_signup_view',
+    'verify_email_view',
     'UserViewSet',
     'OfficeViewSet',
     'BranchViewSet',

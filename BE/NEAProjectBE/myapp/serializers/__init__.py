@@ -1,6 +1,6 @@
 from .office import OfficeSerializer
 from .branch import BranchSerializer
-from .user import UserSignupSerializer, UserLoginSerializer, UserSerializer, CurrentUserSerializer
+from .user import UserSignupSerializer, UserLoginSerializer, UserSerializer, CurrentUserSerializer, EmployeeSignupSerializer
 from .employee import EmployeeSerializer
 from .receiver import ReceiverSerializer
 from .letter import LetterItemSerializer, LetterReceiverSerializer, LetterSerializer
@@ -14,6 +14,7 @@ __all__ = [
     'UserLoginSerializer',
     'UserSerializer',
     'CurrentUserSerializer',
+    'EmployeeSignupSerializer',
     'EmployeeSerializer',
     'ReceiverSerializer',
     'LetterItemSerializer',

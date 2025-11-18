@@ -19,7 +19,6 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.routers import DefaultRouter
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
-from rest_framework_simplejwt.views import TokenRefreshView
 from myapp.views import (
     DashboardViewSet,
     LetterViewSet,
@@ -35,6 +34,8 @@ from myapp.views import (
     logout_view,
     reset_password_request,
     signup_view,
+    employee_signup_view,
+    verify_email_view,
     get_me_view,
     
 )
@@ -61,6 +62,8 @@ urlpatterns = [
 
      # Authentication endpoints (JWT)
     path('api/auth/signup/', signup_view, name='signup'),
+    path('api/auth/employee-signup/', employee_signup_view, name='employee-signup'),
+    path('api/auth/verify-email/', verify_email_view, name='verify-email'),
     path('api/auth/login/', login_view, name='login'),
     path('api/auth/logout/', logout_view, name='logout'),
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
