@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_field
-from myapp.models import Employee, Branch
+from myapp.models import Employee, Branch, EmployeeRole
 
 class EmployeeSerializer(serializers.ModelSerializer):
     serial_number = serializers.SerializerMethodField()
     branch_name = serializers.CharField(source="branch.name", read_only=True)
     organization_id = serializers.IntegerField(source="branch.organization_id", required=False)
-    role = serializers.CharField(max_length=1)
+    role = serializers.ChoiceField(choices=EmployeeRole.choices)
+    password = serializers.CharField(write_only=True, required=False, allow_blank=True)
 
     class Meta:
         model = Employee
@@ -16,6 +17,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "middle_name",
             "last_name",
             "email",
+            "password",
             "role",
             "organization_id",
             "branch_name",
@@ -42,14 +44,6 @@ class EmployeeSerializer(serializers.ModelSerializer):
         return 0
 
     def validate_role(self, value):
-        """Validate that role is a digit between 1-9"""
-        if not value.isdigit():
-            raise serializers.ValidationError("Role must be a digit between 1 and 9")
-        
-        role_num = int(value)
-        if role_num < 1 or role_num > 9:
-            raise serializers.ValidationError("Role must be between 1 and 9")
-        
         return value
 
     def validate_email(self, value):
@@ -63,7 +57,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
         org_id = validated_data.pop("branch")["organization_id"]
         branch = Branch.objects.get(organization_id=org_id)
         validated_data["branch"] = branch
+        raw_pwd = validated_data.pop("password", None)
         employee = Employee.objects.create(**validated_data)
+        if raw_pwd:
+            employee.set_password(raw_pwd)
+            employee.save(update_fields=["password", "updated_at"])
         return employee
 
     def update(self, instance, validated_data):
@@ -71,4 +69,9 @@ class EmployeeSerializer(serializers.ModelSerializer):
             org_id = validated_data.pop("branch")["organization_id"]
             branch = Branch.objects.get(organization_id=org_id)
             validated_data["branch"] = branch
-        return super().update(instance, validated_data)
+        raw_pwd = validated_data.pop("password", None)
+        obj = super().update(instance, validated_data)
+        if raw_pwd:
+            obj.set_password(raw_pwd)
+            obj.save(update_fields=["password", "updated_at"])
+        return obj

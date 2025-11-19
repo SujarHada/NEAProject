@@ -2,17 +2,11 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from .base import TimeStampedModel
 from .branch import Branch
+from django.contrib.auth.hashers import make_password, check_password
 
 class EmployeeRole(models.TextChoices):
-    LEVEL_1 = "1", "Level 1"
-    LEVEL_2 = "2", "Level 2"
-    LEVEL_3 = "3", "Level 3"
-    LEVEL_4 = "4", "Level 4"
-    LEVEL_5 = "5", "Level 5"
-    LEVEL_6 = "6", "Level 6"
-    LEVEL_7 = "7", "Level 7"
-    LEVEL_8 = "8", "Level 8"
-    LEVEL_9 = "9", "Level 9"
+    ADMIN = "admin", "Admin"
+    VIEWER = "viewer", "Viewer"
 
 class EmployeeStatus(models.TextChoices):
     ACTIVE = "active", "Active"
@@ -24,10 +18,11 @@ class Employee(TimeStampedModel):
     middle_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128, blank=True, default="")
     role = models.CharField(
-        max_length=1,
+        max_length=20,
         choices=EmployeeRole.choices,
-        default=EmployeeRole.LEVEL_1,
+        default=EmployeeRole.VIEWER,
     )
     status = models.CharField(
         max_length=10,
@@ -40,13 +35,19 @@ class Employee(TimeStampedModel):
             return f"{self.first_name} {self.middle_name} {self.last_name}"
         return f"{self.first_name} {self.last_name}"
 
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        if not self.password:
+            return False
+        return check_password(raw_password, self.password)
+
     def clean(self):
-        """Additional validation to ensure role is between 1-9"""
-        if self.role and not self.role.isdigit():
-            raise ValidationError({'role': 'Role must be a digit between 1 and 9'})
-        
-        if self.role and (int(self.role) < 1 or int(self.role) > 9):
-            raise ValidationError({'role': 'Role must be between 1 and 9'})
+        """Ensure role is one of the defined choices"""
+        valid_values = [c[0] for c in EmployeeRole.choices]
+        if self.role and self.role not in valid_values:
+            raise ValidationError({'role': 'Role must be either admin or viewer'})
 
     class Meta:
         app_label = 'myapp'

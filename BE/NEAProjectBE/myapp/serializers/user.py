@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from myapp.models import User, UserRole
+from myapp.models import Employee
 
 class UserSignupSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)

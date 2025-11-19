@@ -7,6 +7,7 @@ from .receiver import Receiver
 from .letter import Letter, LetterItem, LetterStatus
 from .product import Product, ProductStatus, UnitOfMeasurement
 from .dashboard import Dashboard
+from .verification import EmailVerification
 
 __all__ = [
     'TimeStampedModel',
@@ -18,4 +19,5 @@ __all__ = [
     'Letter', 'LetterItem', 'LetterStatus',
     'Product', 'ProductStatus', 'UnitOfMeasurement',
     'Dashboard',
+    'EmailVerification',
 ]

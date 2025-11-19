@@ -8,13 +8,15 @@ from django.contrib.auth import authenticate
 from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
 
-from ..models import User
+from ..models import User, Employee
 from ..serializers import (
     UserSignupSerializer, 
     UserLoginSerializer, 
     UserSerializer, 
     CurrentUserSerializer
 )
+import logging
+from django.utils import timezone
 
 def get_tokens_for_user(user):
     """Generate JWT tokens for a user"""
@@ -185,17 +187,29 @@ def login_view(request):
         email = serializer.validated_data['email']
         password = serializer.validated_data['password']
         
-        # Authenticate user
         user = authenticate(request=request, username=email, password=password)
-        
         if not user:
-            return Response(
-                {'error': 'Invalid credentials'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+            emp = Employee.objects.filter(email=email).first()
+            if emp and emp.check_password(password):
+                mapped_role = 'admin' if emp.role == 'admin' else 'viewer'
+                user = User.objects.filter(email=email).first()
+                if not user:
+                    user = User.objects.create_user(email=email, name=(emp.first_name + ' ' + emp.last_name).strip(), password=password, role=mapped_role)
+                else:
+                    user.set_password(password)
+                    if user.role != mapped_role:
+                        user.role = mapped_role
+                    user.save(update_fields=['password', 'role', 'updated_at'])
+            else:
+                logging.getLogger(__name__).warning(f"Failed login attempt for email: {email}")
+                return Response(
+                    {'error': 'Invalid credentials'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
         
         # Check if user is active
         if not user.is_active:
+            logging.getLogger(__name__).warning(f"Inactive account login attempt for email: {email}")
             return Response(
                 {'error': 'Account is not active. Please contact administrator.'},
                 status=status.HTTP_401_UNAUTHORIZED
@@ -211,6 +225,7 @@ def login_view(request):
         })
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @extend_schema(
     request={

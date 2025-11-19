@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.http import HttpResponse
 from datetime import datetime
@@ -16,7 +17,8 @@ class ReceiverViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def export_csv(self, request):
         queryset = self.filter_queryset(self.get_queryset())
-        response = HttpResponse(content_type='text/csv')
+        response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
+        response.write('\ufeff')
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
         response['Content-Disposition'] = f'attachment; filename="receivers_export_{timestamp}.csv"'
         writer = csv.writer(response)
