@@ -6,7 +6,7 @@ class SeedDatabaseView(APIView):
     permission_classes = [permissions.AllowAny]
     
     def post(self, request, *args, **kwargs):
-        from .utils import seed_database
+        from ..utils import seed_database
         result = seed_database()
         if result['success']:
             return Response({"status": "success", "message": "Database seeded successfully", "output": result['output']}, status=status.HTTP_201_CREATED)

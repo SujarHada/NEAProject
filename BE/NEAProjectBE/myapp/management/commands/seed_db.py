@@ -84,6 +84,8 @@ class Command(BaseCommand):
                                 role=random.choice(valid_roles),
                                 status=EmployeeStatus.ACTIVE,
                             )
+                            employee.set_password('employee123')
+                            employee.save(update_fields=['password','updated_at'])
                             employees.append(employee)
                         except Exception as e:
                             logger.error("Failed to create employee", exc_info=e)
