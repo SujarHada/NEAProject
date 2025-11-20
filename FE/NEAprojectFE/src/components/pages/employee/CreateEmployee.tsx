@@ -1,6 +1,6 @@
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { type createEmployeesInputs } from "../../../interfaces/interfaces"
+import { type CreateEmployeesFormData as createEmployeesInputs } from "../../../schemas/employee"
 import { FaChevronDown } from "react-icons/fa"
 import { useParams, useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
@@ -34,8 +34,9 @@ const CreateEmployee = () => {
             middle_name: "",
             last_name: "",
             email: "",
+            password: "",
             organization_id: 0,
-            role: "",
+            role: "viewer",
         },
         resolver: zodResolver(createEmployeesFormschema),
         mode: "onSubmit"
@@ -130,17 +131,30 @@ const CreateEmployee = () => {
                     {errors.last_name && <p className="text-red-500">{errors.last_name.message}</p>}
                 </div>
             </div>
+                <div className="flex flex-row flex-1 gap-4 w-full flex-wrap">
 
-            <div className="lg:w-1/2 flex flex-col gap-2">
-                <label htmlFor="email">{t("createEmployee.labels.email")} *</label>
-                <Controller
-                    name="email"
-                    control={control}
-                    render={({ field }) => (
-                        <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="email" />
-                    )}
-                />
-                {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+                    <div className="flex flex-col w-full flex-1 ">
+                    <label htmlFor="email">{t("createEmployee.labels.email")} *</label>
+                    <Controller
+                        name="email"
+                        control={control}
+                        render={({ field }) => (
+                            <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="email" />
+                        )}
+                    />
+                    {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+                </div>
+                    <div className="flex flex-col w-full flex-1 ">
+                    <label htmlFor="email">{t("createEmployee.labels.password")} *</label>
+                    <Controller
+                        name="password"
+                        control={control}
+                        render={({ field }) => (
+                            <input type="password" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="password" />
+                        )}
+                    />
+                    {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+                </div>
             </div>
 
             <div className="lg:w-1/2 flex flex-col relative">
@@ -149,7 +163,11 @@ const CreateEmployee = () => {
                     name="role"
                     control={control}
                     render={({ field }) => (
-                        <input type="text" placeholder="1-9" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="email" />
+                        <select id="role" {...field} className="bg-[#B5C9DC] w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                            <option value="" disabled hidden>{t("createEmployee.placeholders.position")}</option>
+                            <option value="admin">Admin</option>
+                            <option value="viewer">Viewer</option>
+                        </select>
                     )}
                 />
                 {errors.role && <p className="text-red-500">{errors.role.message}</p>}

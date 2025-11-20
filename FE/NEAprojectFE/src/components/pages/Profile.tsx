@@ -145,7 +145,7 @@ const Profile = () => {
             {t("profile.changePassword")}
           </button>
 
-          {user?.role === "admin" && (
+          {/* {user?.role === "admin" && (
             <button
               onClick={() => setActiveTab("createUser")}
               className={`px-4 sm:px-6 py-2 rounded-lg sm:text-base font-semibold transition ${
@@ -156,7 +156,7 @@ const Profile = () => {
             >
               {t("profile.createUser")}
             </button>
-          )}
+          )} */}
         </div>
 
         {/* Tab Content */}
@@ -201,7 +201,7 @@ const Profile = () => {
               </button>
             </form>
           )}
-
+{/* 
           {activeTab === "createUser" && user?.role === "admin" && (
             <form
               onSubmit={handleUserSubmit(onCreateUser)}
@@ -245,7 +245,7 @@ const Profile = () => {
                 {t("profile.createAccount")}
               </button>
             </form>
-          )}
+          )} */}
         </div>
 
         <button

@@ -14,6 +14,12 @@ const AllLetters = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [nextPage, setNextPage] = useState<string | null>(null)
     const [prevPage, setPrevPage] = useState<string | null>(null)
+    const [startDate, setStartDate] = useState<string | null>(null)
+    const [endDate, setEndDate] = useState<string | null>(null)
+
+
+
+
     const navigate = useNavigate()
     const ref = useRef(null)
     useOnClickOutside<any>(ref, () => setOpenDropdownId(null))
@@ -57,6 +63,7 @@ const AllLetters = () => {
             return []
         }
     }
+    
 
     useEffect(() => {
         fetchletters()
@@ -113,7 +120,6 @@ const AllLetters = () => {
                             <th className="px-6 py-3" >{t("allletters.table.voucher_no")}</th>
                             <th className="px-6 py-3" >{t("allletters.table.chalani_no")}</th>
                             <th className="px-6 py-3" >{t("allletters.table.gatepass_no")}</th>
-                            <th className="px-6 py-3" >{t("allletters.table.subject")}</th>
                             <th className="px-6 py-3" >{t("allletters.table.request_date")}</th>
                             <th className="px-6 py-3" >{t("allletters.table.receiver_name")}</th>
                             <th className="px-6 py-3" >{t("allletters.table.receiver_id_card_number")}</th>
@@ -135,7 +141,6 @@ const AllLetters = () => {
                                 <td className="px-6 py-4">{letter.voucher_no}</td>
                                 <td className="px-6 py-4">{letter.chalani_no}</td>
                                 <td className="px-6 py-4">{letter.gatepass_no}</td>
-                                <td className="px-6 py-4">{letter.subject}</td>
                                 <td className="px-6 py-4">{letter.request_date}</td>
                                 <td className="px-6 py-4">{letter.receiver.name}</td>
                                 <td className="px-6 py-4">{letter.receiver.id_card_number}</td>

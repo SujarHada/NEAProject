@@ -6,6 +6,7 @@ import html2canvas from 'html2canvas';
 import { type Letter } from '../../../interfaces/interfaces';
 import { useParams } from 'react-router';
 import api from '../../../utils/api';
+import { engToNep } from '../../../utils/englishtonepaliNumber';
 const ShowLetter = () => {
     const { id } = useParams();
     const [letter, setLetter] = useState<Letter>();
@@ -130,7 +131,7 @@ const ShowLetter = () => {
                         {
                             letter?.items.map((item, index) => (
                                 <tr key={item.id}>
-                                    <td>{index + 1}</td>
+                                    <td>{engToNep(`${index+1}`)}</td>
                                     <td>{item.name}</td>
                                     <td>{item.company}</td>
                                     <td>{item.serial_number}</td>
@@ -151,7 +152,7 @@ const ShowLetter = () => {
                             <td>पद: {letter?.receiver.post}</td>
                         </tr>
                         <tr >
-                            <td>संकेत नं./परिचय पत्र नं.: {letter?.receiver.id_card_number} </td>
+                            <td>संकेत नं./परिचय पत्र नं.: {engToNep(`${letter?.receiver.id_card_number}`)} </td>
                             <td>परिचयपत्रको किसिम: {letter?.receiver.id_card_type}</td>
                         </tr>
                         <tr >
@@ -160,14 +161,15 @@ const ShowLetter = () => {
                         </tr>
                         <tr >
                             <td>गाडी नं.: {letter?.receiver.vehicle_number} </td>
-                            <td>मोबाईल नं: {letter?.receiver.phone_number} </td>
+                            <td>मोबाईल नं: {engToNep(`${letter?.receiver.phone_number}`)} </td>
                         </tr>
                     </table>
                 </section>
 
                 <footer className="signature-section">
                     <div className="signature-box">
-                        सही: .....................
+                        <div className='signature-line' ></div>
+                        सही
                     </div>
                     <div className="signature-box">
                         <div className="signature-line"></div>

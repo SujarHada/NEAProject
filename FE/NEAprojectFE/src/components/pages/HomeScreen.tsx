@@ -5,8 +5,6 @@ import {
   User,
   FileText,
   Inbox,
-  Send,
-  Edit3,
   Download,
   RefreshCcw,
 } from "lucide-react";
@@ -68,14 +66,12 @@ export default function HomeScreen() {
   }
 
   const cards = [
+    { title: t("dashboard.letters"), icon: <FileText />, value: stats.total_letters },
     { title: t("dashboard.active_products"), icon: <Activity />, value: stats.total_active_products },
     { title: t("dashboard.active_branches"), icon: <Building2 />, value: stats.total_active_branches },
     { title: t("dashboard.active_offices"), icon: <Building2 />, value: stats.total_active_offices },
     { title: t("dashboard.active_employees"), icon: <User />, value: stats.total_active_employees },
-    { title: t("dashboard.total_receivers"), icon: <Inbox />, value: stats.total_receivers },
-    { title: t("dashboard.letters"), icon: <FileText />, value: stats.total_letters },
-    { title: t("dashboard.draft_letters"), icon: <Edit3 />, value: stats.total_draft_letters },
-    { title: t("dashboard.sent_letters"), icon: <Send />, value: stats.total_sent_letters },
+    { title: t("dashboard.total_receivers"), icon: <Inbox />, value: stats.total_receivers }
   ];
 
   return (
