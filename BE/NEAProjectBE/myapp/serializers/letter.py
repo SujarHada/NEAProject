@@ -4,7 +4,7 @@ from myapp.models import Letter, LetterItem
 class LetterItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = LetterItem
-        fields = ['id', 'name', 'company', 'serial_number', 'unit_of_measurement', 'quantity', 'remarks']
+        fields = ['id', 'product_id', 'name', 'company', 'serial_number', 'unit_of_measurement', 'quantity', 'remarks']
 
 class LetterReceiverSerializer(serializers.Serializer):
     """Serializer for receiver data inside letters"""
@@ -50,7 +50,7 @@ class LetterSerializer(serializers.ModelSerializer):
             'receiver_office_name', 'receiver_address', 'subject',
             'request_chalani_number', 'request_letter_count', 'request_date',
             'items', 'gatepass_no', 'receiver', 'status',
-            'created_at', 'updated_at'
+            'created_at', 'updated_at', 'office_name', 'sub_office_name'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
     
@@ -160,6 +160,7 @@ class LetterSerializer(serializers.ModelSerializer):
             letter.receiver_post = receiver_data.get('post', '')
             letter.receiver_id_card_number = receiver_data.get('id_card_number', '')
             letter.receiver_id_card_type = receiver_data.get('id_card_type', 'unknown')
+            letter.receiver_office_name = receiver_data.get('office_name', '')
             letter.receiver_office_address = receiver_data.get('office_address', '')
             letter.receiver_phone_number = receiver_data.get('phone_number', '')
             letter.receiver_vehicle_number = receiver_data.get('vehicle_number', '')
@@ -184,6 +185,7 @@ class LetterSerializer(serializers.ModelSerializer):
         instance.receiver_post = receiver_data.get('post', instance.receiver_post)
         instance.receiver_id_card_number = receiver_data.get('id_card_number', instance.receiver_id_card_number)
         instance.receiver_id_card_type = receiver_data.get('id_card_type', instance.receiver_id_card_type)
+        instance.receiver_office_name = receiver_data.get('office_name', instance.receiver_office_name)
         instance.receiver_office_address = receiver_data.get('office_address', instance.receiver_office_address)
         instance.receiver_phone_number = receiver_data.get('phone_number', instance.receiver_phone_number)
         instance.receiver_vehicle_number = receiver_data.get('vehicle_number', instance.receiver_vehicle_number)

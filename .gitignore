@@ -33,7 +33,7 @@ ENV/
 env/
 .env
 .venv
-
+.myenv
 # Node / React
 node_modules/
 /.pnp

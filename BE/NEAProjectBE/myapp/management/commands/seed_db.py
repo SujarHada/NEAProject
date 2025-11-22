@@ -97,6 +97,7 @@ class Command(BaseCommand):
                 nepali_numerals = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९']
                 nepali_subjects = ["विद्युत सामग्री खरिद", "मर्मत कार्य अनुरोध", "चालानी विवरण", "भुक्तानी सम्बन्धी पत्र", "भण्डारण सूची अद्यावधिक"]
                 nepali_companies = ["नेपाल विद्युत प्राधिकरण", "सगरमाथा ट्रेडर्स", "अरुण कन्स्ट्रक्सन", "बुधनी सप्लायर्स"]
+                nepali_products = ["ट्रान्सफर्मर", "तार", "मीटर", "ब्रेककर", "फ्युज", "कन्ट्रोल प्यानल"]
 
                 for _ in range(15):
                     try:
@@ -113,7 +114,7 @@ class Command(BaseCommand):
                             subject=random.choice([fake.sentence(nb_words=6), random.choice(nepali_subjects)]),
                             request_chalani_number=''.join(random.choice(nepali_numerals) for _ in range(8)),
                             request_letter_count=''.join(random.choice(nepali_numerals) for _ in range(1)),
-                            request_date="२०८२-०۶-३०",
+                            request_date="२०८२-०६-३०",
                             gatepass_no=fake.random_number(digits=6),
                             receiver_name=fake.name(),
                             receiver_post=fake.job(),
@@ -129,10 +130,14 @@ class Command(BaseCommand):
                         items_count = random.randint(1, 4)
                         for _ in range(items_count):
                             try:
+                                # Generate product_id in Nepali numerals
+                                product_id_nepali = ''.join(random.choice(nepali_numerals) for _ in range(6))
+                                
                                 LetterItem.objects.create(
                                     letter=letter,
-                                    name=fake.word().title() + " " + fake.word().title(),
-                                    company=fake.company(),
+                                    product_id=product_id_nepali,  # Added product_id field
+                                    name=f"{random.choice(nepali_products)} {fake.word().title()}",
+                                    company=random.choice(nepali_companies),
                                     serial_number=fake.random_number(digits=9),
                                     unit_of_measurement=random.choice(["वटा", "प्याक", "किलो", "लीटर", "मिटर"]),
                                     quantity=fake.random_number(digits=2),
@@ -165,8 +170,8 @@ class Command(BaseCommand):
                         logger.error("Failed to create receiver", exc_info=e)
                         self.stderr.write(self.style.ERROR(f'Receiver creation failed: {e}'))
                 self.stdout.write(self.style.SUCCESS(f'Created {len(receivers)} receivers'))
+                
                 products = []
-                nepali_products = ["ट्रान्सफर्मर", "तार", "मीटर", "ब्रेककर", "फ्युज", "कन्ट्रोल प्यानल"]
                 nepali_remarks = ["उत्तम अवस्था", "नयाँ", "पुरानो", "चाँडै खरिद आवश्यक"]
                 for _ in range(12):
                     try:
@@ -209,10 +214,22 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.SUCCESS('\nSample Letter Data:'))
                 self.stdout.write(self.style.SUCCESS(f'  - Letter Count: {sample_letter.letter_count}'))
                 self.stdout.write(self.style.SUCCESS(f'  - Subject: {sample_letter.subject}'))
+                self.stdout.write(self.style.SUCCESS(f'  - Office Name: {sample_letter.office_name}'))
+                self.stdout.write(self.style.SUCCESS(f'  - Sub Office Name: {sample_letter.sub_office_name}'))
                 self.stdout.write(self.style.SUCCESS(f'  - Receiver Office: {sample_letter.receiver_office_name}'))
                 self.stdout.write(self.style.SUCCESS(f'  - Receiver Name: {sample_letter.receiver_name}'))
                 self.stdout.write(self.style.SUCCESS(f'  - Status: {sample_letter.get_status_display()}'))
                 self.stdout.write(self.style.SUCCESS(f'  - Items Count: {sample_letter.items.count()}'))
+                
+                # Show sample letter item with product_id
+                if sample_letter.items.exists():
+                    sample_item = sample_letter.items.first()
+                    self.stdout.write(self.style.SUCCESS('\nSample Letter Item Data:'))
+                    self.stdout.write(self.style.SUCCESS(f'  - Product ID: {sample_item.product_id}'))
+                    self.stdout.write(self.style.SUCCESS(f'  - Name: {sample_item.name}'))
+                    self.stdout.write(self.style.SUCCESS(f'  - Company: {sample_item.company}'))
+                    self.stdout.write(self.style.SUCCESS(f'  - Serial Number: {sample_item.serial_number}'))
+                    self.stdout.write(self.style.SUCCESS(f'  - Quantity: {sample_item.quantity}'))
 
             self.stdout.write(self.style.SUCCESS('\nSample User Accounts:'))
             self.stdout.write(self.style.SUCCESS('  - Admin: admin@example.com (System Administrator) - Role: Admin'))
