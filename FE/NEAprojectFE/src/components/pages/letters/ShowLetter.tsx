@@ -54,7 +54,7 @@ const ShowLetter = () => {
         setIsLoading(false);
     };
 
-
+    console.log(letter)
 
     return (<>
     {

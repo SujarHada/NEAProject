@@ -24,6 +24,7 @@ const EditLetter = () => {
     formState: { isSubmitting, errors },
     setValue,
     reset,
+    watch
   } = useForm<EditLetterI>({
     resolver: zodResolver(EditLetterSchema),
     defaultValues: {
@@ -124,6 +125,8 @@ const EditLetter = () => {
       setValue("receiver", selected);
     }
   };
+
+  console.log(watch())
 
   const onSubmit = async (data: EditLetterI) => {
     try {

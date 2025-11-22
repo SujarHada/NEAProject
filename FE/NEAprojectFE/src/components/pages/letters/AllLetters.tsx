@@ -5,6 +5,8 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from 'usehooks-ts'
 import { useTranslation } from "react-i18next"
 import api from "../../../utils/api"
+import NepaliDatePicker, { NepaliDate } from "@zener/nepali-datepicker-react"
+import type { AxiosResponse } from "axios"
 
 const AllLetters = () => {
     const { t } = useTranslation()
@@ -14,11 +16,8 @@ const AllLetters = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [nextPage, setNextPage] = useState<string | null>(null)
     const [prevPage, setPrevPage] = useState<string | null>(null)
-    const [startDate, setStartDate] = useState<string | null>(null)
-    const [endDate, setEndDate] = useState<string | null>(null)
-
-
-
+    const [startDate, setStartDate] = useState<NepaliDate | null>(null)
+    const [endDate, setEndDate] = useState<NepaliDate | null>(null)
 
     const navigate = useNavigate()
     const ref = useRef(null)
@@ -44,7 +43,7 @@ const AllLetters = () => {
     const fetchletters = async (pageUrl?: string, pageNum?: number) => {
         try {
             const apiUrl = pageUrl || `/api/letters/?page=${pageNum || currentPage}`
-            const res = await api.get(apiUrl,{
+            const res = await api.get(apiUrl, {
                 params: {
                     status: "draft"
                 }
@@ -63,7 +62,7 @@ const AllLetters = () => {
             return []
         }
     }
-    
+
 
     useEffect(() => {
         fetchletters()
@@ -82,35 +81,98 @@ const AllLetters = () => {
         }
     }
 
-    const handleDownload = async () => {
-        const res = await api.get('/api/letters/export_csv/', {
-            responseType: 'blob',
-            params: {
-                status: "draft"
-            }
-        })
-        const blob = new Blob([res.data], { type: "text/csv" });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `letters_${new Date().toISOString()}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.URL.revokeObjectURL(url);
+    useEffect(() => {
+        console.log("Date range changed:", startDate?.format("YYYY-MM-DD"), endDate?.format("YYYY-MM-DD"));
+    }, [startDate, endDate])
 
-    }
+    const handleDownload = async () => {
+        try {
+            let res;
+
+            const isRangeSelected = startDate && endDate;
+
+            if (!isRangeSelected) {
+                res = await api.get('/api/letters/export_xlsx/', {
+                    responseType: 'blob',
+                });
+            } else {
+                res = await api.post(
+                    '/api/letters/export_xlsx_by_date/',
+                    {
+                        start_date: startDate.format("YYYY-MM-DD"),
+                        end_date: endDate.format("YYYY-MM-DD"),
+                    },
+                    {
+                        responseType: 'blob',
+                    }
+                );
+            }
+
+            if (!res || !res.data) {
+                throw new Error("Empty server response");
+            }
+
+            // detect file type properly
+            const contentType = res.headers["content-type"] || "application/octet-stream";
+            const extension =
+                contentType.includes("excel") || contentType.includes("spreadsheet")
+                    ? "xlsx"
+                    : "csv";
+
+            const blob = new Blob([res.data], { type: contentType });
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `letters_${new Date().toISOString()}.${extension}`;
+            document.body.appendChild(link);
+
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+
+        } catch (err: any) {
+            console.error("Download error:", err);
+
+            const msg = err.message.includes('404') ? 'Data not found' :
+                "Something went wrong while downloading.";
+
+            alert(`${msg}`);
+        }
+    };
+
 
     const totalPages = Math.ceil(letterCount / 10)
 
     return (
         <div className="flex flex-col gap-5">
-            <div className="flex items-center justify-between" >
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <h1 className="text-2xl font-bold">{t("allletters.title")}</h1>
-                <button onClick={handleDownload} className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5">
-                    Download
-                </button>
+
+                <div className="flex flex-col sm:flex-row gap-2 w-full md:w-[50%]">
+                    <NepaliDatePicker
+                        value={startDate}
+                        onChange={setStartDate}
+                        className="flex-1 border-2 pl-3 rounded-md w-full"
+                        placeholder="Select starting date"
+                    />
+
+                    <NepaliDatePicker
+                        value={endDate}
+                        onChange={setEndDate}
+                        className="flex-1 border-2 pl-3 rounded-md w-full"
+                        placeholder="Select ending date"
+                    />
+
+                    <button
+                        onClick={handleDownload}
+                        className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5 w-full sm:w-auto"
+                    >
+                        Download
+                    </button>
+                </div>
             </div>
+
             <div className="w-full  overflow-x-auto overflow-y-visible" style={{ scrollbarWidth: 'thin' }} >
 
                 <table className="w-full text-sm text-left text-gray-400">

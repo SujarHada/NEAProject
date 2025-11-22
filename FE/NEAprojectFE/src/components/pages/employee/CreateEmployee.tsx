@@ -1,14 +1,14 @@
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { type CreateEmployeesFormData as createEmployeesInputs } from "../../../schemas/employee"
+import { type CreateEmployeesFormData as createEmployeesInputs } from "app/schemas/employee"
 import { FaChevronDown } from "react-icons/fa"
 import { useParams, useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
 import { useEffect } from "react"
-import api from "../../../utils/api"
+import api from "app/utils/api"
 import axios from "axios"
-import useDataStore from "../../../store/useDataStore"
-import { createEmployeesFormSchema } from "../../../schemas/employee"
+import useDataStore from "app/store/useDataStore"
+import { createEmployeesFormSchema } from "app/schemas/employee"
 const CreateEmployee = () => {
     const params = useParams()
     const { t } = useTranslation()
