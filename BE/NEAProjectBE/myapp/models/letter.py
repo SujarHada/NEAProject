@@ -59,6 +59,7 @@ class Letter(TimeStampedModel):
 
 class LetterItem(TimeStampedModel):
     letter = models.ForeignKey(Letter, on_delete=models.CASCADE, related_name="items")
+    product_id = models.CharField(max_length=100, blank=True, default="")
     name = models.CharField(max_length=500)
     company = models.CharField(max_length=200)
     serial_number = models.CharField(max_length=100)

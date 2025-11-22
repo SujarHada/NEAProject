@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from datetime import datetime
 from django.db import transaction
 import csv
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 from openpyxl import Workbook
 from openpyxl.styles import Font
@@ -336,7 +336,100 @@ class LetterViewSet(viewsets.ModelViewSet):
                 "bin_letters": bin_letters
             }
         })
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='start_date',
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description='Start date in Nepali format (YYYY-MM-DD)',
+                required=True,
+                examples=[
+                    OpenApiExample(
+                        'Example 1',
+                        value='2082-07-01'
+                    )
+                ]
+            ),
+            OpenApiParameter(
+                name='end_date',
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description='End date in Nepali format (YYYY-MM-DD)',
+                required=True,
+                examples=[
+                    OpenApiExample(
+                        'Example 1',
+                        value='2082-08-03'
+                    )
+                ]
+            ),
+        ],
+        description='Get letters by Nepali date range using query parameters',
+        summary='Get Letters by Date Range'
+    )
+    @action(detail=False, methods=['get'], url_path='by-date-range')
+    def get_by_date_range(self, request):
+        """Get letters by Nepali date range using query parameters"""
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+        
+        if not start_date or not end_date:
+            return Response({
+                "status": "error",
+                "message": "Both 'start_date' and 'end_date' query parameters are required in YYYY-MM-DD format"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        def nepali_to_english_digits(s):
+            mapping = {
+                '०': '0', '१': '1', '२': '2', '३': '3', '४': '4',
+                '५': '5', '६': '6', '७': '7', '८': '8', '९': '9'
+            }
+            return ''.join(mapping.get(ch, ch) for ch in (s or ''))
+        
+        start_norm = nepali_to_english_digits(start_date)
+        end_norm = nepali_to_english_digits(end_date)
+        
+        try:
+            # Validate date format
+            datetime.strptime(start_norm, '%Y-%m-%d')
+            datetime.strptime(end_norm, '%Y-%m-%d')
+        except ValueError:
+            return Response({
+                "status": "error",
+                "message": "Invalid date format. Use YYYY-MM-DD for 'start_date' and 'end_date'"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Get base queryset
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        # Filter by date range
+        filtered_letters = []
+        for letter in queryset:
+            letter_date_norm = nepali_to_english_digits(letter.date)
+            if letter_date_norm and len(letter_date_norm) == 10 and letter_date_norm.count('-') == 2:
+                if start_norm <= letter_date_norm <= end_norm:
+                    filtered_letters.append(letter.id)
+        
+        # Apply the filter
+        queryset = queryset.filter(id__in=filtered_letters)
+        
+        # Paginate and return response
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response({
+                "status": "success",
+                "message": f"Letters filtered by date range {start_date} to {end_date}",
+                "data": serializer.data
+            })
 
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            "status": "success",
+            "message": f"Letters filtered by date range {start_date} to {end_date}",
+            "data": serializer.data
+        })
     @action(detail=False, methods=['get'], url_path='letter-creation-data')
     def letter_creation_data(self, request):
         def nepali_to_english_digits(s):
