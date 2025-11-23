@@ -1,4 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap");
+@font-face {
+  font-family: "Kokila";
+  src: url("/assets/kokila.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
 
 @page {
   size: A4;
@@ -24,7 +29,7 @@ html {
 }
 
 body {
-  font-family: "Noto Sans Devanagari", Arial, sans-serif;
+  font-family: "Kokila", sans-serif;
   background: #e0e0e0;
 }
 
