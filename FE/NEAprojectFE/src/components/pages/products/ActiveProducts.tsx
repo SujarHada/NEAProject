@@ -36,7 +36,7 @@ const ActiveProducts = () => {
         setOpenDropdownId(serial_number)
     }
 
-//
+// Comment added
     const fetchProducts = async (pageUrl?: string, pageNum?: number) => {
         try {
             const apiUrl = pageUrl || `/api/products/?page=${pageNum || currentPage}`
