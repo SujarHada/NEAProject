@@ -82,7 +82,6 @@ const CreateLetter = () => {
     const { fields, append, remove } = useFieldArray({ control, name: "items" });
 
     const onSubmit = async (data: CreateLetterI) => {
-        console.log(data)
         const res = await api.post('/api/letters/', data);
         if (res.status === 201) navigate(`/letters/view-letter/${res.data.data.id}`);
     };

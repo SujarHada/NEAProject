@@ -48,7 +48,7 @@
     "remarks": "टिप्पणीहरू",
     "select_receiver": "प्राप्तकर्ता छान्नुहोस्",
     "vehiche_number": "गाडी नं",
-    "receiver_office_name": "प्राप्तकर्ता कार्यालय",
+    "office_name": "प्राप्तकर्ता कार्यालय",
     "receiver_office_address": "प्राप्तकर्ता कार्यालय ठेगाना",
     "no_receiver_found": "हाल चयन गरिएको कार्यालयमा कुनै प्राप्तकर्ता छैन",
     "submit": "पत्र सिर्जना गर्नुहोस्",

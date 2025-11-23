@@ -38,6 +38,7 @@ export const createLetterSchema = z.object({
       "drivers_license",
       "pan_card",
       "unknown",
+      "employee_id"
     ]),
     office_name: z.string().min(1, "Office name is required"),
     office_address: z.string().min(1, "Office address is required"),
@@ -96,6 +97,7 @@ export const updateLetterSchema = z.object({
             "drivers_license",
             "pan_card",
             "unknown",
+            "employee_id"
         ]),
         office_name: z.string().min(1, "Office name is required"),
         office_address: z.string().min(1, "Office address is required"),

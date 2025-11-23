@@ -47,7 +47,7 @@
     "quantity": "Quantity",
     "remarks": "Remarks",
     "select_receiver": "Select Receiver",
-    "receiver_office_name": "Receiver office",
+    "office_name": "Receiver office",
     "receiver_office_address": "Receiver office address",
     "vehiche_number": "Vehicle number",
     "no_receiver_found": "No receivers found in current selected office",

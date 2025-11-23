@@ -35,7 +35,8 @@ class Letter(TimeStampedModel):
             ("voter_id", "Voter ID"),
             ("passport", "Passport"),
             ("drivers_license", "Driver's License"),
-            ("pan_card", "PAN Card")
+            ("pan_card", "PAN Card"),
+            ("employee_id", "EMPLOYEE ID")
         ]
     )
     receiver_office_name = models.CharField(max_length=200, blank=True, default="")

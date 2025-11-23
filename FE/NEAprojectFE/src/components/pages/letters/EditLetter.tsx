@@ -95,7 +95,6 @@ const EditLetter = () => {
     };
 
     if (Receivers && Offices && Products) {
-      console.log("Fetching letter...");
       fetchLetter();
     }
   }, [Receivers, Offices, Products]);
@@ -126,7 +125,6 @@ const EditLetter = () => {
     }
   };
 
-  // console.log(watch())
 
   const onSubmit = async (data: EditLetterI) => {
     try {
