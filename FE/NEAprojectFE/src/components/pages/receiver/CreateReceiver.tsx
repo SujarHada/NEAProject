@@ -1,14 +1,14 @@
 import { useForm, Controller, type SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { type createReceiverInputs } from "../../../interfaces/interfaces"
+import { type createReceiverInputs } from "app/interfaces/interfaces"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
 import { FaChevronDown } from "react-icons/fa"
-import { id_types } from "../../../enum/id_types"
-import api from "../../../utils/api"
-import useDataStore from "../../../store/useDataStore"
+import { id_types } from "app/enum/id_types"
+import api from "app/utils/api"
+import useDataStore from "app/store/useDataStore"
 import { useEffect } from "react"
-import { createReceiverSchema } from "../../../schemas/receiver"
+import { createReceiverSchema } from "app/schemas/receiver"
 const CreateReceiver = () => {
     const { t } = useTranslation()
     const navigate = useNavigate()

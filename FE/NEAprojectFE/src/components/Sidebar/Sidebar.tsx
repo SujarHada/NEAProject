@@ -110,7 +110,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
             icon: <FaUserTie />,
             children: [
                 ...(user?.role === "admin" ? [{ id: "create-employee", label: "Create Employee", icon: <FaPen /> }] : []),
-                { id: "manage-employees", label: "Manage Employees", icon: <FaList /> },
+                { id: "manage-employees", label: "All Employees", icon: <FaList /> },
             ],
         },
 

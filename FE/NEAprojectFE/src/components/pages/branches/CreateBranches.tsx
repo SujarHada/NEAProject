@@ -1,12 +1,11 @@
 import { Controller, useForm, type SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import type { BranchFormInputs } from "../../../interfaces/interfaces"
-import api from "../../../utils/api"
+import type { BranchFormInputs } from "app/interfaces/interfaces"
+import api from "app/utils/api"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
-import { branchCreationSchema } from "../../../schemas/branch"
-import type { AxiosError } from "axios"
-import axios from "axios"
+import { branchCreationSchema } from "app/schemas/branch"
+import { type AxiosError, isAxiosError } from "axios"
 
 const CreateBranches = () => {
     const { t } = useTranslation()
@@ -58,7 +57,7 @@ const CreateBranches = () => {
             }
 
         } catch (err) {
-            if (axios.isAxiosError(err)) {
+            if (isAxiosError(err)) {
                 const errors = parseError(err.response?.data)
                 alert(errors[0])
             }

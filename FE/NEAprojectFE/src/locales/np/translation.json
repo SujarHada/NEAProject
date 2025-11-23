@@ -42,10 +42,14 @@
     "request_chalani_number": "अनुरोध चलानी नं",
     "request_letter_count": "अनुरोध पत्र संख्या",
     "items": "सामग्रीहरू",
+    "serial_number": "सरियल नं",
     "product": "उत्पादन",
     "quantity": "मात्रा",
     "remarks": "टिप्पणीहरू",
     "select_receiver": "प्राप्तकर्ता छान्नुहोस्",
+    "vehiche_number": "गाडी नं",
+    "receiver_office_name": "प्राप्तकर्ता कार्यालय",
+    "receiver_office_address": "प्राप्तकर्ता कार्यालय ठेगाना",
     "no_receiver_found": "हाल चयन गरिएको कार्यालयमा कुनै प्राप्तकर्ता छैन",
     "submit": "पत्र सिर्जना गर्नुहोस्",
     "creating": "सिर्जना हुँदैछ..."
@@ -334,7 +338,9 @@
       "middleName": "मध्य नाम",
       "lastName": "थर",
       "email": "इमेल",
-      "position": "तह"
+      "position": "तह",
+      "password": "पासवर्ड",
+      "confirmPassword": "पासवर्ड निश्चित गर्नुहोस्"
     },
     "placeholders": {
       "position": "तह छान्नुहोस् *"

@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import './ShowLetterStyle.css'
-import nepal_electricity_authority_logo from '../../../assets/nepal_electricity_authority_logo.png'
+import nepal_electricity_authority_logo from 'app/assets/nepal_electricity_authority_logo.png'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas';
-import { type Letter } from '../../../interfaces/interfaces';
+import { type Letter } from 'app/interfaces/interfaces';
 import { useParams } from 'react-router';
-import api from '../../../utils/api';
+import api from 'app/utils/api';
+import { engToNep } from 'app/utils/englishtonepaliNumber';
 const ShowLetter = () => {
     const { id } = useParams();
     const [letter, setLetter] = useState<Letter>();
@@ -53,7 +54,7 @@ const ShowLetter = () => {
         setIsLoading(false);
     };
 
-
+    console.log(letter)
 
     return (<>
     {
@@ -93,7 +94,7 @@ const ShowLetter = () => {
                     <div className="ref-left">
                         <div>पत्र सं.: <span className="dynamic">{letter?.letter_count} च.नं.: {letter?.chalani_no}</span></div>
                         <div>
-                            श्री {letter?.receiver_office_name},<br />
+                            श्री {letter?.office_name},<br />
                             &nbsp;&nbsp;&nbsp;&nbsp;{letter?.receiver_address}
                         </div>
                     </div>
@@ -130,7 +131,7 @@ const ShowLetter = () => {
                         {
                             letter?.items.map((item, index) => (
                                 <tr key={item.id}>
-                                    <td>{index + 1}</td>
+                                    <td>{engToNep(`${index+1}`)}</td>
                                     <td>{item.name}</td>
                                     <td>{item.company}</td>
                                     <td>{item.serial_number}</td>
@@ -151,7 +152,7 @@ const ShowLetter = () => {
                             <td>पद: {letter?.receiver.post}</td>
                         </tr>
                         <tr >
-                            <td>संकेत नं./परिचय पत्र नं.: {letter?.receiver.id_card_number} </td>
+                            <td>संकेत नं./परिचय पत्र नं.: {engToNep(`${letter?.receiver.id_card_number}`)} </td>
                             <td>परिचयपत्रको किसिम: {letter?.receiver.id_card_type}</td>
                         </tr>
                         <tr >
@@ -160,14 +161,15 @@ const ShowLetter = () => {
                         </tr>
                         <tr >
                             <td>गाडी नं.: {letter?.receiver.vehicle_number} </td>
-                            <td>मोबाईल नं: {letter?.receiver.phone_number} </td>
+                            <td>मोबाईल नं: {engToNep(`${letter?.receiver.phone_number}`)} </td>
                         </tr>
                     </table>
                 </section>
 
                 <footer className="signature-section">
                     <div className="signature-box">
-                        सही: .....................
+                        <div className='signature-line' ></div>
+                        सही
                     </div>
                     <div className="signature-box">
                         <div className="signature-line"></div>

@@ -3,11 +3,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate, useParams } from "react-router"
 import { FaChevronDown } from 'react-icons/fa'
 import { useEffect, useState } from 'react'
-import type { Product, createProductInputs } from '../../../interfaces/interfaces'
+import type { Product, createProductInputs } from 'app/interfaces/interfaces'
 import axios from 'axios'
 import { useTranslation } from "react-i18next"
-import api from '../../../utils/api'
-import { updateProductFormschema } from '../../../schemas/product'
+import api from 'app/utils/api'
+import { updateProductFormschema } from 'app/schemas/product'
 
 const EditProduct = () => {
     const { t } = useTranslation()

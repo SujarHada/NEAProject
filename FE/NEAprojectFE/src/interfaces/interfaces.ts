@@ -28,15 +28,11 @@ export interface Employee {
   middle_name?: string
   last_name: string
   email: string
-  role: string
+  role: 'admin' | 'viewer'
   organization_id: number
   branch_name: string
   serial_number: number
 }
-
-export interface createEmployeesInputs extends Omit<Employee, 'id' | 'serial_number' | 'branch_name'> { }
-
-export interface EditEmployeesInputs extends createEmployeesInputs { }
 
 export interface Receiver {
   id: number
@@ -127,7 +123,7 @@ export interface Letter {
   chalani_no: string
   voucher_no: string
   date: string
-  receiver_office_name: string
+  office_name: string
   receiver_address: string
   subject: string
   request_chalani_number: string
@@ -144,4 +140,13 @@ export interface Letter {
   }[]
   gatepass_no: string
   receiver: Omit<Receiver, 'id'>
+}
+
+
+export interface LetterCreationData {
+  chalani_no: string,
+  chalani_no_nepali: string,
+  voucher_no: string,
+  voucher_no_nepali: string,
+  fiscal_year: string
 }

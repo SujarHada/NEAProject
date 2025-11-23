@@ -42,10 +42,14 @@
     "request_chalani_number": "Request chalani number",
     "request_letter_count": "Request letter count",
     "items": "Items",
+    "serial_number": "Serial number",
     "product": "Product",
     "quantity": "Quantity",
     "remarks": "Remarks",
     "select_receiver": "Select Receiver",
+    "receiver_office_name": "Receiver office",
+    "receiver_office_address": "Receiver office address",
+    "vehiche_number": "Vehicle number",
     "no_receiver_found": "No receivers found in current selected office",
     "submit": "Create Letter",
     "creating": "Creating..."
@@ -304,7 +308,8 @@
       "middleName": "Middle Name",
       "lastName": "Last Name",
       "email": "Email",
-      "position": "Position"
+      "position": "Position",
+      "password": "Password"
     },
     "placeholders": {
       "position": "Select Role*",
@@ -326,7 +331,8 @@
       "emailInvalid": "Email is invalid",
       "emailRequired": "Email is required",
       "branchId": "Branch Id is required",
-      "position": "Position is required"
+      "position": "Position is required",
+      "passwordLength": "Password must be at least 8 characters long"
     }
   },
   "editEmployee": {
@@ -337,7 +343,9 @@
       "middleName": "Middle Name",
       "lastName": "Last Name",
       "email": "Email",
-      "position": "Position"
+      "position": "Position",
+      "password": "Password",
+      "confirmPassword": "Confirm Password"
     },
     "placeholders": {
       "position": "Select Position *"

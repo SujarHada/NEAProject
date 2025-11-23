@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router"
-import type { Employee } from "../../../interfaces/interfaces"
+import type { Employee } from "app/interfaces/interfaces"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from 'usehooks-ts'
 import { useTranslation } from "react-i18next"
-import api from "../../../utils/api"
+import api from "app/utils/api"
 
 const AllEmployees = () => {
     const params = useParams()

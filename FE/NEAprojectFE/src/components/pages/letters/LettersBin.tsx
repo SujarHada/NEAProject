@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react"
-import type { Letter } from "../../../interfaces/interfaces"
+import type { Letter } from "app/interfaces/interfaces"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from 'usehooks-ts'
 import { useTranslation } from "react-i18next"
-import api from "../../../utils/api"
+import api from "app/utils/api"
 import { useNavigate } from "react-router"
 
 const LettersBin = () => {
@@ -113,7 +113,7 @@ const LettersBin = () => {
                         )}
                         {letters?.map(letter => (
                             <tr key={letter.id} className="border-b bg-gray-800 border-gray-700">
-                                <td className="px-6 py-4 font-medium text-white">{letter.receiver_office_name}</td>
+                                <td className="px-6 py-4 font-medium text-white">{letter.office_name}</td>
                                 <td className="px-6 py-4">{letter.voucher_no}</td>
                                 <td className="px-6 py-4">{letter.chalani_no}</td>
                                 <td className="px-6 py-4">{letter.gatepass_no}</td>

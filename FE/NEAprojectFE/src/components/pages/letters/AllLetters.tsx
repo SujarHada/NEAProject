@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router"
-import type { Letter } from "../../../interfaces/interfaces"
+import type { Letter } from "app/interfaces/interfaces"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from 'usehooks-ts'
 import { useTranslation } from "react-i18next"
-import api from "../../../utils/api"
+import api from "app/utils/api"
+import NepaliDatePicker, { NepaliDate } from "@zener/nepali-datepicker-react"
 
 const AllLetters = () => {
     const { t } = useTranslation()
@@ -14,6 +15,9 @@ const AllLetters = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [nextPage, setNextPage] = useState<string | null>(null)
     const [prevPage, setPrevPage] = useState<string | null>(null)
+    const [startDate, setStartDate] = useState<NepaliDate | null>(null)
+    const [endDate, setEndDate] = useState<NepaliDate | null>(null)
+
     const navigate = useNavigate()
     const ref = useRef(null)
     useOnClickOutside<any>(ref, () => setOpenDropdownId(null))
@@ -35,38 +39,73 @@ const AllLetters = () => {
     }
 
 
-    const fetchletters = async (pageUrl?: string, pageNum?: number) => {
+    const fetchLetters = async (options?: {
+        page?: number;
+        url?: string;
+        start?: string;
+        end?: string;
+    }) => {
         try {
-            const apiUrl = pageUrl || `/api/letters/?page=${pageNum || currentPage}`
-            const res = await api.get(apiUrl,{
-                params: {
-                    status: "draft"
-                }
-            })
-            setLetters(res.data.results.data)
-            setLetterCount(res.data.count)
-            setNextPage(res.data.next)
-            setPrevPage(res.data.previous)
-            if (pageNum) setCurrentPage(pageNum)
+            const { page, url, start, end } = options || {};
+
+            const apiUrl =
+                url ||
+                (start && end
+                    ? "/api/letters/by-date-range/"
+                    : `/api/letters/?page=${page || currentPage}`);
+
+            const params: any = {};
+
+            if (start && end) {
+                params.start_date = start;
+                params.end_date = end;
+            } else {
+                params.status = "draft";
+            }
+
+            const res = await api.get(apiUrl, { params });
+
+            const result = res.data.results?.data || [];
+
+            setLetters(result);
+            setLetterCount(res.data.count);
+            setNextPage(res.data.next);
+            setPrevPage(res.data.previous);
+
+            if (page) setCurrentPage(page);
         } catch (err: any) {
             if (err.response?.status === 404 && currentPage > 1) {
-                await fetchletters(undefined, currentPage - 1)
-                return
+                // fallback to previous page
+                await fetchLetters({ page: currentPage - 1 });
+                return;
             }
-            console.error("Error fetching letters:", err)
-            return []
+            console.error("Error fetching letters:", err);
         }
-    }
+    };
+
 
     useEffect(() => {
-        fetchletters()
-    }, [])
+        if (startDate && endDate) {
+            fetchLetters({
+                start: startDate.format("YYYY-MM-DD"),
+                end: endDate.format("YYYY-MM-DD")
+            });
+        }else{
+            fetchLetters();
+        }
+    }, [startDate, endDate]);
+
+
+    useEffect(() => {
+        fetchLetters();
+    }, []);
+
 
     const handleDelete = async (letterId: number) => {
         try {
             const res = await api.delete(`/api/letters/${letterId}/`)
             if (res.status === 200) {
-                await fetchletters()
+                await fetchLetters()
                 setOpenDropdownId(null)
 
             }
@@ -75,35 +114,95 @@ const AllLetters = () => {
         }
     }
 
-    const handleDownload = async () => {
-        const res = await api.get('/api/letters/export_csv/', {
-            responseType: 'blob',
-            params: {
-                status: "draft"
-            }
-        })
-        const blob = new Blob([res.data], { type: "text/csv" });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `letters_${new Date().toISOString()}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.URL.revokeObjectURL(url);
 
-    }
+    const handleDownload = async () => {
+        try {
+            let res;
+
+            const isRangeSelected = startDate && endDate;
+
+            if (!isRangeSelected) {
+                res = await api.get('/api/letters/export_xlsx/', {
+                    responseType: 'blob',
+                });
+            } else {
+                res = await api.post(
+                    '/api/letters/export_xlsx_by_date/',
+                    {
+                        start_date: startDate.format("YYYY-MM-DD"),
+                        end_date: endDate.format("YYYY-MM-DD"),
+                    },
+                    {
+                        responseType: 'blob',
+                    }
+                );
+            }
+
+            if (!res || !res.data) {
+                throw new Error("Empty server response");
+            }
+
+            // detect file type properly
+            const contentType = res.headers["content-type"] || "application/octet-stream";
+            const extension =
+                contentType.includes("excel") || contentType.includes("spreadsheet")
+                    ? "xlsx"
+                    : "csv";
+
+            const blob = new Blob([res.data], { type: contentType });
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `letters_${new Date().toISOString()}.${extension}`;
+            document.body.appendChild(link);
+
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+
+        } catch (err: any) {
+            console.error("Download error:", err);
+
+            const msg = err.message.includes('404') ? 'Data not found' :
+                "Something went wrong while downloading.";
+
+            alert(`${msg}`);
+        }
+    };
+
 
     const totalPages = Math.ceil(letterCount / 10)
 
     return (
         <div className="flex flex-col gap-5">
-            <div className="flex items-center justify-between" >
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <h1 className="text-2xl font-bold">{t("allletters.title")}</h1>
-                <button onClick={handleDownload} className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5">
-                    Download
-                </button>
+
+                <div className="flex flex-col sm:flex-row gap-2 w-full md:w-[50%]">
+                    <NepaliDatePicker
+                        value={startDate}
+                        onChange={setStartDate}
+                        className="flex-1 border-2 pl-3 rounded-md w-full"
+                        placeholder="Select starting date"
+                    />
+
+                    <NepaliDatePicker
+                        value={endDate}
+                        onChange={setEndDate}
+                        className="flex-1 border-2 pl-3 rounded-md w-full"
+                        placeholder="Select ending date"
+                    />
+
+                    <button
+                        onClick={handleDownload}
+                        className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5 w-full sm:w-auto"
+                    >
+                        Download
+                    </button>
+                </div>
             </div>
+
             <div className="w-full  overflow-x-auto overflow-y-visible" style={{ scrollbarWidth: 'thin' }} >
 
                 <table className="w-full text-sm text-left text-gray-400">
@@ -113,7 +212,6 @@ const AllLetters = () => {
                             <th className="px-6 py-3" >{t("allletters.table.voucher_no")}</th>
                             <th className="px-6 py-3" >{t("allletters.table.chalani_no")}</th>
                             <th className="px-6 py-3" >{t("allletters.table.gatepass_no")}</th>
-                            <th className="px-6 py-3" >{t("allletters.table.subject")}</th>
                             <th className="px-6 py-3" >{t("allletters.table.request_date")}</th>
                             <th className="px-6 py-3" >{t("allletters.table.receiver_name")}</th>
                             <th className="px-6 py-3" >{t("allletters.table.receiver_id_card_number")}</th>
@@ -131,11 +229,10 @@ const AllLetters = () => {
                         )}
                         {letters?.map(letter => (
                             <tr key={letter.id} className="border-b bg-gray-800 border-gray-700">
-                                <td className="px-6 py-4 font-medium text-white">{letter.receiver_office_name}</td>
+                                <td className="px-6 py-4 font-medium text-white">{letter.office_name}</td>
                                 <td className="px-6 py-4">{letter.voucher_no}</td>
                                 <td className="px-6 py-4">{letter.chalani_no}</td>
                                 <td className="px-6 py-4">{letter.gatepass_no}</td>
-                                <td className="px-6 py-4">{letter.subject}</td>
                                 <td className="px-6 py-4">{letter.request_date}</td>
                                 <td className="px-6 py-4">{letter.receiver.name}</td>
                                 <td className="px-6 py-4">{letter.receiver.id_card_number}</td>
@@ -196,7 +293,7 @@ const AllLetters = () => {
                 <ul className="flex items-center justify-center h-8 text-sm">
                     <li>
                         <button
-                            onClick={() => prevPage && fetchletters(prevPage, currentPage - 1)}
+                            onClick={() => prevPage && fetchLetters({ url: prevPage, page: currentPage - 1 })}
                             disabled={!prevPage}
                             className={`flex items-center justify-center px-3 h-8 border rounded-s-lg bg-gray-800 border-gray-700 ${prevPage ? "text-gray-400 hover:bg-gray-700 hover:text-white" : "text-gray-600 cursor-not-allowed"}`}
                         >
@@ -207,7 +304,7 @@ const AllLetters = () => {
                     {Array.from({ length: totalPages }).map((_, i) => (
                         <li key={i}>
                             <button
-                                onClick={() => fetchletters(undefined, i + 1)}
+                                onClick={() => fetchLetters({ url: undefined, page: i + 1 })}
                                 className={`flex items-center justify-center px-3 h-8 border bg-gray-800 border-gray-700 ${currentPage === i + 1 ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-700 hover:text-white"}`}
                             >
                                 {i + 1}
@@ -217,7 +314,7 @@ const AllLetters = () => {
 
                     <li>
                         <button
-                            onClick={() => nextPage && fetchletters(nextPage, currentPage + 1)}
+                            onClick={() => nextPage && fetchLetters({ url: nextPage, page: currentPage + 1 })}
                             disabled={!nextPage}
                             className={`flex items-center justify-center px-3 h-8 border rounded-e-lg bg-gray-800 border-gray-700 ${nextPage ? "text-gray-400 hover:bg-gray-700 hover:text-white" : "text-gray-600 cursor-not-allowed"}`}
                         >

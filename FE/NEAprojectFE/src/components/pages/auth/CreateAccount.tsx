@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../../../utils/api";
+import api from "app/utils/api";
 
 const CreateAccount = () => {
   const [name, setName] = useState("");

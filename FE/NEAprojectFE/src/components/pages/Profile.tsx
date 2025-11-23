@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import useAuthStore from "../../store/useAuthStore";
-import api from "../../utils/api";
+import useAuthStore from "app/store/useAuthStore";
+import api from "app/utils/api";
 import { useNavigate } from "react-router";
 import { LogOut } from "lucide-react";
 import axios from "axios";
@@ -20,19 +20,11 @@ const changePasswordSchema = z
     path: ["confirmPassword"],
   });
 
-const createUserSchema = z.object({
-  name: z.string().min(2, "Name is too short"),
-  email: z.email("Invalid email format"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  role: z.enum(["admin", "viewer"]),
-});
-
 type ChangePasswordForm = z.infer<typeof changePasswordSchema>;
-type CreateUserForm = z.infer<typeof createUserSchema>;
 
 const Profile = () => {
   const { t, i18n } = useTranslation();
-  const { user, clearAuth } = useAuthStore();
+  const { clearAuth } = useAuthStore();
   const [activeTab, setActiveTab] = useState<"password" | "createUser">("password");
   const navigate = useNavigate()
   const logout = () => {
@@ -53,14 +45,6 @@ const Profile = () => {
     resolver: zodResolver(changePasswordSchema),
   });
 
-  const {
-    register: registerUser,
-    handleSubmit: handleUserSubmit,
-    formState: { errors: userErrors },
-    reset: resetUser,
-  } = useForm<CreateUserForm>({
-    resolver: zodResolver(createUserSchema),
-  });
 
   const onChangePassword = async (data: ChangePasswordForm) => {
     const { confirmPassword, ...setData } = data;
@@ -82,21 +66,6 @@ const Profile = () => {
       } else {
         console.error("Unexpected Error:", err)
       }
-    }
-  };
-
-  const onCreateUser = async (data: CreateUserForm) => {
-    try {
-      await api.post("/api/auth/signup/", {
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        password_confirm: data.password,
-        role: data.role,
-      });
-      resetUser();
-    } catch (err) {
-      console.error(err);
     }
   };
 
@@ -144,19 +113,6 @@ const Profile = () => {
           >
             {t("profile.changePassword")}
           </button>
-
-          {user?.role === "admin" && (
-            <button
-              onClick={() => setActiveTab("createUser")}
-              className={`px-4 sm:px-6 py-2 rounded-lg sm:text-base font-semibold transition ${
-                activeTab === "createUser"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-800 hover:bg-gray-700 text-gray-300"
-              }`}
-            >
-              {t("profile.createUser")}
-            </button>
-          )}
         </div>
 
         {/* Tab Content */}
@@ -198,51 +154,6 @@ const Profile = () => {
 
               <button type="submit" className="w-full mt-3 sm:mt-4 bg-blue-600 hover:bg-blue-700 transition text-white font-semibold py-2 rounded-md">
                 {t("profile.updatePassword")}
-              </button>
-            </form>
-          )}
-
-          {activeTab === "createUser" && user?.role === "admin" && (
-            <form
-              onSubmit={handleUserSubmit(onCreateUser)}
-              className="space-y-4 sm:space-y-5 max-w-sm sm:max-w-md mx-auto"
-            >
-              <input
-                {...registerUser("name")}
-                type="text"
-                placeholder={t("profile.name")}
-                className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600"
-              />
-              {userErrors.name && <p className="text-red-400 text-sm">{userErrors.name.message}</p>}
-
-              <input
-                {...registerUser("email")}
-                type="email"
-                placeholder={t("profile.email")}
-                className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600"
-              />
-              {userErrors.email && <p className="text-red-400 text-sm">{userErrors.email.message}</p>}
-
-              <input
-                {...registerUser("password")}
-                type="password"
-                placeholder={t("profile.password")}
-                className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600"
-              />
-              {userErrors.password && (
-                <p className="text-red-400 text-sm">{userErrors.password.message}</p>
-              )}
-
-              <select
-                {...registerUser("role")}
-                className="w-full bg-gray-900/80 border border-gray-700 rounded-md px-3 sm:px-4 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600"
-              >
-                <option value="viewer">{t("profile.viewer")}</option>
-                <option value="admin">{t("profile.admin")}</option>
-              </select>
-
-              <button type="submit" className="w-full mt-3 sm:mt-4 bg-green-600 hover:bg-green-700 transition text-white font-semibold py-2 rounded-md">
-                {t("profile.createAccount")}
               </button>
             </form>
           )}

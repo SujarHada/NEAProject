@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Branch, Employee, Office, Product, Receiver } from "../interfaces/interfaces";
+import type { Branch, Employee, LetterCreationData, Office, Product, Receiver } from "../interfaces/interfaces";
 import api from "../utils/api";
 
 interface DataState {
@@ -8,11 +8,13 @@ interface DataState {
     Products: Product[]
     Offices: Office[]
     Employees: Employee[]
+    LetterCreationData: LetterCreationData | null
     getBranches: () => void
     getReceivers: () => void
     getProducts: () => void
     getOffices: () => void
     getEmployees: () => void
+    getLetterCreationData: () => void
 }
 const useDataStore = create<DataState>((set) => (
     {
@@ -20,7 +22,9 @@ const useDataStore = create<DataState>((set) => (
         Receivers: [],
         Products: [],
         Offices: [],
-        Employees: [], getBranches: async () => {
+        Employees: [], 
+        LetterCreationData: null,
+        getBranches: async () => {
             const res = await api.get<{data:Branch[]}>('/api/branches/all-active/')
             set({Branches:res.data.data})
         },
@@ -40,6 +44,10 @@ const useDataStore = create<DataState>((set) => (
             const res = await api.get<{data:Office[]}>('/api/offices/all-active/')
             set({Offices:res.data.data})
         },
+        getLetterCreationData: async () => {
+            const res = await api.get<LetterCreationData>('/api/letters/letter-creation-data/')
+            set({LetterCreationData:res.data})
+        }
 
     }
 ))

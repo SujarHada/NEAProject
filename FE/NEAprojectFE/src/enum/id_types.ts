@@ -31,6 +31,11 @@ export const id_types = [
     },
     {
         id:7,
+        name:"Employee Id",
+        value:"employee_id"
+    },
+    {
+        id:8,
         name:"Unknown",
         value:"unknown"
     }

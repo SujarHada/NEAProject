@@ -1,10 +1,10 @@
 import { useForm, Controller, type SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { type OfficeFormInputs } from "../../../interfaces/interfaces"
+import { type OfficeFormInputs } from "app/interfaces/interfaces"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
-import api from "../../../utils/api"
-import { createOfficeFormschema } from "../../../schemas/office"
+import api from "app/utils/api"
+import { createOfficeFormschema } from "app/schemas/office"
 const CreateOffice = () => {
     const { t } = useTranslation()
     const navigate = useNavigate()
