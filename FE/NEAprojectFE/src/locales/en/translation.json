@@ -343,7 +343,9 @@
       "middleName": "Middle Name",
       "lastName": "Last Name",
       "email": "Email",
-      "position": "Position"
+      "position": "Position",
+      "password": "Password",
+      "confirmPassword": "Confirm Password"
     },
     "placeholders": {
       "position": "Select Position *"

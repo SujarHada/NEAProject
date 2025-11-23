@@ -338,7 +338,9 @@
       "middleName": "मध्य नाम",
       "lastName": "थर",
       "email": "इमेल",
-      "position": "तह"
+      "position": "तह",
+      "password": "पासवर्ड",
+      "confirmPassword": "पासवर्ड निश्चित गर्नुहोस्"
     },
     "placeholders": {
       "position": "तह छान्नुहोस् *"

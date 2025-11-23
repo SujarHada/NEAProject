@@ -8,8 +8,8 @@ import {
   Download,
   RefreshCcw,
 } from "lucide-react";
-import type { dashboard } from "../../interfaces/interfaces";
-import api from "../../utils/api";
+import type { dashboard } from "app/interfaces/interfaces";
+import api from "app/utils/api";
 import { useTranslation } from "react-i18next";
 
 export default function HomeScreen() {

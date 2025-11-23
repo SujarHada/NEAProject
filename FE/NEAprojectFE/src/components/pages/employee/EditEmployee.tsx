@@ -1,14 +1,12 @@
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { type Employee } from "../../../interfaces/interfaces"
-// import { type updateEmployeesFormSchema } from "../../../schemas/employee"
+import { type Employee, type Branch } from "app/interfaces/interfaces"
 import { FaChevronDown } from "react-icons/fa"
 import { useNavigate, useParams } from "react-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { type Branch } from "../../../interfaces/interfaces"
-import api from "../../../utils/api"
-import { updateEmployeesFormSchema, type UpdateEmployeesFormData } from "../../../schemas/employee"
+import api from "app/utils/api"
+import { updateEmployeesFormSchema, type UpdateEmployeesFormData } from "app/schemas/employee"
 
 const EditEmployee = () => {
     const { t } = useTranslation()
@@ -188,7 +186,7 @@ const EditEmployee = () => {
                     {errors.password && <p className="text-red-500">{errors.password.message}</p>}
                 </div>
                 <div className="lg:w-1/2 flex flex-1 flex-col gap-2" >
-                    <label htmlFor="password">{t("editEmployee.labels.password")} *</label>
+                    <label htmlFor="password">{t("editEmployee.labels.confirmPassword")} *</label>
                     <Controller
                         name="password_confirmation"
                         control={control}

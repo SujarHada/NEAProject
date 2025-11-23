@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import './ShowLetterStyle.css'
-import nepal_electricity_authority_logo from '../../../assets/nepal_electricity_authority_logo.png'
+import nepal_electricity_authority_logo from 'app/assets/nepal_electricity_authority_logo.png'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas';
-import { type Letter } from '../../../interfaces/interfaces';
+import { type Letter } from 'app/interfaces/interfaces';
 import { useParams } from 'react-router';
-import api from '../../../utils/api';
-import { engToNep } from '../../../utils/englishtonepaliNumber';
+import api from 'app/utils/api';
+import { engToNep } from 'app/utils/englishtonepaliNumber';
 const ShowLetter = () => {
     const { id } = useParams();
     const [letter, setLetter] = useState<Letter>();

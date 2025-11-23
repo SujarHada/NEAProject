@@ -1,12 +1,12 @@
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FaChevronDown } from "react-icons/fa"
-import type { createProductInputs } from "../../../interfaces/interfaces"
+import type { createProductInputs } from "app/interfaces/interfaces"
 import axios from "axios"
-import api from "../../../utils/api"
+import api from "app/utils/api"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
-import { createProductFormschema } from "../../../schemas/product"
+import { createProductFormschema } from "app/schemas/product"
 
 const CreateProducts = () => {
     const { t } = useTranslation()

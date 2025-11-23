@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react"
-import type { Product } from "../../../interfaces/interfaces"
+import type { Product } from "app/interfaces/interfaces"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from "usehooks-ts"
 import { useTranslation } from "react-i18next"
-import api from "../../../utils/api"
+import api from "app/utils/api"
 
 const ProductsBin = () => {
   const { t } = useTranslation()

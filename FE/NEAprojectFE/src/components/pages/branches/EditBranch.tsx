@@ -1,11 +1,11 @@
 import { Controller, useForm, type SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import type { Branch, BranchFormInputs } from "../../../interfaces/interfaces"
-import api from "../../../utils/api"
+import type { Branch, BranchFormInputs } from "app/interfaces/interfaces"
+import api from "app/utils/api"
 import { useNavigate, useParams } from "react-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { branchUpdateSchema } from "../../../schemas/branch"
+import { branchUpdateSchema } from "app/schemas/branch"
 
 const EditBranch = () => {
     const { t } = useTranslation()

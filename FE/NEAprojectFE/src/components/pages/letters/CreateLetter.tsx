@@ -1,16 +1,15 @@
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import useDataStore from "../../../store/useDataStore";
+import useDataStore from "app/store/useDataStore";
 import { useEffect, useState } from "react";
-
-import type { Receiver } from "../../../interfaces/interfaces";
+import type { Receiver } from "app/interfaces/interfaces";
 import NepaliDatePicker, { NepaliDate } from '@zener/nepali-datepicker-react';
 import '@zener/nepali-datepicker-react/index.css';
-import api from "../../../utils/api";
+import api from "app/utils/api";
 import { useNavigate } from "react-router";
-import { type CreateLetter as CreateLetterI, createLetterSchema } from "../../../schemas/letter";
+import { type CreateLetter as CreateLetterI, createLetterSchema } from "app/schemas/letter";
 import { useTranslation } from "react-i18next";
-import { engToNep, nepToEng } from "../../../utils/englishtonepaliNumber";
+import { engToNep, nepToEng } from "app/utils/englishtonepaliNumber";
 
 const CreateLetter = () => {
     const { t } = useTranslation();

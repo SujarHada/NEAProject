@@ -1,8 +1,8 @@
 import { useEffect, useState, type JSX } from "react";
 import { useNavigate } from "react-router";
-import useAuthStore from "../../store/useAuthStore";
-import api from "../../utils/api";
-import type { meResponse } from "../../interfaces/interfaces";
+import useAuthStore from "app/store/useAuthStore";
+import api from "app/utils/api";
+import type { meResponse } from "app/interfaces/interfaces";
 import { FaSpinner } from "react-icons/fa";
 
 const AuthCheck = ({ children }: { children: JSX.Element }) => {
