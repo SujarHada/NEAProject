@@ -47,7 +47,7 @@ class LetterSerializer(serializers.ModelSerializer):
         model = Letter
         fields = [
             'id', 'letter_count', 'chalani_no', 'voucher_no', 'date',
-            'receiver_office_name', 'receiver_address', 'subject',
+            'receiver_address', 'subject',
             'request_chalani_number', 'request_letter_count', 'request_date',
             'items', 'gatepass_no', 'receiver', 'status',
             'created_at', 'updated_at', 'office_name', 'sub_office_name'
