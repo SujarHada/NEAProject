@@ -123,7 +123,7 @@ export interface Letter {
   chalani_no: string
   voucher_no: string
   date: string
-  receiver_office_name: string
+  office_name: string
   receiver_address: string
   subject: string
   request_chalani_number: string

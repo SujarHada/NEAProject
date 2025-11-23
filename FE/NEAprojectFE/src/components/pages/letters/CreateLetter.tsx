@@ -21,7 +21,7 @@ const CreateLetter = () => {
             items: [{ name: "", company: "", serial_number: "", unit_of_measurement: "", quantity: "", remarks: "" }],
             receiver: { name: "", post: "", id_card_number: "", id_card_type: "unknown", office_name: "", office_address: "", phone_number: "", vehicle_number: "" },
             date: new NepaliDate().format('YYYY-MM-DD', 'np'), chalani_no: '', voucher_no: '', gatepass_no: '',
-            receiver_office_name: '', receiver_address: '', subject: ' जिन्सी सामान हस्तान्तरण गरी पठाइएको बारे ।',
+            office_name: '', receiver_address: '', subject: ' जिन्सी सामान हस्तान्तरण गरी पठाइएको बारे ।',
             request_chalani_number: '', request_letter_count: '', request_date: new NepaliDate().format('YYYY-MM-DD', 'np')
         },
         mode: 'onSubmit'
@@ -48,12 +48,12 @@ const CreateLetter = () => {
     const handleOfficeChange = (officeId: string) => {
         const selectedOffice = Offices?.find(o => o.id.toString() === officeId);
         if (selectedOffice) {
-            setValue("receiver_office_name", selectedOffice.name);
+            setValue("office_name", selectedOffice.name);
             setValue("receiver_address", selectedOffice.address);
             const filtered = Receivers?.filter(r => r.office_name === selectedOffice.name);
             setFilteredReceivers(filtered || []);
         } else {
-            setValue("receiver_office_name", "");
+            setValue("office_name", "");
             setValue("receiver_address", "");
             setFilteredReceivers([]);
         }
@@ -165,7 +165,7 @@ const CreateLetter = () => {
                             {Offices?.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
                         </select>
                         {
-                            errors.receiver_office_name && <span className="text-red-500">{errors.receiver_office_name.message}</span>
+                            errors.office_name && <span className="text-red-500">{errors.office_name.message}</span>
                         }
                     </div>
 
@@ -331,7 +331,7 @@ const CreateLetter = () => {
                 </div>
                 <div className="w-full flex gap-4  flex-wrap ">
                     <div className="flex flex-col flex-1">
-                        <label htmlFor="receiverSelect">{t("createLetter.receiver_office_name")} *</label>
+                        <label htmlFor="receiverSelect">{t("createLetter.office_name")} *</label>
                         <Controller
                             name="receiver.office_name"
                             control={control}

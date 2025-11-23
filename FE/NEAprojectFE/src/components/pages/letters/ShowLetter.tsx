@@ -94,7 +94,7 @@ const ShowLetter = () => {
                     <div className="ref-left">
                         <div>पत्र सं.: <span className="dynamic">{letter?.letter_count} च.नं.: {letter?.chalani_no}</span></div>
                         <div>
-                            श्री {letter?.receiver_office_name},<br />
+                            श्री {letter?.office_name},<br />
                             &nbsp;&nbsp;&nbsp;&nbsp;{letter?.receiver_address}
                         </div>
                     </div>

@@ -43,7 +43,7 @@ const EditLetter = () => {
       chalani_no: "",
       voucher_no: "",
       gatepass_no: "",
-      receiver_office_name: "",
+      office_name: "",
       receiver_address: "",
       subject: "",
       request_chalani_number: "",
@@ -105,7 +105,7 @@ const EditLetter = () => {
       (o) => o.id.toString() === officeId
     );
     if (selectedOffice) {
-      setValue("receiver_office_name", selectedOffice.name);
+      setValue("office_name", selectedOffice.name);
       setValue("receiver_address", selectedOffice.address);
 
       const filtered = Receivers?.filter(
@@ -113,7 +113,7 @@ const EditLetter = () => {
       );
       setFilteredReceivers(filtered || []);
     } else {
-      setValue("receiver_office_name", "");
+      setValue("office_name", "");
       setValue("receiver_address", "");
       setFilteredReceivers([]);
     }
@@ -261,7 +261,7 @@ const EditLetter = () => {
               onChange={(e) => handleOfficeChange(e.target.value)}
               value={
                 Offices?.find(
-                  (o) => o.name === control._formValues.receiver_office_name
+                  (o) => o.name === control._formValues.office_name
                 )?.id || ""
               }
               className="bg-[#B5C9DC] pl-3 border-2 h-10 rounded-md border-gray-600"
@@ -484,7 +484,7 @@ const EditLetter = () => {
           </div>
           <div className="w-full flex gap-4  flex-wrap ">
             <div className="flex flex-col flex-1">
-              <label htmlFor="receiverSelect">{t("createLetter.receiver_office_name")} *</label>
+              <label htmlFor="receiverSelect">{t("createLetter.office_name")} *</label>
               <Controller
                 name="receiver.office_name"
                 control={control}

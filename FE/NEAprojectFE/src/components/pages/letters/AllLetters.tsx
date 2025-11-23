@@ -90,6 +90,8 @@ const AllLetters = () => {
                 start: startDate.format("YYYY-MM-DD"),
                 end: endDate.format("YYYY-MM-DD")
             });
+        }else{
+            fetchLetters();
         }
     }, [startDate, endDate]);
 
@@ -227,7 +229,7 @@ const AllLetters = () => {
                         )}
                         {letters?.map(letter => (
                             <tr key={letter.id} className="border-b bg-gray-800 border-gray-700">
-                                <td className="px-6 py-4 font-medium text-white">{letter.receiver_office_name}</td>
+                                <td className="px-6 py-4 font-medium text-white">{letter.office_name}</td>
                                 <td className="px-6 py-4">{letter.voucher_no}</td>
                                 <td className="px-6 py-4">{letter.chalani_no}</td>
                                 <td className="px-6 py-4">{letter.gatepass_no}</td>

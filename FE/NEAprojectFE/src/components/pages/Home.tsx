@@ -62,7 +62,10 @@ const Home = () => {
             }`}
           >
             <p className="text-sm text-gray-600">
-              Made with ❤️ by Hashtag Web Solutions Pvt. Ltd
+              Made with ❤️ by {' '} 
+              <a  className="text-blue-700 underline" target="_blank" href="https://hashtagweb.com.np/">
+              Hashtag Web Solutions Pvt. Ltd
+              </a>
             </p>
           </div>
         </div>
