@@ -16,7 +16,7 @@ export const createLetterSchema = z.object({
 
   items: z.array(
     z.object({
-      id: z.number().optional(),
+      product_id: z.string({ error: "Item is required" }),
       name: z.string().min(1, "Item name is required"),
       company: z.string().min(1, "Company name is required"),
       serial_number: z.string().min(1, "Serial number is required"),
@@ -73,7 +73,7 @@ export const updateLetterSchema = z.object({
     items: z
         .array(
             z.object({
-                id: z.number().optional(),
+                product_id: z.string(),
                 name: z.string().min(1, "Item name is required"),
                 company: z.string().min(1, "Company name is required"),
                 serial_number: z.string().min(1, "Serial number is required"),

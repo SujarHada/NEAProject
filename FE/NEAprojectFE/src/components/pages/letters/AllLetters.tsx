@@ -6,7 +6,6 @@ import { useOnClickOutside } from 'usehooks-ts'
 import { useTranslation } from "react-i18next"
 import api from "../../../utils/api"
 import NepaliDatePicker, { NepaliDate } from "@zener/nepali-datepicker-react"
-import type { AxiosResponse } from "axios"
 
 const AllLetters = () => {
     const { t } = useTranslation()
@@ -40,39 +39,71 @@ const AllLetters = () => {
     }
 
 
-    const fetchletters = async (pageUrl?: string, pageNum?: number) => {
+    const fetchLetters = async (options?: {
+        page?: number;
+        url?: string;
+        start?: string;
+        end?: string;
+    }) => {
         try {
-            const apiUrl = pageUrl || `/api/letters/?page=${pageNum || currentPage}`
-            const res = await api.get(apiUrl, {
-                params: {
-                    status: "draft"
-                }
-            })
-            setLetters(res.data.results.data)
-            setLetterCount(res.data.count)
-            setNextPage(res.data.next)
-            setPrevPage(res.data.previous)
-            if (pageNum) setCurrentPage(pageNum)
+            const { page, url, start, end } = options || {};
+
+            const apiUrl =
+                url ||
+                (start && end
+                    ? "/api/letters/by-date-range/"
+                    : `/api/letters/?page=${page || currentPage}`);
+
+            const params: any = {};
+
+            if (start && end) {
+                params.start_date = start;
+                params.end_date = end;
+            } else {
+                params.status = "draft";
+            }
+
+            const res = await api.get(apiUrl, { params });
+
+            const result = res.data.results?.data || [];
+
+            setLetters(result);
+            setLetterCount(res.data.count);
+            setNextPage(res.data.next);
+            setPrevPage(res.data.previous);
+
+            if (page) setCurrentPage(page);
         } catch (err: any) {
             if (err.response?.status === 404 && currentPage > 1) {
-                await fetchletters(undefined, currentPage - 1)
-                return
+                // fallback to previous page
+                await fetchLetters({ page: currentPage - 1 });
+                return;
             }
-            console.error("Error fetching letters:", err)
-            return []
+            console.error("Error fetching letters:", err);
         }
-    }
+    };
 
 
     useEffect(() => {
-        fetchletters()
-    }, [])
+        if (startDate && endDate) {
+            fetchLetters({
+                start: startDate.format("YYYY-MM-DD"),
+                end: endDate.format("YYYY-MM-DD")
+            });
+        }
+    }, [startDate, endDate]);
+
+
+    useEffect(() => {
+        fetchLetters();
+    }, []);
+
 
     const handleDelete = async (letterId: number) => {
         try {
             const res = await api.delete(`/api/letters/${letterId}/`)
             if (res.status === 200) {
-                await fetchletters()
+                await fetchLetters()
                 setOpenDropdownId(null)
 
             }
@@ -81,9 +112,6 @@ const AllLetters = () => {
         }
     }
 
-    useEffect(() => {
-        console.log("Date range changed:", startDate?.format("YYYY-MM-DD"), endDate?.format("YYYY-MM-DD"));
-    }, [startDate, endDate])
 
     const handleDownload = async () => {
         try {
@@ -263,7 +291,7 @@ const AllLetters = () => {
                 <ul className="flex items-center justify-center h-8 text-sm">
                     <li>
                         <button
-                            onClick={() => prevPage && fetchletters(prevPage, currentPage - 1)}
+                            onClick={() => prevPage && fetchLetters({ url: prevPage, page: currentPage - 1 })}
                             disabled={!prevPage}
                             className={`flex items-center justify-center px-3 h-8 border rounded-s-lg bg-gray-800 border-gray-700 ${prevPage ? "text-gray-400 hover:bg-gray-700 hover:text-white" : "text-gray-600 cursor-not-allowed"}`}
                         >
@@ -274,7 +302,7 @@ const AllLetters = () => {
                     {Array.from({ length: totalPages }).map((_, i) => (
                         <li key={i}>
                             <button
-                                onClick={() => fetchletters(undefined, i + 1)}
+                                onClick={() => fetchLetters({ url: undefined, page: i + 1 })}
                                 className={`flex items-center justify-center px-3 h-8 border bg-gray-800 border-gray-700 ${currentPage === i + 1 ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-700 hover:text-white"}`}
                             >
                                 {i + 1}
@@ -284,7 +312,7 @@ const AllLetters = () => {
 
                     <li>
                         <button
-                            onClick={() => nextPage && fetchletters(nextPage, currentPage + 1)}
+                            onClick={() => nextPage && fetchLetters({ url: nextPage, page: currentPage + 1 })}
                             disabled={!nextPage}
                             className={`flex items-center justify-center px-3 h-8 border rounded-e-lg bg-gray-800 border-gray-700 ${nextPage ? "text-gray-400 hover:bg-gray-700 hover:text-white" : "text-gray-600 cursor-not-allowed"}`}
                         >

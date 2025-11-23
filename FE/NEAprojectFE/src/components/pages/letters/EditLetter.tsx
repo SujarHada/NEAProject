@@ -2,7 +2,7 @@ import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useDataStore from "../../../store/useDataStore";
 import { useEffect, useState } from "react";
-import type { Receiver } from "../../../interfaces/interfaces";
+import type { Letter, Receiver } from "../../../interfaces/interfaces";
 import NepaliDatePicker from "@zener/nepali-datepicker-react";
 import "@zener/nepali-datepicker-react/index.css";
 import api from "../../../utils/api";
@@ -23,9 +23,8 @@ const EditLetter = () => {
     handleSubmit,
     formState: { isSubmitting, errors },
     setValue,
-    reset,
-    watch
-  } = useForm<EditLetterI>({
+    reset
+    } = useForm<EditLetterI>({
     resolver: zodResolver(EditLetterSchema),
     defaultValues: {
       letter_count: "",
@@ -72,10 +71,10 @@ const EditLetter = () => {
       try {
         const res = await api.get(`/api/letters/${id}/`);
         if (res.status === 200) {
-          const letter = res.data.data;
+          const letter:Letter = res.data.data;
 
           const officeReceivers = Receivers?.filter(
-            (r) => r.office_name === letter.receiver_office_name
+            (r) => r.id_card_number === letter.receiver.id_card_number
           );
           setFilteredReceivers(officeReceivers || []);
 
@@ -96,6 +95,7 @@ const EditLetter = () => {
     };
 
     if (Receivers && Offices && Products) {
+      console.log("Fetching letter...");
       fetchLetter();
     }
   }, [Receivers, Offices, Products]);
@@ -126,7 +126,7 @@ const EditLetter = () => {
     }
   };
 
-  console.log(watch())
+  // console.log(watch())
 
   const onSubmit = async (data: EditLetterI) => {
     try {
@@ -372,7 +372,7 @@ const EditLetter = () => {
                 <div className="flex flex-col flex-1 gap-2">
                   <label>{t("createLetter.product")} *</label>
                   <Controller
-                    name={`items.${index}.id`}
+                    name={`items.${index}.product_id`}
                     control={control}
                     render={({ field }) => (
                       <select
@@ -381,7 +381,7 @@ const EditLetter = () => {
                           const selected = Products?.find(p => p.id.toString() === e.target.value);
                           if (selected) {
                             setValue(`items.${index}.name`, selected.name);
-                            setValue(`items.${index}.id`, selected.id);
+                            setValue(`items.${index}.product_id`, selected.id.toString());
                             setValue(`items.${index}.company`, selected.company);
                             setValue(`items.${index}.unit_of_measurement`, selected.unit_of_measurement);
                           }
@@ -444,7 +444,7 @@ const EditLetter = () => {
               <button type="button" className="bg-red-500 self-end text-white px-3 rounded h-10" onClick={() => remove(index)}>Remove</button>
             </div>
           ))}
-          <button type="button" className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => append({ name: "", company: "", serial_number: '', unit_of_measurement: "", quantity: '', remarks: "" })}>
+          <button type="button" className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => append({product_id:'', name: "", company: "", serial_number: '', unit_of_measurement: "", quantity: '', remarks: "" })}>
             Add Item
           </button>
         </div>

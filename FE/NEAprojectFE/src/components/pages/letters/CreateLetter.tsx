@@ -226,7 +226,7 @@ const CreateLetter = () => {
                             <div className="flex flex-col flex-1 gap-2">
                                 <label>{t("createLetter.product")} *</label>
                                 <Controller
-                                    name={`items.${index}.id`}
+                                    name={`items.${index}.product_id`}
                                     control={control}
                                     render={({ field }) => (
                                         <select
@@ -236,7 +236,7 @@ const CreateLetter = () => {
                                                 const selected = Products?.find(p => p.id.toString() === e.target.value);
                                                 if (selected) {
                                                     setValue(`items.${index}.name`, selected.name);
-                                                    setValue(`items.${index}.id`, selected.id);
+                                                    setValue(`items.${index}.product_id`, selected.id.toString());
                                                     setValue(`items.${index}.company`, selected.company);
                                                     setValue(`items.${index}.unit_of_measurement`, selected.unit_of_measurement);
                                                 }
@@ -299,7 +299,7 @@ const CreateLetter = () => {
                         <button type="button" className="bg-red-500 self-end text-white px-3 rounded h-10" onClick={() => remove(index)}>Remove</button>
                     </div>
                 ))}
-                <button type="button" className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => append({ name: "", company: "", serial_number: '', unit_of_measurement: "", quantity: '', remarks: "" })}>
+                <button type="button" className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => append({product_id: "", name: "", company: "", serial_number: '', unit_of_measurement: "", quantity: '', remarks: "" })}>
                     Add Item
                 </button>
             </div>

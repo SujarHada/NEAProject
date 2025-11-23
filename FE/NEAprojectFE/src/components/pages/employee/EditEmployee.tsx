@@ -1,13 +1,14 @@
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { type createEmployeesInputs, type Employee } from "../../../interfaces/interfaces"
+import { type Employee } from "../../../interfaces/interfaces"
+// import { type updateEmployeesFormSchema } from "../../../schemas/employee"
 import { FaChevronDown } from "react-icons/fa"
 import { useNavigate, useParams } from "react-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { type Branch } from "../../../interfaces/interfaces"
 import api from "../../../utils/api"
-import { updateEmployeesFormSchema } from "../../../schemas/employee"
+import { updateEmployeesFormSchema, type UpdateEmployeesFormData } from "../../../schemas/employee"
 
 const EditEmployee = () => {
     const { t } = useTranslation()
@@ -50,14 +51,14 @@ const EditEmployee = () => {
     }, [param.id, branches, employee])
     const formSchema = updateEmployeesFormSchema(t)
 
-    const { control, handleSubmit, formState: { isSubmitting, errors }, setValue, reset } = useForm<createEmployeesInputs>({
+    const { control, handleSubmit, formState: { isSubmitting, errors }, setValue, reset } = useForm<UpdateEmployeesFormData>({
         defaultValues: {
             first_name: "",
             middle_name: "",
             last_name: "",
             email: "",
             organization_id: 0,
-            role: "",
+            role: "viewer",
         },
         resolver: zodResolver(formSchema),
         mode: "onSubmit"
@@ -87,8 +88,9 @@ const EditEmployee = () => {
         setValue("role", employee.role)
     }, [param, employee])
 
-    const onSubmit = async (data: createEmployeesInputs) => {
-        const res = await api.put(`/api/employees/${param.id}/`, data)
+    const onSubmit = async (data: UpdateEmployeesFormData) => {
+        const {password_confirmation, ...refinedData} = data
+        const res = await api.put(`/api/employees/${param.id}/`, refinedData)
         if (res.status === 200) {
             navigate("/employees/manage")
             reset()
@@ -109,7 +111,7 @@ const EditEmployee = () => {
                     control={control}
                     render={({ field }) => (
                         <div className="flex w-full items-center relative">
-                            <select id="position" {...field} onChange={(e)=>field.onChange(Number(e.target.value))} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                            <select id="position" {...field} onChange={(e) => field.onChange(Number(e.target.value))} className="bg-[#B5C9DC] appearance-none w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
                                 <option value="" disabled hidden>{t("createEmployee.placeholders.branches")}</option>
                                 {
                                     branches.map((branch) => (
@@ -172,6 +174,30 @@ const EditEmployee = () => {
                     )}
                 />
                 {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+            </div>
+            <div className="flex w-full flex-wrap gap-4">
+                <div className="lg:w-1/2 flex flex-1 flex-col gap-2" >
+                    <label htmlFor="password">{t("editEmployee.labels.password")} *</label>
+                    <Controller
+                        name="password"
+                        control={control}
+                        render={({ field }) => (
+                            <input type="password" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="email" />
+                        )}
+                    />
+                    {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+                </div>
+                <div className="lg:w-1/2 flex flex-1 flex-col gap-2" >
+                    <label htmlFor="password">{t("editEmployee.labels.password")} *</label>
+                    <Controller
+                        name="password_confirmation"
+                        control={control}
+                        render={({ field }) => (
+                            <input type="password" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="email" />
+                        )}
+                    />
+                    {errors.password_confirmation && <p className="text-red-500">{errors.password_confirmation.message}</p>}
+                </div>
             </div>
 
             <div className="lg:w-1/2 flex flex-col relative">
