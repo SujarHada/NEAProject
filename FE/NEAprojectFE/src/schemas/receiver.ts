@@ -6,7 +6,7 @@ export const createReceiverSchema = (t: (key: string) => string) => {
         office_name: z.string().min(1, t("createReceiver.errors.deptRequired")),
         office_address: z.string().min(1, t("createReceiver.errors.deptAddressRequired")),
         id_card_number: z.string().min(1, t("createReceiver.errors.idNo")),
-        id_card_type: z.enum(["national_id", "citizenship", "voter_id", "passport", "drivers_license", "pan_card", "unknown"], t("createReceiver.errors.idType")),
+        id_card_type: z.enum(["national_id", "citizenship", "voter_id", "passport", "drivers_license", "pan_card", "unknown", "employee_id"], t("createReceiver.errors.idType")),
         phone_number: z.string()
             .min(1, t("createReceiver.errors.phone"))
             .regex(/^[\d\u0966-\u096F]+$/, t("createReceiver.errors.phoneNum"))
