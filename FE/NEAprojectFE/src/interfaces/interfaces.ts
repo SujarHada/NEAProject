@@ -39,7 +39,7 @@ export interface Receiver {
   name: string
   post: string
   id_card_number: string
-  id_card_type: "national_id" | "citizenship" | "voter_id" | "passport" | "drivers_license" | "pan_card" | "unknown"
+  id_card_type: "national_id" | "citizenship" | "voter_id" | "passport" | "drivers_license" | "pan_card" | "unknown" | "employee_id"
   office_name: string
   office_address: string
   phone_number: string
