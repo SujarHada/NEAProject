@@ -11,7 +11,6 @@ class Letter(TimeStampedModel):
     chalani_no = models.CharField(max_length=100, null=True, blank=True)
     voucher_no = models.CharField(max_length=100, null=True, blank=True)
     date = models.CharField(max_length=50, blank=True, default="")
-    receiver_office_name = models.CharField(max_length=200, blank=True, default="")
     receiver_address = models.CharField(max_length=500, blank=True, default="")
     subject = models.CharField(max_length=500, blank=True, default="")
     request_chalani_number = models.CharField(max_length=100, blank=True, default="")
