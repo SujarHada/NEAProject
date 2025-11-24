@@ -498,12 +498,15 @@ class LetterViewSet(viewsets.ModelViewSet):
             c.font = header_font
 
         row_idx = 2
-        for index, letter in enumerate(records, start=1):
+        # FIX: Use a single counter for all items across all letters
+        serial_counter = 1
+        
+        for letter in records:
             items = list(letter.items.all())
             if not items:
                 last_name = (letter.receiver_name or '').strip().split(' ')[-1] if letter.receiver_name else ''
                 row = [
-                    index,
+                    serial_counter,  # Use the continuous counter
                     str(letter.chalani_no or ''),
                     str(letter.voucher_no or ''),
                     normalize_date(letter.date),
@@ -525,11 +528,12 @@ class LetterViewSet(viewsets.ModelViewSet):
                     ws.cell(row=row_idx, column=col).font = cell_font
                     ws.cell(row=row_idx, column=col).number_format = '@'
                 row_idx += 1
+                serial_counter += 1
             else:
                 for it in items:
                     last_name = (letter.receiver_name or '').strip().split(' ')[-1] if letter.receiver_name else ''
                     row = [
-                        index,
+                        serial_counter,
                         str(letter.chalani_no or ''),
                         str(letter.voucher_no or ''),
                         normalize_date(letter.date),
@@ -556,18 +560,7 @@ class LetterViewSet(viewsets.ModelViewSet):
                         ws.cell(row=row_idx, column=col).font = cell_font
                         ws.cell(row=row_idx, column=col).number_format = '@'
                     row_idx += 1
-
-        # Add instructions sheet
-        info = wb.create_sheet('Instructions')
-        info_text = (
-            'यो फाइल Unicode (UTF-8) मा तयार गरिएको छ।\n'
-            'गाडी नम्बर र Mobile स्तम्भहरूमा नेपाली अंक (०–९) प्रयोग गरिएको छ।\n'
-            'Google Sheets मा आयात गर्दा Noto Sans Devanagari फन्ट प्रयोग गर्नुहोस्।\n'
-            'Excel मा Noto Sans Devanagari वा Mangal फन्ट इन्स्टल गरिएको हुनुपर्छ।\n'
-            'Preeti जस्तो legacy फन्ट प्रयोग नगर्नुहोस्; Unicode मात्र राख्नुहोस्।'
-        )
-        info.cell(row=1, column=1, value=info_text)
-        info.column_dimensions['A'].width = 120
+                    serial_counter += 1
 
         from io import BytesIO
         output = BytesIO()
@@ -664,12 +657,15 @@ class LetterViewSet(viewsets.ModelViewSet):
             c.font = header_font
         row_idx = 2
 
-        for index, letter in enumerate(records, start=1):
+        # FIX: Use a single continuous counter for all items across all letters
+        serial_counter = 1
+
+        for letter in records:
             items = list(letter.items.all())
             if not items:
                 last_name = (letter.receiver_name or '').strip().split(' ')[-1] if letter.receiver_name else ''
                 row = [
-                    index,
+                    serial_counter,  # Use continuous counter instead of index
                     str(letter.chalani_no or ''),
                     str(letter.voucher_no or ''),
                     normalize_date(letter.date),
@@ -691,11 +687,12 @@ class LetterViewSet(viewsets.ModelViewSet):
                     ws.cell(row=row_idx, column=col).font = cell_font
                     ws.cell(row=row_idx, column=col).number_format = '@'
                 row_idx += 1
+                serial_counter += 1  # Increment counter for each row
             else:
                 for it in items:
                     last_name = (letter.receiver_name or '').strip().split(' ')[-1] if letter.receiver_name else ''
                     row = [
-                        index,
+                        serial_counter,  # Use continuous counter instead of index
                         str(letter.chalani_no or ''),
                         str(letter.voucher_no or ''),
                         normalize_date(letter.date),
@@ -722,6 +719,7 @@ class LetterViewSet(viewsets.ModelViewSet):
                         ws.cell(row=row_idx, column=col).font = cell_font
                         ws.cell(row=row_idx, column=col).number_format = '@'
                     row_idx += 1
+                    serial_counter += 1  # Increment counter for each row
 
         info = wb.create_sheet('Instructions')
         info_text = (
