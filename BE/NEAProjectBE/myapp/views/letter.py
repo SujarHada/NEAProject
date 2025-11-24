@@ -473,6 +473,22 @@ class LetterViewSet(viewsets.ModelViewSet):
             if dn and dn.count('-') == 2 and len(dn) == 10:
                 return dn.replace('-', '.')
             return d or ''
+        
+        def to_number(s):
+            """Extract digits from string and convert to number, return None if empty"""
+            if not s:
+                return None
+            # Convert Nepali digits to English first
+            m = {'०':'0','१':'1','२':'2','३':'3','४':'4','५':'5','६':'6','७':'7','८':'8','९':'9'}
+            converted = ''.join(m.get(ch, ch) for ch in str(s))
+            # Extract only digits
+            digits = ''.join(ch for ch in converted if ch.isdigit())
+            if digits:
+                try:
+                    return int(digits)
+                except ValueError:
+                    return None
+            return None
 
         queryset = self.filter_queryset(self.get_queryset())
         records = list(queryset.prefetch_related('items'))
@@ -497,6 +513,11 @@ class LetterViewSet(viewsets.ModelViewSet):
             c = ws.cell(row=1, column=i)
             c.font = header_font
 
+        # Column indices for numeric columns (1-indexed)
+        # च.नं.=2, भौचर क्र. सं.=3, गेटपास नं.=5, बुझेको परिमाण नया=14
+        # Note: Mobile (18) and सिरियल नं. (11) are kept in original format, not converted to number
+        numeric_columns = {2, 3, 5, 14}
+
         row_idx = 2
         # FIX: Use a single counter for all items across all letters
         serial_counter = 1
@@ -507,10 +528,10 @@ class LetterViewSet(viewsets.ModelViewSet):
                 last_name = (letter.receiver_name or '').strip().split(' ')[-1] if letter.receiver_name else ''
                 row = [
                     serial_counter,  # Use the continuous counter
-                    str(letter.chalani_no or ''),
-                    str(letter.voucher_no or ''),
+                    to_number(letter.chalani_no) or '',
+                    to_number(letter.voucher_no) or '',
                     normalize_date(letter.date),
-                    str(letter.gatepass_no or ''),
+                    to_number(letter.gatepass_no) or '',
                     '-',
                     letter.office_name or '',
                     letter.sub_office_name or '',
@@ -525,8 +546,11 @@ class LetterViewSet(viewsets.ModelViewSet):
                 ]
                 ws.append(row)
                 for col in range(1, len(headers)+1):
-                    ws.cell(row=row_idx, column=col).font = cell_font
-                    ws.cell(row=row_idx, column=col).number_format = '@'
+                    cell = ws.cell(row=row_idx, column=col)
+                    cell.font = cell_font
+                    # Only set text format for non-numeric columns
+                    if col not in numeric_columns:
+                        cell.number_format = '@'
                 row_idx += 1
                 serial_counter += 1
             else:
@@ -534,10 +558,10 @@ class LetterViewSet(viewsets.ModelViewSet):
                     last_name = (letter.receiver_name or '').strip().split(' ')[-1] if letter.receiver_name else ''
                     row = [
                         serial_counter,
-                        str(letter.chalani_no or ''),
-                        str(letter.voucher_no or ''),
+                        to_number(letter.chalani_no) or '',
+                        to_number(letter.voucher_no) or '',
                         normalize_date(letter.date),
-                        str(letter.gatepass_no or ''),
+                        to_number(letter.gatepass_no) or '',
                         '-',
                         letter.office_name or '',
                         letter.sub_office_name or '',
@@ -546,7 +570,7 @@ class LetterViewSet(viewsets.ModelViewSet):
                         it.serial_number,
                         it.unit_of_measurement,
                         '-',
-                        str(it.quantity),
+                        to_number(it.quantity) or '',
                         letter.receiver_name or '',
                         last_name,
                         letter.receiver_post or '',
@@ -557,8 +581,11 @@ class LetterViewSet(viewsets.ModelViewSet):
                     ]
                     ws.append(row)
                     for col in range(1, len(headers)+1):
-                        ws.cell(row=row_idx, column=col).font = cell_font
-                        ws.cell(row=row_idx, column=col).number_format = '@'
+                        cell = ws.cell(row=row_idx, column=col)
+                        cell.font = cell_font
+                        # Only set text format for non-numeric columns
+                        if col not in numeric_columns:
+                            cell.number_format = '@'
                     row_idx += 1
                     serial_counter += 1
 
@@ -604,6 +631,21 @@ class LetterViewSet(viewsets.ModelViewSet):
             if dn and dn.count('-') == 2 and len(dn) == 10:
                 return dn.replace('-', '.')
             return d or ''
+        
+        def to_number(s):
+            """Extract digits from string and convert to number, return None if empty"""
+            if not s:
+                return None
+            # Convert Nepali digits to English first
+            converted = en_digits(str(s))
+            # Extract only digits
+            digits = ''.join(ch for ch in converted if ch.isdigit())
+            if digits:
+                try:
+                    return int(digits)
+                except ValueError:
+                    return None
+            return None
 
         start_date = request.data.get('start_date')
         end_date = request.data.get('end_date')
@@ -655,6 +697,12 @@ class LetterViewSet(viewsets.ModelViewSet):
         for i, _ in enumerate(headers, start=1):
             c = ws.cell(row=1, column=i)
             c.font = header_font
+        
+        # Column indices for numeric columns (1-indexed)
+        # च.नं.=2, भौचर क्र. सं.=3, गेटपास नं.=5, बुझेको परिमाण नया=14
+        # Note: Mobile (18) and सिरियल नं. (11) are kept in original format, not converted to number
+        numeric_columns = {2, 3, 5, 14}
+        
         row_idx = 2
 
         # FIX: Use a single continuous counter for all items across all letters
@@ -666,10 +714,10 @@ class LetterViewSet(viewsets.ModelViewSet):
                 last_name = (letter.receiver_name or '').strip().split(' ')[-1] if letter.receiver_name else ''
                 row = [
                     serial_counter,  # Use continuous counter instead of index
-                    str(letter.chalani_no or ''),
-                    str(letter.voucher_no or ''),
+                    to_number(letter.chalani_no) or '',
+                    to_number(letter.voucher_no) or '',
                     normalize_date(letter.date),
-                    str(letter.gatepass_no or ''),
+                    to_number(letter.gatepass_no) or '',
                     '-',
                     letter.office_name or '',
                     letter.sub_office_name or '',
@@ -684,8 +732,11 @@ class LetterViewSet(viewsets.ModelViewSet):
                 ]
                 ws.append(row)
                 for col in range(1, len(headers)+1):
-                    ws.cell(row=row_idx, column=col).font = cell_font
-                    ws.cell(row=row_idx, column=col).number_format = '@'
+                    cell = ws.cell(row=row_idx, column=col)
+                    cell.font = cell_font
+                    # Only set text format for non-numeric columns
+                    if col not in numeric_columns:
+                        cell.number_format = '@'
                 row_idx += 1
                 serial_counter += 1  # Increment counter for each row
             else:
@@ -693,10 +744,10 @@ class LetterViewSet(viewsets.ModelViewSet):
                     last_name = (letter.receiver_name or '').strip().split(' ')[-1] if letter.receiver_name else ''
                     row = [
                         serial_counter,  # Use continuous counter instead of index
-                        str(letter.chalani_no or ''),
-                        str(letter.voucher_no or ''),
+                        to_number(letter.chalani_no) or '',
+                        to_number(letter.voucher_no) or '',
                         normalize_date(letter.date),
-                        str(letter.gatepass_no or ''),
+                        to_number(letter.gatepass_no) or '',
                         '-',
                         letter.office_name or '',
                         letter.sub_office_name or '',
@@ -705,7 +756,7 @@ class LetterViewSet(viewsets.ModelViewSet):
                         it.serial_number,
                         it.unit_of_measurement,
                         '-',
-                        str(it.quantity),
+                        to_number(it.quantity) or '',
                         letter.receiver_name or '',
                         last_name,
                         letter.receiver_post or '',
@@ -716,8 +767,11 @@ class LetterViewSet(viewsets.ModelViewSet):
                     ]
                     ws.append(row)
                     for col in range(1, len(headers)+1):
-                        ws.cell(row=row_idx, column=col).font = cell_font
-                        ws.cell(row=row_idx, column=col).number_format = '@'
+                        cell = ws.cell(row=row_idx, column=col)
+                        cell.font = cell_font
+                        # Only set text format for non-numeric columns
+                        if col not in numeric_columns:
+                            cell.number_format = '@'
                     row_idx += 1
                     serial_counter += 1  # Increment counter for each row
 
