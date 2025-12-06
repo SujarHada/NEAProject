@@ -10,6 +10,9 @@ import { useNavigate } from "react-router";
 import { type CreateLetter as CreateLetterI, createLetterSchema } from "app/schemas/letter";
 import { useTranslation } from "react-i18next";
 import { engToNep, nepToEng } from "app/utils/englishtonepaliNumber";
+import { productUnits } from "app/enum/productUnits";
+import { id_types } from "app/enum/id_types";
+import toast from "react-hot-toast";
 
 const CreateLetter = () => {
     const { t } = useTranslation();
@@ -20,7 +23,7 @@ const CreateLetter = () => {
             items: [{ name: "", company: "", serial_number: "", unit_of_measurement: "", quantity: "", remarks: "" }],
             receiver: { name: "", post: "", id_card_number: "", id_card_type: "unknown", office_name: "", office_address: "", phone_number: "", vehicle_number: "" },
             date: new NepaliDate().format('YYYY-MM-DD', 'np'), chalani_no: '', voucher_no: '', gatepass_no: '',
-            office_name: '', receiver_address: '', subject: ' जिन्सी सामान हस्तान्तरण गरी पठाइएको बारे ।',
+            office_name: '', receiver_address: '', subject: 'जिन्सी सामान हस्तान्तरण गरी पठाइएको बारे ।',
             request_chalani_number: '', request_letter_count: '', request_date: new NepaliDate().format('YYYY-MM-DD', 'np')
         },
         mode: 'onSubmit'
@@ -83,11 +86,18 @@ const CreateLetter = () => {
 
     const onSubmit = async (data: CreateLetterI) => {
         const res = await api.post('/api/letters/', data);
-        if (res.status === 201) navigate(`/letters/view-letter/${res.data.data.id}`);
+        if (res.status === 201) {
+            toast.success('Letter created successfully', {
+                position: 'top-center',
+                duration: 1000,
+                removeDelay: 1000,
+            })
+            navigate(`/letters/view-letter/${res.data.data.id}`);
+        }
     };
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-3">
             <h1 className="text-2xl font-bold text-gray-800">{t("createLetter.title")}</h1>
             <div className="flex flex-1 flex-row gap-2 flex-wrap">
 
@@ -98,12 +108,12 @@ const CreateLetter = () => {
                         name="date"
                         control={control}
                         render={({ field }) => (
-                            <div className="bg-[#B5C9DC] border-2 h-10 outline-none z-50 rounded-md border-gray-600">
-                                <NepaliDatePicker {...field} value={new NepaliDate(nepToEng(field.value))} onChange={(e) => field.onChange(e!.format('YYYY-MM-DD', 'np'))} className='h-10 px-3 cursor-pointer' placeholder="YYYY-MM-DD" />
+                            <div className="bg-[#B5C9DC] border-2 h-8 outline-none z-50 rounded-md border-gray-600">
+                                <NepaliDatePicker {...field} value={new NepaliDate(nepToEng(field.value))} onChange={(e) => field.onChange(e!.format('YYYY-MM-DD', 'np'))} className='h-8 px-3 cursor-pointer' placeholder="YYYY-MM-DD" />
                             </div>
                         )}
                     />
-                    {errors.date && <span className="text-red-500">{errors.date.message}</span>}
+                    {errors.date && <span className="text-[#B22222]">{errors.date.message}</span>}
                 </div>
 
                 {/* Letter count */}
@@ -113,9 +123,9 @@ const CreateLetter = () => {
                         name="letter_count"
                         defaultValue={LetterCreationData?.fiscal_year}
                         control={control}
-                        render={({ field }) => <input {...field} id="lettercount" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />}
+                        render={({ field }) => <input {...field} id="lettercount" type="text" className="bg-[#B5C9DC] border-2 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                     />
-                    {errors.letter_count && <span className="text-red-500">{errors.letter_count.message}</span>}
+                    {errors.letter_count && <span className="text-[#B22222]">{errors.letter_count.message}</span>}
                 </div>
 
                 {/* Chalani No */}
@@ -124,9 +134,9 @@ const CreateLetter = () => {
                     <Controller
                         name="chalani_no"
                         control={control}
-                        render={({ field }) => <input {...field} id="chalani" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />}
+                        render={({ field }) => <input {...field} id="chalani" type="text" className="bg-[#B5C9DC] border-2 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                     />
-                    {errors.chalani_no && <span className="text-red-500">{errors.chalani_no.message}</span>}
+                    {errors.chalani_no && <span className="text-[#B22222]">{errors.chalani_no.message}</span>}
                 </div>
 
                 {/* Voucher No */}
@@ -135,9 +145,9 @@ const CreateLetter = () => {
                     <Controller
                         name="voucher_no"
                         control={control}
-                        render={({ field }) => <input {...field} id="voucher_no" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />}
+                        render={({ field }) => <input {...field} id="voucher_no" type="text" className="bg-[#B5C9DC] border-2 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                     />
-                    {errors.voucher_no && <span className="text-red-500">{errors.voucher_no.message}</span>}
+                    {errors.voucher_no && <span className="text-[#B22222]">{errors.voucher_no.message}</span>}
                 </div>
 
                 {/* GatePass No */}
@@ -146,9 +156,9 @@ const CreateLetter = () => {
                     <Controller
                         name="gatepass_no"
                         control={control}
-                        render={({ field }) => <input {...field} id="gatepass_no" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />}
+                        render={({ field }) => <input {...field} id="gatepass_no" type="text" className="bg-[#B5C9DC] border-2 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                     />
-                    {errors.gatepass_no && <span className="text-red-500">{errors.gatepass_no.message}</span>}
+                    {errors.gatepass_no && <span className="text-[#B22222]">{errors.gatepass_no.message}</span>}
                 </div>
 
             </div>
@@ -158,12 +168,12 @@ const CreateLetter = () => {
                 <div className="flex flex-row flex-1 gap-2 w-full flex-wrap">
                     <div className="flex flex-col w-full flex-1 ">
                         <label htmlFor="officeSelect">{t("createLetter.select_office")} *</label>
-                        <select id="officeSelect" onChange={e => handleOfficeChange(e.target.value)} className="bg-[#B5C9DC] border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                        <select id="officeSelect" onChange={e => handleOfficeChange(e.target.value)} className="bg-[#B5C9DC] border-2 h-8 outline-none px-3 rounded-md border-gray-600">
                             <option value="" hidden>{t("createLetter.select_office")}</option>
                             {Offices?.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
                         </select>
                         {
-                            errors.office_name && <span className="text-red-500">{errors.office_name.message}</span>
+                            errors.office_name && <span className="text-[#B22222]">{errors.office_name.message}</span>
                         }
                     </div>
 
@@ -172,9 +182,9 @@ const CreateLetter = () => {
                         <Controller
                             name="subject"
                             control={control}
-                            render={({ field }) => <input {...field} id="subject" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />}
+                            render={({ field }) => <input {...field} id="subject" type="text" className="bg-[#B5C9DC] border-2 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                         />
-                        {errors.subject && <span className="text-red-500">{errors.subject.message}</span>}
+                        {errors.subject && <span className="text-[#B22222]">{errors.subject.message}</span>}
                     </div>
                 </div>
 
@@ -185,12 +195,12 @@ const CreateLetter = () => {
                             name="request_date"
                             control={control}
                             render={({ field }) => (
-                                <div className="bg-[#B5C9DC] border-2 h-10 outline-none z-50 rounded-md border-gray-600">
-                                    <NepaliDatePicker {...field} value={new NepaliDate(nepToEng(field.value))} format="YYYY-MM-DD" lang="np" onChange={(e) => field.onChange(e!.format('YYYY-MM-DD', 'np'))} className='h-10 px-3 cursor-pointer' placeholder="YYYY-MM-DD" />
+                                <div className="bg-[#B5C9DC] border-2 h-8 outline-none z-50 rounded-md border-gray-600">
+                                    <NepaliDatePicker {...field} value={new NepaliDate(nepToEng(field.value))} format="YYYY-MM-DD" lang="np" onChange={(e) => field.onChange(e!.format('YYYY-MM-DD', 'np'))} className='h-8 px-3 cursor-pointer' placeholder="YYYY-MM-DD" />
                                 </div>
                             )}
                         />
-                        {errors.request_date && <span className="text-red-500">{errors.request_date.message}</span>}
+                        {errors.request_date && <span className="text-[#B22222]">{errors.request_date.message}</span>}
                     </div>
 
                     <div className="flex flex-col w-full flex-1">
@@ -198,9 +208,9 @@ const CreateLetter = () => {
                         <Controller
                             name="request_chalani_number"
                             control={control}
-                            render={({ field }) => <input {...field} id="request_chalani_number" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />}
+                            render={({ field }) => <input {...field} id="request_chalani_number" type="text" className="bg-[#B5C9DC] border-2 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                         />
-                        {errors.request_chalani_number && <span className="text-red-500">{errors.request_chalani_number.message}</span>}
+                        {errors.request_chalani_number && <span className="text-[#B22222]">{errors.request_chalani_number.message}</span>}
                     </div>
 
                     <div className="flex flex-col w-full flex-1">
@@ -208,21 +218,32 @@ const CreateLetter = () => {
                         <Controller
                             name="request_letter_count"
                             control={control}
-                            render={({ field }) => <input {...field} id="request_letter_count" type="text" className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" />}
+                            render={({ field }) => <input {...field} id="request_letter_count" type="text" className="bg-[#B5C9DC] border-2 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                         />
-                        {errors.request_letter_count && <span className="text-red-500">{errors.request_letter_count.message}</span>}
+                        {errors.request_letter_count && <span className="text-[#B22222]">{errors.request_letter_count.message}</span>}
                     </div>
                 </div>
             </div>
 
             {/* Items */}
-            <div className="flex flex-col  gap-4 border-1 rounded-2xl p-5">
-                <h2 className="font-semibold text-gray-700">{t("createLetter.items")}</h2>
-                {fields.map((item, index) => (
-                    <div key={item.id} className="flex  flex-col border-2 items-center p-3 rounded-2xl shadow-gray-700 gap-2">
-                        <div className="flex flex-wrap gap-4 w-full">
+            <div className="flex flex-col gap-3 rounded-2xl p-5">
+                <div className="flex flex-col rounded-2xl p-2 bg-[#91a4c3]">
+                    <div className="flex p-2 w-full ">
+                        <div className="flex-1 pl-3">Product</div>
+                        <div className="flex  flex-2 justify-between" >
+                            <div className="flex-1 pl-3 max-w-[30%]">Unit</div>
+                            <div className="flex-1 pl-3 flex-row flex justify-between ">
+                                <div className="flex-1 pl-3 flex max-w-[66%] ">Serial number</div>
+                                <div className="flex-1 pl-3 flex max-w-[30%] ">Quantity</div>
+                            </div>
+                        </div>
+                        <div className="flex-1 pl-3">Remarks</div>
+                        <button type="button" className="self-end  px-3 w-24 "></button>
+
+                    </div>
+                    {fields.map((item, index) => (
+                        <div key={item.id} className="flex flex-wrap items-center p-2 rounded-2xl shadow-gray-700 gap-2">
                             <div className="flex flex-col flex-1 gap-2">
-                                <label>{t("createLetter.product")} *</label>
                                 <Controller
                                     name={`items.${index}.product_id`}
                                     control={control}
@@ -239,7 +260,7 @@ const CreateLetter = () => {
                                                     setValue(`items.${index}.unit_of_measurement`, selected.unit_of_measurement);
                                                 }
                                             }}
-                                            className="bg-[#B5C9DC] w-full min-w-[203px] border-2 h-10 outline-none px-3 rounded-md border-gray-600"
+                                            className="bg-[#B5C9DC] w-full min-w-[203px] border-2 h-8 outline-none px-3 rounded-md border-gray-600"
                                         >
                                             <option value="" hidden>{t("createLetter.product")}</option>
                                             {Products?.map(p => (
@@ -249,70 +270,105 @@ const CreateLetter = () => {
                                     )}
                                 />
                                 {
-                                    errors.items && errors.items[index] && errors.items[index].name && <span className="text-red-500">{errors.items[index].name.message}</span>
+                                    errors.items && errors.items[index] && errors.items[index].name && <span className="text-[#B22222]">{errors.items[index].name.message}</span>
                                 }
                             </div>
+                            <div className="flex flex-2 gap-2 justify-between" >
 
+                                <div className="flex max-w-[30%] flex-col flex-1 gap-2">
+                                    <Controller
+                                        name={`items.${index}.unit_of_measurement`}
+                                        control={control}
+                                        render={({ field }) => (
+                                            <select
+                                                value={field.value}
+                                                onChange={e => {
+                                                    setValue(`items.${index}.unit_of_measurement`, e.target.value);
+                                                }}
+                                                className="bg-[#B5C9DC] w-full border-2 h-8 outline-none px-3 rounded-md border-gray-600"
+                                            >
+                                                <option value="" hidden>{t("createLetter.unit")}</option>
+                                                {productUnits?.map(p => (
+                                                    <option key={p.id} value={p.value}>{p.name}</option>
+                                                ))}
+                                            </select>
+                                        )}
+                                    />
+                                    {
+                                        errors.items && errors.items[index] && errors.items[index].name && <span className="text-[#B22222]">{errors.items[index].name.message}</span>
+                                    }
+                                </div>
 
-                            <div className="flex flex-1 flex-col gap-2 ">
-                                <label htmlFor="quantity">{t("createLetter.serial_number")} *</label>
-                                <Controller
-                                    name={`items.${index}.serial_number`}
-                                    control={control}
-                                    render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-10 outline-none pl-3 rounded-md border-gray-600" />}
-                                />
-                                {
-                                    errors.items && errors.items[index] && errors.items[index].serial_number && <span className="text-red-500">{errors.items[index].serial_number.message}</span>
-                                }
+                                <div className="flex flex-1 flex-wrap justify-between  flex-row gap-2" >
+                                    <div className={'  flex-col flex-2 max-w-[66%] flex'} >
+                                        <Controller
+                                            name={`items.${index}.serial_number`}
+                                            control={control}
+                                            render={({ field }) =>
+                                                <input
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value;
+                                                        field.onChange(value);
+                                                        const trimmed = value.trim();
+                                                        if (trimmed === "" || trimmed === "-") {
+                                                            return;
+                                                        }
+                                                        const count = trimmed.split(",").map(s => s.trim()).filter(Boolean).length;
+                                                        setValue(`items.${index}.quantity`, String(count));
+                                                    }}
+                                                    type="text"
+                                                    className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+                                                />
+                                            }
+                                        />
+                                        {
+                                            errors.items && errors.items[index] && errors.items[index].serial_number && <span className="text-[#B22222]">{errors.items[index].serial_number.message}</span>
+                                        }
+                                    </div>
+                                    <div className="flex max-w-[30%] flex-1 flex-col gap-2">
+                                        <Controller
+                                            name={`items.${index}.quantity`}
+                                            control={control}
+                                            render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
+                                        />
+                                        {
+                                            errors.items && errors.items[index] && errors.items[index].quantity && <span className="text-[#B22222]">{errors.items[index].quantity.message}</span>
+                                        }
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-
-                        <div className="flex flex-wrap flex-row flex-1 w-full gap-4">
-
                             <div className="flex flex-1 flex-col gap-2">
-                                <label htmlFor="quantity">{t("createLetter.quantity")} * </label>
-                                <Controller
-                                    name={`items.${index}.quantity`}
-                                    control={control}
-                                    render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-10 outline-none pl-3 rounded-md border-gray-600" />}
-                                />
-                                {
-                                    errors.items && errors.items[index] && errors.items[index].quantity && <span className="text-red-500">{errors.items[index].quantity.message}</span>
-                                }
-                            </div>
-
-                            <div className="flex flex-1 flex-col gap-2">
-                                <label htmlFor="remarks">{t("createLetter.remarks")}</label>
                                 <Controller
                                     name={`items.${index}.remarks`}
                                     control={control}
-                                    render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-10 outline-none pl-3 rounded-md border-gray-600" />}
+                                    render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                                 />
                                 {
-                                    errors.items && errors.items[index] && errors.items[index].remarks && <span className="text-red-500">{errors.items[index].remarks.message}</span>
+                                    errors.items && errors.items[index] && errors.items[index].remarks && <span className="text-[#B22222]">{errors.items[index].remarks.message}</span>
                                 }
                             </div>
+                            <button type="button" className="bg-red-500 self-end text-white shadow px-3 rounded-xl border-1 border-black h-8" onClick={() => remove(index)}>Remove</button>
                         </div>
+                    ))}
+                </div>
 
-                        <button type="button" className="bg-red-500 self-end text-white px-3 rounded h-10" onClick={() => remove(index)}>Remove</button>
-                    </div>
-                ))}
-                <button type="button" className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => append({product_id: "", name: "", company: "", serial_number: '', unit_of_measurement: "", quantity: '', remarks: "" })}>
+                <button type="button" className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => append({ product_id: "", name: "", company: "", serial_number: '', unit_of_measurement: "", quantity: '', remarks: "" })}>
                     Add Item
                 </button>
             </div>
 
             {/* Receiver */}
-            <div className="flex w-full flex-col gap-4 ">
+            <div className="flex w-full flex-col gap-2 ">
                 <div className="w-full flex gap-4  flex-wrap ">
                     <div className="flex flex-col flex-1">
                         <label htmlFor="receiverSelect">{t("createLetter.select_receiver")} *</label>
-                        <select id="receiverSelect" onChange={e => handleReceiverChange(e.target.value)} disabled={!filteredReceivers.length} className="bg-[#B5C9DC] border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                        <select id="receiverSelect" onChange={e => handleReceiverChange(e.target.value)} disabled={!filteredReceivers.length} className="bg-[#B5C9DC] border-2 h-8 outline-none px-3 rounded-md border-gray-600">
                             <option value="" hidden>{filteredReceivers.length ? t("createLetter.select_receiver") : t("createLetter.no_receiver_found")}</option>
                             {filteredReceivers.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
                         </select>
                         {
-                            errors.receiver && errors.receiver.name && <span className="text-red-500">{errors.receiver.name.message}</span>
+                            errors.receiver && errors.receiver.name && <span className="text-[#B22222]">{errors.receiver.name.message}</span>
                         }
                     </div>
                     <div className="flex flex-col flex-1">
@@ -320,23 +376,35 @@ const CreateLetter = () => {
                         <Controller
                             name="receiver.vehicle_number"
                             control={control}
-                            render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-10 outline-none pl-3 rounded-md border-gray-600" />}
+                            render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                         />
                         {
-                            errors.receiver && errors.receiver.vehicle_number && <span className="text-red-500">{errors.receiver.vehicle_number.message}</span>
+                            errors.receiver && errors.receiver.vehicle_number && <span className="text-[#B22222]">{errors.receiver.vehicle_number.message}</span>
+                        }
+                    </div>
+                    <div className="flex flex-col flex-1">
+                        <label htmlFor="receiverSelect">{t("createLetter.post")} *</label>
+                        <Controller
+                            name="receiver.post"
+                            control={control}
+                            render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
+                        />
+                        {
+                            errors.receiver && errors.receiver.post && <span className="text-[#B22222]">{errors.receiver.post.message}</span>
                         }
                     </div>
                 </div>
                 <div className="w-full flex gap-4  flex-wrap ">
+
                     <div className="flex flex-col flex-1">
                         <label htmlFor="receiverSelect">{t("createLetter.office_name")} *</label>
                         <Controller
                             name="receiver.office_name"
                             control={control}
-                            render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-10 outline-none pl-3 rounded-md border-gray-600" />}
+                            render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                         />
                         {
-                            errors.receiver && errors.receiver.office_name && <span className="text-red-500">{errors.receiver.office_name.message}</span>
+                            errors.receiver && errors.receiver.office_name && <span className="text-[#B22222]">{errors.receiver.office_name.message}</span>
                         }
                     </div>
                     <div className="flex flex-col flex-1">
@@ -344,10 +412,56 @@ const CreateLetter = () => {
                         <Controller
                             name="receiver.office_address"
                             control={control}
-                            render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-10 outline-none pl-3 rounded-md border-gray-600" />}
+                            render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                         />
                         {
-                            errors.receiver && errors.receiver.office_address && <span className="text-red-500">{errors.receiver.office_address.message}</span>
+                            errors.receiver && errors.receiver.office_address && <span className="text-[#B22222]">{errors.receiver.office_address.message}</span>
+                        }
+                    </div>
+                    <div className="flex flex-col flex-1">
+                        <label htmlFor="receiverSelect">{t("createLetter.phone_number")} *</label>
+                        <Controller
+                            name="receiver.phone_number"
+                            control={control}
+                            render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
+                        />
+                        {
+                            errors.receiver && errors.receiver.office_address && <span className="text-[#B22222]">{errors.receiver.office_address.message}</span>
+                        }
+                    </div>
+                </div>
+                <div className="w-full flex gap-4  flex-wrap ">
+                    <div className="flex flex-col flex-1">
+                        <label htmlFor="receiverSelect">{t("createLetter.id_card_number")} *</label>
+                        <Controller
+                            name="receiver.id_card_number"
+                            control={control}
+                            render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
+                        />
+                        {
+                            errors.receiver && errors.receiver.office_address && <span className="text-[#B22222]">{errors.receiver.office_address.message}</span>
+                        }
+                    </div>
+                    <div className="flex flex-col flex-1">
+                        <label htmlFor="receiverSelect">{t("createLetter.id_card_number")} *</label>
+                        <Controller
+                            name="receiver.id_card_type"
+                            control={control}
+                            render={({ field }) => (
+                                <div className="flex w-full items-center relative">
+                                    <select id="position" {...field} className="bg-[#B5C9DC] w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                                        {
+                                            id_types.map((idType) => (
+                                                <option key={idType.id} value={idType.value}>{idType.name}</option>
+                                            ))
+                                        }
+                                    </select>
+                                </div>
+                            )
+                            }
+                        />
+                        {
+                            errors.receiver && errors.receiver.office_address && <span className="text-[#B22222]">{errors.receiver.office_address.message}</span>
                         }
                     </div>
                 </div>

@@ -28,8 +28,8 @@ const ShowLetter = () => {
         fetchLetter();
     }, [id]);
 
-    // Splits items into chunks of 15 per page
-    const chunkItems = (items: any[], size: number) => {
+    // Splits items into chunks of 12 per page for safer pagination
+    const chunkItems = (items: Letter['items'], size: number) => {
         const chunks = [];
         for (let i = 0; i < items.length; i += size) {
             chunks.push(items.slice(i, i + size));
@@ -163,7 +163,14 @@ const ShowLetter = () => {
                                         <td>{engToNep(`${index + 1 + pageIndex * 15}`)}</td>
                                         <td>{item.name}</td>
                                         <td>{item.company}</td>
-                                        <td>{item.serial_number}</td>
+                                        <td style={{ 
+                                            wordWrap: "break-word", 
+                                            whiteSpace: "normal",
+                                            maxWidth: "120px",
+                                            wordBreak: "break-word"
+                                        }}>
+                                            {item.serial_number}
+                                        </td>
                                         <td>{item.unit_of_measurement}</td>
                                         <td>{item.quantity}</td>
                                         <td>{item.remarks}</td>
@@ -175,7 +182,7 @@ const ShowLetter = () => {
                         {/* SHOW ONLY ON LAST PAGE */}
                         {pageIndex === pages.length - 1 && (
                             <>
-                                <section className="supplier-info">
+                                <section className="supplier-info" style={{ marginTop: '20px' }}>
                                     <strong>सामान बुझ्नेको</strong>
                                     <table>
                                         <tbody>
@@ -199,7 +206,7 @@ const ShowLetter = () => {
                                     </table>
                                 </section>
 
-                                <footer className="signature-section">
+                                <footer className="signature-section" style={{ marginTop: '30px' }}>
                                     <div className="signature-box">
                                         <div className='signature-line'></div>
                                         सही

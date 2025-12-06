@@ -7,6 +7,7 @@ import api from "app/utils/api"
 import { useNavigate } from "react-router"
 import { useTranslation } from "react-i18next"
 import { createProductFormschema } from "app/schemas/product"
+import { productUnits } from "app/enum/productUnits"
 
 const CreateProducts = () => {
     const { t } = useTranslation()
@@ -97,12 +98,11 @@ const CreateProducts = () => {
                             <div className=" w-full ">
                                 <select id="unit" {...field} className="bg-[#B5C9DC] w-full appearance-none  border-2 h-10 outline-none px-3 rounded-md border-gray-600" >
                                     <option value="" disabled hidden> Unit </option>
-                                    <option value="kg">{t("createProductPage.units.kg")}</option>
-                                    <option value="nos">{t("createProductPage.units.nos")}</option>
-                                    <option value="set"> {t("createProductPage.units.set")} </option>
-                                    <option value="ltr">{t("createProductPage.units.ltr")} </option>
-                                    <option value="pcs">{t("createProductPage.units.pcs")}</option>
-
+                                    {
+                                        productUnits.map((unit) => (
+                                            <option key={unit.id} value={unit.value}>{unit.name}</option>
+                                        ))
+                                    }
                                 </select>
                                 <FaChevronDown className="absolute top-3  right-3 text-gray-500" />
                             </div>
