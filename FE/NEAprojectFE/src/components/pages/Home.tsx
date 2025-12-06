@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { useState, useRef } from "react";
 import { useOnClickOutside } from "usehooks-ts";
 import { FaInfoCircle } from "react-icons/fa";
+import { Toaster } from 'react-hot-toast';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -57,19 +58,19 @@ const Home = () => {
 
           <div
             ref={cardRef}
-            className={`absolute bottom-10 right-0 bg-white text-black shadow-xl rounded-lg w-64 p-4 transition-all duration-300 ${
-              showInfo ? "opacity-100 visible" : "opacity-0 invisible"
-            }`}
+            className={`absolute bottom-10 right-0 bg-white text-black shadow-xl rounded-lg w-64 p-4 transition-all duration-300 ${showInfo ? "opacity-100 visible" : "opacity-0 invisible"
+              }`}
           >
             <p className="text-sm text-gray-600">
-              Made with ❤️ by {' '} 
-              <a  className="text-blue-700 underline" target="_blank" href="https://hashtagweb.com.np/">
-              Hashtag Web Solutions Pvt. Ltd
+              Made with ❤️ by {' '}
+              <a className="text-blue-700 underline" target="_blank" href="https://hashtagweb.com.np/">
+                Hashtag Web Solutions Pvt. Ltd
               </a>
             </p>
           </div>
         </div>
       </main>
+      <Toaster />
     </div>
   );
 };
