@@ -9,9 +9,22 @@ class ProductStatus(models.TextChoices):
 class UnitOfMeasurement(models.TextChoices):
     NOS = "nos", "Nos."
     SET = "set", "Set"
+    Pair = "pair", "Pair"
+    Meter = "meter", "Meter"
     KG = "kg", "KG"
-    LTR = "ltr", "Ltr"
+    LTR = "ltr", "Litre"
+    RIM = "rim", "Rim"
+    PAD = "pad", "Pad"
+    DOZEN = "dozen", "Dozen"
+    KMS = "kms", "KMS"
+    CU_METER = "cu_meter", "CU. METER"
     PCS = "pcs", "Pcs"
+    ROLLS = "rolls", "Rolls"
+    BOTTLES = "bottles", "Bottles"
+    PACKETS = "packets", "Packets"
+    SQ_FT = "sq_ft", "SQ. FT."
+    FT = "ft", "FT."
+    COIL = "coil", "Coil"
 
 class Product(TimeStampedModel):
     name = models.CharField(max_length=255)
@@ -19,7 +32,7 @@ class Product(TimeStampedModel):
     status = models.CharField(max_length=10, choices=ProductStatus.choices, default=ProductStatus.ACTIVE)
     remarks = models.TextField(blank=True, default="")
     unit_of_measurement = models.CharField(
-        max_length=10, 
+        max_length=20, 
         choices=UnitOfMeasurement.choices, 
         default=UnitOfMeasurement.NOS
     )
