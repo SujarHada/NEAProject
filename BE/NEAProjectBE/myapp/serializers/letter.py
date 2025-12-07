@@ -1,7 +1,11 @@
 from rest_framework import serializers
-from myapp.models import Letter, LetterItem
+from myapp.models import Letter, LetterItem, UnitOfMeasurement  
 
 class LetterItemSerializer(serializers.ModelSerializer):
+    unit_of_measurement = serializers.ChoiceField(
+        choices=UnitOfMeasurement.choices,
+        default=UnitOfMeasurement.NOS
+    )
     class Meta:
         model = LetterItem
         fields = ['id', 'product_id', 'name', 'company', 'serial_number', 'unit_of_measurement', 'quantity', 'remarks']

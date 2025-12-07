@@ -62,7 +62,7 @@ class LetterItem(TimeStampedModel):
     product_id = models.CharField(max_length=100, blank=True, default="")
     name = models.CharField(max_length=500)
     company = models.CharField(max_length=200)
-    serial_number = models.CharField(max_length=100)
+    serial_number = models.TextField()
     unit_of_measurement = models.CharField(max_length=50, blank=True, default="")
     quantity = models.CharField(max_length=100)
     remarks = models.CharField(max_length=500, blank=True, default="")
