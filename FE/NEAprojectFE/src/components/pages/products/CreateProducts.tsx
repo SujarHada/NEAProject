@@ -1,6 +1,5 @@
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { FaChevronDown } from "react-icons/fa"
 import type { createProductInputs } from "app/interfaces/interfaces"
 import axios from "axios"
 import api from "app/utils/api"
@@ -51,9 +50,9 @@ const CreateProducts = () => {
     }
 
     return (
-        <div className="flex flex-col gap-6 ">
+        <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold">{t("createProductPage.title")}</h1>
-            <div className="flex gap-4 flex-wrap w-full ">
+            <div className="flex gap-2 flex-wrap w-full ">
                 <div className="flex flex-1 flex-col w-full gap-2">
                     <label htmlFor="name">{t('createProductPage.productName')}</label>
                     <Controller
@@ -76,9 +75,30 @@ const CreateProducts = () => {
                     />
                     {errors.company && <p className="text-red-500">{errors.company.message}</p>}
                 </div>
+                 <div className="flex flex-[0.5] flex-col w-full gap-2">
+                     <label htmlFor="company"> {t('createProductPage.unit')} </label>
+                    <Controller
+                        name="unit_of_measurement"
+                        control={control}
+                        render={({ field }) => (
+                            <div className=" w-full ">
+                                <select id="unit" {...field} className="bg-[#B5C9DC] w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600" >
+                                    <option value="" disabled hidden> Unit </option>
+                                    {
+                                        productUnits.map((unit) => (
+                                            <option key={unit.id} value={unit.value}>{unit.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+
+                        )}
+                    />
+                    {errors.unit_of_measurement && <p className="text-red-500">{errors.unit_of_measurement.message}</p>}
+                </div>
             </div>
             <div className="flex gap-4 flex-wrap w-full items-end">
-                <div className="flex flex-1 flex-col w-full min-w-[48.5%] gap-2">
+                <div className="flex flex-col w-1/2 gap-2">
                     <label htmlFor="remarks"> {t('createProductPage.remarks')} </label>
                     <Controller
                         name="remarks"
@@ -89,29 +109,6 @@ const CreateProducts = () => {
                     />
                     {errors.remarks && <p className="text-red-500">{errors.remarks.message}</p>}
                 </div>
-
-                <div className="flex flex-1 flex-col w-full min-w-[48.5%] gap-2 relative">
-                    <Controller
-                        name="unit_of_measurement"
-                        control={control}
-                        render={({ field }) => (
-                            <div className=" w-full ">
-                                <select id="unit" {...field} className="bg-[#B5C9DC] w-full appearance-none  border-2 h-10 outline-none px-3 rounded-md border-gray-600" >
-                                    <option value="" disabled hidden> Unit </option>
-                                    {
-                                        productUnits.map((unit) => (
-                                            <option key={unit.id} value={unit.value}>{unit.name}</option>
-                                        ))
-                                    }
-                                </select>
-                                <FaChevronDown className="absolute top-3  right-3 text-gray-500" />
-                            </div>
-
-                        )}
-                    />
-                    {errors.unit_of_measurement && <p className="text-red-500">{errors.unit_of_measurement.message}</p>}
-                </div>
-
             </div>
 
             <div className="flex">
