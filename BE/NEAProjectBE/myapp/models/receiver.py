@@ -4,14 +4,14 @@ from .base import TimeStampedModel
 
 class Receiver(TimeStampedModel):
     class IDCardType(models.TextChoices):
-        NATIONAL_ID = "national_id", "National Identity Card"
-        CITIZENSHIP = "citizenship", "Citizenship Certificate"
-        VOTER_ID = "voter_id", "Voter ID Card"
-        PASSPORT = "passport", "Passport / E-Passport"
-        DRIVERS_LICENSE = "drivers_license", "Driver's License"
-        PAN_CARD = "pan_card", "PAN Card"
-        UNKNOWN = "unknown", "UNKNOWN"
-        EMPLOYEE_ID = "employee_id", "EMPLOYEE ID"
+        NATIONAL_ID = "national_id", "राष्ट्रिय परिचयपत्र"
+        CITIZENSHIP = "citizenship", "नागरिकता प्रमाणपत्र"
+        VOTER_ID = "voter_id", "मतदाता परिचयपत्र"
+        PASSPORT = "passport", "राहदानी / ई–राहदानी"
+        DRIVERS_LICENSE = "drivers_license", "सवारी चालक अनुमति पत्र"
+        PAN_CARD = "pan_card", "स्थायी लेखा नम्बर (प्यान)"
+        UNKNOWN = "unknown", "अज्ञात"
+        EMPLOYEE_ID = "employee_id", "कर्मचारी परिचयपत्र"
 
     name = models.CharField(max_length=255)
     post = models.CharField(max_length=255, default="UNKNOWN")
