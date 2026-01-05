@@ -16,12 +16,12 @@ export const createLetterSchema = z.object({
 
   items: z.array(
     z.object({
-      product_id: z.string({ error: "Item is required" }),
+      product_id: z.string({error: "Product is required"}).min(1, "Product is required"),
       name: z.string().min(1, "Item name is required"),
       company: z.string().min(1, "Company name is required"),
-      serial_number: z.string(),
+      serial_number: z.string().min(1, "Serial number is required"),
       unit_of_measurement: z.string().min(1, "Unit of measurement is required"),
-      quantity: z.string().regex(/^[\d\u0966-\u096F]+$/, "Quantity must be numeric"),
+      quantity: z.string().min(1, "Quantity is required").regex(/^[\d\u0966-\u096F]+$/, "Quantity must be numeric"),
       remarks: z.string().optional(),
     }).refine((item) => {
       const sn = item.serial_number.trim();

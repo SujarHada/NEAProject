@@ -52,7 +52,13 @@ const ShowLetter = () => {
 
         for (let i = 0; i < pageRefs.current.length; i++) {
             const element = pageRefs.current[i];
-            const canvas = await html2canvas(element, { scale: 2 });
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#ffffff',
+                removeContainer: true
+            });
             const image = canvas.toDataURL("image/png");
 
             const imgProps = pdf.getImageProperties(image);
@@ -105,7 +111,8 @@ const ShowLetter = () => {
                                 <h1>नेपाल विद्युत् प्राधिकरण</h1>
                                 <h2>(नेपाल सरकारको स्वामित्व)</h2>
                                 <h3>वितरण तथा ग्राहक सेवा निर्देशनालय</h3>
-                                <h3>केन्द्रीय भण्डार, हेटौँडा</h3>
+                                <h3>खरिद व्यवस्थापन महाशाखा</h3>
+                                <h3>जिन्सी व्यवस्थापन शाखा, हेटौंडा</h3>
                             </div>
 
                             <div className="contact-section">
@@ -163,8 +170,8 @@ const ShowLetter = () => {
                                         <td>{engToNep(`${index + 1 + pageIndex * 15}`)}</td>
                                         <td>{item.name}</td>
                                         <td>{item.company}</td>
-                                        <td style={{ 
-                                            wordWrap: "break-word", 
+                                        <td style={{
+                                            wordWrap: "break-word",
                                             whiteSpace: "normal",
                                             maxWidth: "120px",
                                             wordBreak: "break-word"
@@ -206,10 +213,10 @@ const ShowLetter = () => {
                                     </table>
                                 </section>
 
-                                <footer className="signature-section" style={{ marginTop: '30px' }}>
+                                <footer className="signature-section" style={{ marginTop: '90px' }}>
                                     <div className="signature-box">
                                         <div className='signature-line'></div>
-                                        सही
+                                        सामान बुझिलिनेको सही
                                     </div>
                                     <div className="signature-box">
                                         <div className="signature-line"></div>
@@ -221,11 +228,14 @@ const ShowLetter = () => {
                                     </div>
                                     <div className="signature-box">
                                         <div className="signature-line"></div>
-                                        स्वर्य स्वीकृत गर्ने
+                                        स्वीकृत गर्ने
                                     </div>
                                 </footer>
                             </>
                         )}
+                        <footer className="page-number">
+                            {engToNep(`${pages.length}`)} मध्ये {engToNep(`${pageIndex + 1}`)}
+                        </footer>
                     </div>
                 ))}
             </div>
