@@ -17,10 +17,12 @@ class Letter(TimeStampedModel):
     request_letter_count = models.CharField(max_length=100, blank=True, default="")
     request_date = models.CharField(max_length=50, blank=True, default="")
     gatepass_no = models.CharField(max_length=100, null=True, blank=True)
+    office_id = models.CharField(max_length=100, blank=True, default="")
     office_name = models.CharField(max_length=200, blank=True, default="")
     sub_office_name = models.CharField(max_length=200, blank=True, default="")
     
     # Receiver information
+    receiver_id = models.CharField(max_length=100, blank=True, default="")
     receiver_name = models.CharField(max_length=200, blank=True, default="")
     receiver_post = models.CharField(max_length=100, blank=True, default="")
     receiver_id_card_number = models.CharField(max_length=100, blank=True, default="")
