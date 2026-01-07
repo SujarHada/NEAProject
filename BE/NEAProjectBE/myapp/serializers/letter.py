@@ -54,7 +54,7 @@ class LetterSerializer(serializers.ModelSerializer):
             'id', 'letter_count', 'chalani_no', 'voucher_no', 'date',
             'receiver_address', 'subject',
             'request_chalani_number', 'request_letter_count', 'request_date',
-            'items', 'gatepass_no', 'receiver', 'status',
+            'items', 'gatepass_no', 'receiver', 'receiver_id', 'office_id', 'status',
             'created_at', 'updated_at', 'office_name', 'sub_office_name'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
@@ -94,7 +94,7 @@ class LetterSerializer(serializers.ModelSerializer):
                     data[field] = self._convert_nepali_to_english(data[field])
         
         # Convert string numeric fields
-        string_numeric_fields = ['letter_count', 'request_chalani_number', 'request_letter_count']
+        string_numeric_fields = ['letter_count', 'request_chalani_number', 'request_letter_count', 'receiver_id', 'office_id']
         
         for field in string_numeric_fields:
             if field in data and data[field]:
@@ -140,6 +140,7 @@ class LetterSerializer(serializers.ModelSerializer):
         
         # Add receiver data to representation
         representation['receiver'] = {
+            'id': representation['receiver_id'],
             'name': instance.receiver_name,
             'post': instance.receiver_post,
             'id_card_number': instance.receiver_id_card_number,
