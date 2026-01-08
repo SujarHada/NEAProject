@@ -20,6 +20,8 @@ const CreateLetter = () => {
         resolver: zodResolver(createLetterSchema),
         defaultValues: {
             letter_count: "",
+            office_id: "",
+            receiver_id:"",
             items: [{ name: "", company: "", serial_number: "", unit_of_measurement: "", quantity: "", remarks: "" }],
             receiver: { name: "", post: "", id_card_number: "", id_card_type: "unknown", office_name: "", office_address: "", phone_number: "", vehicle_number: "" },
             date: new NepaliDate().format('YYYY-MM-DD', 'np'), chalani_no: '', voucher_no: '', gatepass_no: '',
@@ -51,20 +53,19 @@ const CreateLetter = () => {
     const handleOfficeChange = (officeId: string) => {
         const selectedOffice = Offices?.find(o => o.id.toString() === officeId);
         if (selectedOffice) {
+            setValue("office_id", selectedOffice.id.toString());
             setValue("office_name", selectedOffice.name);
             setValue("receiver_address", selectedOffice.address);
             const filtered = Receivers?.filter(r => r.office_name === selectedOffice.name);
             setFilteredReceivers(filtered || []);
-        } else {
-            setValue("office_name", "");
-            setValue("receiver_address", "");
-            setFilteredReceivers([]);
         }
+        trigger('office_id')
     };
 
     const handleReceiverChange = (receiverId: string) => {
         const selected = Receivers?.find(r => r.id.toString() === receiverId);
         if (selected) {
+            setValue("receiver_id", selected.id.toString());
             setValue("receiver.name", selected.name);
             setValue("receiver.post", selected.post);
             setValue("receiver.id_card_number", selected.id_card_number);
@@ -73,14 +74,8 @@ const CreateLetter = () => {
             setValue("receiver.vehicle_number", selected.vehicle_number);
             setValue("receiver.office_name", selected.office_name);
             setValue("receiver.office_address", selected.office_address);
-        } else {
-            setValue("receiver.name", "");
-            setValue("receiver.post", "");
-            setValue("receiver.id_card_number", "");
-            setValue("receiver.id_card_type", "unknown");
-            setValue("receiver.phone_number", "");
-            setValue("receiver.vehicle_number", "");
         }
+        trigger('receiver')
     };
  console.log(watch())
  console.log(errors)
@@ -175,7 +170,7 @@ const CreateLetter = () => {
                             {Offices?.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
                         </select>
                         {
-                            errors.office_name && <span className="text-[#B22222]">{errors.office_name.message}</span>
+                            errors.office_id && <span className="text-[#B22222]">{errors.office_id.message}</span>
                         }
                     </div>
 
@@ -257,16 +252,14 @@ const CreateLetter = () => {
                                                 const p = Products?.find(
                                                     x => x.id.toString() === e.target.value
                                                 );
-                                                console.log({Products })    
                                                 if (!p) return;
-                                                console.log(p)
                                                 setValue(`items.${index}.product_id`, p.id.toString());
                                                 setValue(`items.${index}.name`, p.name);
                                                 setValue(`items.${index}.company`, p.company);
                                                 setValue(`items.${index}.unit_of_measurement`, p.unit_of_measurement);
+                                                trigger(`items`);
 
                                                 // Only validate the name field (which is the one that shows errors)
-                                                await trigger(`items.${index}`);
                                             }}
                                             className="bg-[#B5C9DC] w-full min-w-[203px] border-2 h-8 outline-none px-3 rounded-md border-gray-600"
                                         >

@@ -1,42 +1,42 @@
 export const id_types = [
     {
         id:1,
-        name:"National ID Card",
+        name:"राष्ट्रिय परिचय पत्र",
         value:"national_id"
     },
     {
         id:2,
-        name:"Citizenship Card",
+        name:"नागरिकता प्रमाणपत्र",
         value:"citizenship"
     },
     {
         id:3,
-        name:"Voter ID Card",
+        name:"मतदाता परिचय पत्र",
         value:"voter_id"
     },
     {
         id:4,
-        name:"Passport",
+        name:"राहदानी",
         value:"passport"
     },
     {
         id:5,
-        name:"Drivers License",
+        name:"सवारी चालक अनुमतिपत्र",
         value:"drivers_license"
     },
     {
         id:6,
-        name:"PAN Card",
+        name:"प्यान कार्ड",
         value:"pan_card"
     },
     {
         id:7,
-        name:"Employee Id",
+        name:"कर्मचारी परिचय पत्र",
         value:"employee_id"
     },
     {
         id:8,
-        name:"Unknown",
+        name:"अज्ञात",
         value:"unknown"
     }
 ]

@@ -1,8 +1,8 @@
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useDataStore from "app/store/useDataStore";
-import { useEffect, useState } from "react";
-import type { Letter, Receiver } from "app/interfaces/interfaces";
+import { useEffect, useMemo } from "react";
+import type { Letter } from "app/interfaces/interfaces";
 import NepaliDatePicker from "@zener/nepali-datepicker-react";
 import "@zener/nepali-datepicker-react/index.css";
 import api from "app/utils/api";
@@ -27,7 +27,8 @@ const EditLetter = () => {
         handleSubmit,
         formState: { isSubmitting, errors },
         setValue,
-        reset
+        reset,
+        watch
     } = useForm<EditLetterI>({
         resolver: zodResolver(EditLetterSchema),
         defaultValues: {
@@ -53,21 +54,27 @@ const EditLetter = () => {
             request_chalani_number: "",
             request_letter_count: "",
             request_date: "",
+            office_id: "",
+            receiver_id: "",
         },
     });
 
     const { Offices, Receivers, Products, LetterCreationData, ...StoreMethods } = useDataStore();
-    const [filteredReceivers, setFilteredReceivers] = useState<Receiver[]>([]);
+    const officeName = watch("office_name");
 
+    const filteredReceivers = useMemo(
+        () => Receivers.filter(r => r.office_name === officeName),
+        [Receivers, officeName]
+    );
     const { fields, append, remove } = useFieldArray({
         control,
         name: "items",
     });
 
     useEffect(() => {
-        StoreMethods.getOffices();
-        StoreMethods.getReceivers();
-        StoreMethods.getProducts();
+        if (!Offices.length) StoreMethods.getOffices();
+        if (!Receivers.length) StoreMethods.getReceivers();
+        if (!Products.length) StoreMethods.getProducts();
     }, []);
 
     useEffect(() => {
@@ -76,12 +83,6 @@ const EditLetter = () => {
                 const res = await api.get(`/api/letters/${id}/`);
                 if (res.status === 200) {
                     const letter: Letter = res.data.data;
-
-                    const officeReceivers = Receivers?.filter(
-                        (r) => r.id_card_number === letter.receiver.id_card_number
-                    );
-                    setFilteredReceivers(officeReceivers || []);
-
                     reset({
                         ...letter,
                         receiver: {
@@ -91,6 +92,8 @@ const EditLetter = () => {
                         items: letter.items || [],
                         date: letter.date,
                         request_date: letter.request_date,
+                        office_id: letter.office_id,
+                        receiver_id: letter.receiver_id,
                     });
                 }
             } catch (err) {
@@ -98,33 +101,24 @@ const EditLetter = () => {
             }
         };
 
-        if (Receivers && Offices && Products) {
             fetchLetter();
-        }
-    }, [Receivers, Offices, Products]);
-
+    }, []);
     const handleOfficeChange = (officeId: string) => {
         const selectedOffice = Offices?.find(
             (o) => o.id.toString() === officeId
         );
         if (selectedOffice) {
+            setValue("office_id", selectedOffice.id.toString());
             setValue("office_name", selectedOffice.name);
             setValue("receiver_address", selectedOffice.address);
 
-            const filtered = Receivers?.filter(
-                (r) => r.office_name === selectedOffice.name
-            );
-            setFilteredReceivers(filtered || []);
-        } else {
-            setValue("office_name", "");
-            setValue("receiver_address", "");
-            setFilteredReceivers([]);
         }
     };
 
     const handleReceiverChange = (receiverId: string) => {
         const selected = Receivers?.find((r) => r.id.toString() === receiverId);
         if (selected) {
+            setValue("receiver_id", selected.id.toString());
             setValue("receiver", selected);
         }
     };
@@ -136,10 +130,10 @@ const EditLetter = () => {
             if (res.status === 200) {
                 navigate(`/letters/view-letter/${res.data.data.id}`);
             }
-        } catch (err:AxiosError | any) {
+        } catch (err: AxiosError | any) {
             if (err && typeof err === 'object' && 'isAxiosError' in err) {
                 const axiosErr = err as AxiosError<EditLetterI>;
-                if(axiosErr.response?.data?.items?.[0]){
+                if (axiosErr.response?.data?.items?.[0]) {
                     const errObj = axiosErr.response?.data?.items?.[0]
                     const errKey = Object.keys(errObj)[0]
                     const errMsg = Object.values(errObj)[0][0]
@@ -221,10 +215,20 @@ const EditLetter = () => {
                 <div className="flex flex-row flex-1 gap-2 w-full flex-wrap">
                     <div className="flex flex-col w-full flex-1 ">
                         <label htmlFor="officeSelect">{t("createLetter.select_office")} *</label>
-                        <select id="officeSelect" onChange={e => handleOfficeChange(e.target.value)} className="bg-[#B5C9DC] border-2 h-8 outline-none px-3 rounded-md border-gray-600">
-                            <option value="" hidden>{t("createLetter.select_office")}</option>
-                            {Offices?.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-                        </select>
+
+                        <Controller
+                            name="office_id"
+                            control={control}
+                            render={({ field }) => (
+                                <div className="flex w-full items-center relative">
+                                    <select id="position" {...field} onChange={(e) => { handleOfficeChange(e.target.value) }} className="bg-[#B5C9DC] w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                                        <option value="" hidden>{t("createLetter.select_office")}</option>
+                                        {Offices?.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+                                    </select>
+                                </div>
+                            )
+                            }
+                        />
                         {
                             errors.office_name && <span className="text-red-500">{errors.office_name.message}</span>
                         }
@@ -279,7 +283,7 @@ const EditLetter = () => {
             </div>
 
             {/* Items */}
-             <div className="flex flex-col gap-3 rounded-2xl p-5">
+            <div className="flex flex-col gap-3 rounded-2xl p-5">
                 <div className="flex flex-col rounded-2xl p-2 bg-[#91a4c3]">
                     <div className="flex p-2 w-full ">
                         <div className="flex-1 pl-3">Product</div>
@@ -416,10 +420,19 @@ const EditLetter = () => {
                 <div className="w-full flex gap-4  flex-wrap ">
                     <div className="flex flex-col flex-1">
                         <label htmlFor="receiverSelect">{t("createLetter.select_receiver")} *</label>
-                        <select id="receiverSelect" onChange={e => handleReceiverChange(e.target.value)} disabled={!filteredReceivers.length} className="bg-[#B5C9DC] border-2 h-8 outline-none px-3 rounded-md border-gray-600">
-                            <option value="" hidden>{filteredReceivers.length ? t("createLetter.select_receiver") : t("createLetter.no_receiver_found")}</option>
-                            {filteredReceivers.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
-                        </select>
+                        <Controller
+                            name="receiver_id"
+                            control={control}
+                            render={({ field }) => (
+                                <div className="flex w-full items-center relative">
+                                    <select id="receiverSelect"  {...field} onChange={e => { handleReceiverChange(e.target.value) }} disabled={!filteredReceivers.length} className="bg-[#B5C9DC] border-2 h-8 flex-1 outline-none px-3 rounded-md border-gray-600">
+                                        <option value="" hidden>{filteredReceivers.length ? t("createLetter.select_receiver") : t("createLetter.no_receiver_found")}</option>
+                                        {filteredReceivers.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+                                    </select>
+                                </div>
+                            )
+                            }
+                        />
                         {
                             errors.receiver && errors.receiver.name && <span className="text-red-500">{errors.receiver.name.message}</span>
                         }
@@ -496,7 +509,7 @@ const EditLetter = () => {
                         }
                     </div>
                     <div className="flex flex-col flex-1">
-                        <label htmlFor="receiverSelect">{t("createLetter.id_card_number")} *</label>
+                        <label htmlFor="receiverSelect">{t("createLetter.id_card_type")} *</label>
                         <Controller
                             name="receiver.id_card_type"
                             control={control}
@@ -524,7 +537,7 @@ const EditLetter = () => {
             {/* Submit */}
             <div className="flex mt-4">
                 <button type="submit" onClick={handleSubmit(onSubmit)} disabled={isSubmitting} className="outline-none w-full bg-[#10172A] text-white h-12 hover:bg-[#233058] active:bg-[#314379] rounded-md disabled:opacity-50">
-                    {isSubmitting ? t("createLetter.creating") : t("createLetter.submit")}
+                    {isSubmitting ? t("editLetter.updating") : t("editLetter.update")}
                 </button>
             </div>
         </div>

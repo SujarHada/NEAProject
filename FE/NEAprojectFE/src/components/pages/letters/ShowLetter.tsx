@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './ShowLetterStyle.css';
 import nepal_electricity_authority_logo from 'app/assets/nepal_electricity_authority_logo.png';
 import jsPDF from 'jspdf';
@@ -7,12 +7,16 @@ import { type Letter } from 'app/interfaces/interfaces';
 import { useParams } from 'react-router';
 import api from 'app/utils/api';
 import { engToNep } from 'app/utils/englishtonepaliNumber';
+import { id_types } from 'app/enum/id_types';
 
 const ShowLetter = () => {
     const { id } = useParams();
     const [letter, setLetter] = useState<Letter>();
     const [isLoading, setIsLoading] = useState(false);
     const pageRefs = useRef<HTMLDivElement[]>([]);
+    const idType = useMemo(() => {
+        return id_types.find((id_type) => id_type.value === letter?.receiver.id_card_type)?.name;
+    },[letter])
 
     // Fetch Letter
     useEffect(() => {
@@ -37,7 +41,7 @@ const ShowLetter = () => {
         return chunks;
     };
 
-    const pages = letter ? chunkItems(letter.items, 15) : [];
+    const pages = letter ? chunkItems(letter.items, 12) : [];
 
     // PDF Download Handler
     const handleDownload = async () => {
@@ -167,7 +171,7 @@ const ShowLetter = () => {
                             <tbody>
                                 {chunk.map((item, index) => (
                                     <tr key={item.id}>
-                                        <td>{engToNep(`${index + 1 + pageIndex * 15}`)}</td>
+                                        <td>{engToNep(`${index + 1 + pageIndex * 12}`)}</td>
                                         <td>{item.name}</td>
                                         <td>{item.company}</td>
                                         <td style={{
@@ -199,7 +203,7 @@ const ShowLetter = () => {
                                             </tr>
                                             <tr>
                                                 <td>संकेत नं./परिचय पत्र नं.: {engToNep(`${letter?.receiver.id_card_number}`)}</td>
-                                                <td>परिचयपत्रको किसिम: {letter?.receiver.id_card_type}</td>
+                                                <td>परिचयपत्रको किसिम: {idType}</td>
                                             </tr>
                                             <tr>
                                                 <td>कार्यालयको नाम: {letter?.receiver.office_name}</td>

@@ -1,12 +1,14 @@
-import * as z from "zod";
+import z from "zod";
 
 export const createLetterSchema = z.object({
   id: z.number().optional(),
   letter_count: z.string().regex(/^[\d\u0966-\u096F/]+$/, "Letter count must be numeric"),
   chalani_no: z.string().regex(/^[\d\u0966-\u096F/]+$/, "Chalani number must be numeric").min(1, "Chalani number is required"),
   voucher_no: z.string().regex(/^[\d\u0966-\u096F/]+$/, "Voucher number must be numeric").min(1, "Voucher number is required"),
+  office_id: z.string().min(1, "Receiver office is required"),
   date: z.string().min(1, "Date is required"),
   office_name: z.string().min(1, "Receiver office name is required"),
+  receiver_id: z.string().min(1, "Receiver is required"),
   receiver_address: z.string().min(1, "Receiver address is required"),
   subject: z.string().min(1, "Subject is required"),
   request_chalani_number: z.string().min(1, "Request chalani number is required"),
@@ -73,8 +75,10 @@ export const updateLetterSchema = z.object({
   letter_count: z.string().regex(/^[\d\u0966-\u096F/]+$/, "Letter count must be numeric"),
   chalani_no: z.string().min(1, "Chalani number is required"),
   voucher_no: z.string().min(1, "Voucher number is required"),
+  office_id: z.string().min(1, "Receiver office is required"),
   date: z.string().min(1, "Date is required"),
   office_name: z.string().min(1, "Receiver office name is required"),
+  receiver_id: z.string().min(1, "Receiver is required"),
   receiver_address: z.string().min(1, "Receiver address is required"),
   subject: z.string().min(1, "Subject is required"),
   request_chalani_number: z.string().min(1, "Request chalani number is required"),
