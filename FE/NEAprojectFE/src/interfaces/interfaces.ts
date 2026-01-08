@@ -119,6 +119,8 @@ export interface createLetter {
 
 export interface Letter {
   id: number
+  office_id: string
+  receiver_id: string
   letter_count: string
   chalani_no: string
   voucher_no: string
@@ -139,7 +141,7 @@ export interface Letter {
     remarks: string
   }[]
   gatepass_no: string
-  receiver: Omit<Receiver, 'id'>
+  receiver: Receiver
 }
 
 

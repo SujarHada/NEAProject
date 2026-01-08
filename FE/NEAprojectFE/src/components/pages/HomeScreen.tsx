@@ -21,6 +21,7 @@ export default function HomeScreen() {
     const fetchData = async () => {
       try {
         const response = await api.get("/api/dashboard/");
+        console.log(response.data)
         setStats(response.data);
       } catch (error) {
         console.error("Error loading dashboard:", error);

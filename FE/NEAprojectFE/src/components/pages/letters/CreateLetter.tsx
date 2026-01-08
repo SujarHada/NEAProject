@@ -16,17 +16,20 @@ import toast from "react-hot-toast";
 
 const CreateLetter = () => {
     const { t } = useTranslation();
-    const { control, handleSubmit, formState: { isSubmitting, errors }, setValue } = useForm<CreateLetterI>({
+    const { control, handleSubmit, formState: { isSubmitting, errors }, setValue, trigger, watch } = useForm<CreateLetterI>({
         resolver: zodResolver(createLetterSchema),
         defaultValues: {
             letter_count: "",
+            office_id: "",
+            receiver_id:"",
             items: [{ name: "", company: "", serial_number: "", unit_of_measurement: "", quantity: "", remarks: "" }],
             receiver: { name: "", post: "", id_card_number: "", id_card_type: "unknown", office_name: "", office_address: "", phone_number: "", vehicle_number: "" },
             date: new NepaliDate().format('YYYY-MM-DD', 'np'), chalani_no: '', voucher_no: '', gatepass_no: '',
             office_name: '', receiver_address: '', subject: 'जिन्सी सामान हस्तान्तरण गरी पठाइएको बारे ।',
             request_chalani_number: '', request_letter_count: '', request_date: new NepaliDate().format('YYYY-MM-DD', 'np')
         },
-        mode: 'onSubmit'
+        mode: 'onSubmit',
+        reValidateMode: 'onChange'
     });
     const { Offices, Receivers, Products, LetterCreationData, ...StoreMethods } = useDataStore();
     const [filteredReceivers, setFilteredReceivers] = useState<Receiver[]>([]);
@@ -50,20 +53,19 @@ const CreateLetter = () => {
     const handleOfficeChange = (officeId: string) => {
         const selectedOffice = Offices?.find(o => o.id.toString() === officeId);
         if (selectedOffice) {
+            setValue("office_id", selectedOffice.id.toString());
             setValue("office_name", selectedOffice.name);
             setValue("receiver_address", selectedOffice.address);
             const filtered = Receivers?.filter(r => r.office_name === selectedOffice.name);
             setFilteredReceivers(filtered || []);
-        } else {
-            setValue("office_name", "");
-            setValue("receiver_address", "");
-            setFilteredReceivers([]);
         }
+        trigger('office_id')
     };
 
     const handleReceiverChange = (receiverId: string) => {
         const selected = Receivers?.find(r => r.id.toString() === receiverId);
         if (selected) {
+            setValue("receiver_id", selected.id.toString());
             setValue("receiver.name", selected.name);
             setValue("receiver.post", selected.post);
             setValue("receiver.id_card_number", selected.id_card_number);
@@ -72,16 +74,11 @@ const CreateLetter = () => {
             setValue("receiver.vehicle_number", selected.vehicle_number);
             setValue("receiver.office_name", selected.office_name);
             setValue("receiver.office_address", selected.office_address);
-        } else {
-            setValue("receiver.name", "");
-            setValue("receiver.post", "");
-            setValue("receiver.id_card_number", "");
-            setValue("receiver.id_card_type", "unknown");
-            setValue("receiver.phone_number", "");
-            setValue("receiver.vehicle_number", "");
         }
+        trigger('receiver')
     };
-
+ console.log(watch())
+ console.log(errors)
     const { fields, append, remove } = useFieldArray({ control, name: "items" });
 
     const onSubmit = async (data: CreateLetterI) => {
@@ -173,7 +170,7 @@ const CreateLetter = () => {
                             {Offices?.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
                         </select>
                         {
-                            errors.office_name && <span className="text-[#B22222]">{errors.office_name.message}</span>
+                            errors.office_id && <span className="text-[#B22222]">{errors.office_id.message}</span>
                         }
                     </div>
 
@@ -251,14 +248,18 @@ const CreateLetter = () => {
                                         <select
                                             {...field}
                                             value={field.value}
-                                            onChange={e => {
-                                                const selected = Products?.find(p => p.id.toString() === e.target.value);
-                                                if (selected) {
-                                                    setValue(`items.${index}.name`, selected.name);
-                                                    setValue(`items.${index}.product_id`, selected.id.toString());
-                                                    setValue(`items.${index}.company`, selected.company);
-                                                    setValue(`items.${index}.unit_of_measurement`, selected.unit_of_measurement);
-                                                }
+                                            onChange={async (e) => {
+                                                const p = Products?.find(
+                                                    x => x.id.toString() === e.target.value
+                                                );
+                                                if (!p) return;
+                                                setValue(`items.${index}.product_id`, p.id.toString());
+                                                setValue(`items.${index}.name`, p.name);
+                                                setValue(`items.${index}.company`, p.company);
+                                                setValue(`items.${index}.unit_of_measurement`, p.unit_of_measurement);
+                                                trigger(`items`);
+
+                                                // Only validate the name field (which is the one that shows errors)
                                             }}
                                             className="bg-[#B5C9DC] w-full min-w-[203px] border-2 h-8 outline-none px-3 rounded-md border-gray-600"
                                         >
@@ -270,7 +271,7 @@ const CreateLetter = () => {
                                     )}
                                 />
                                 {
-                                    errors.items && errors.items[index] && errors.items[index].name && <span className="text-[#B22222]">{errors.items[index].name.message}</span>
+                                    errors.items && errors.items[index] && errors.items[index].product_id && <span className="text-[#B22222]">{errors.items[index].product_id.message}</span>
                                 }
                             </div>
                             <div className="flex flex-2 gap-2 justify-between" >
@@ -282,8 +283,11 @@ const CreateLetter = () => {
                                         render={({ field }) => (
                                             <select
                                                 value={field.value}
-                                                onChange={e => {
-                                                    setValue(`items.${index}.unit_of_measurement`, e.target.value);
+                                                onChange={async (e) => {
+                                                    setValue(`items.${index}.unit_of_measurement`, e.target.value, {
+                                                        shouldValidate: true
+                                                    });
+                                                    await trigger(`items.${index}.unit_of_measurement`);
                                                 }}
                                                 className="bg-[#B5C9DC] w-full border-2 h-8 outline-none px-3 rounded-md border-gray-600"
                                             >
@@ -295,7 +299,7 @@ const CreateLetter = () => {
                                         )}
                                     />
                                     {
-                                        errors.items && errors.items[index] && errors.items[index].name && <span className="text-[#B22222]">{errors.items[index].name.message}</span>
+                                        errors.items && errors.items[index] && errors.items[index].unit_of_measurement && <span className="text-[#B22222]">{errors.items[index].unit_of_measurement.message}</span>
                                     }
                                 </div>
 
@@ -307,15 +311,19 @@ const CreateLetter = () => {
                                             render={({ field }) =>
                                                 <input
                                                     {...field}
-                                                    onChange={(e) => {
+                                                    onChange={async (e) => {
                                                         const value = e.target.value;
                                                         field.onChange(value);
                                                         const trimmed = value.trim();
                                                         if (trimmed === "" || trimmed === "-") {
+                                                            await trigger(`items.${index}.serial_number`);
                                                             return;
                                                         }
                                                         const count = trimmed.split(",").map(s => s.trim()).filter(Boolean).length;
-                                                        setValue(`items.${index}.quantity`, String(count));
+                                                        setValue(`items.${index}.quantity`, String(count), {
+                                                            shouldValidate: true,
+                                                        });
+                                                        await trigger([`items.${index}.serial_number`, `items.${index}.quantity`]);
                                                     }}
                                                     type="text"
                                                     className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
@@ -330,7 +338,17 @@ const CreateLetter = () => {
                                         <Controller
                                             name={`items.${index}.quantity`}
                                             control={control}
-                                            render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
+                                            render={({ field }) =>
+                                                <input
+                                                    {...field}
+                                                    onChange={async (e) => {
+                                                        field.onChange(e);
+                                                        await trigger(`items.${index}.quantity`);
+                                                    }}
+                                                    type="text"
+                                                    className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+                                                />
+                                            }
                                         />
                                         {
                                             errors.items && errors.items[index] && errors.items[index].quantity && <span className="text-[#B22222]">{errors.items[index].quantity.message}</span>
@@ -353,9 +371,39 @@ const CreateLetter = () => {
                     ))}
                 </div>
 
-                <button type="button" className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => append({ product_id: "", name: "", company: "", serial_number: '', unit_of_measurement: "", quantity: '', remarks: "" })}>
+                <button
+                    type="button"
+                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                    onClick={async () => {
+                        const lastIndex = fields.length - 1;
+
+                        const isValid = await trigger([
+                            `items.${lastIndex}.product_id`,
+                            `items.${lastIndex}.name`,
+                            `items.${lastIndex}.unit_of_measurement`,
+                            `items.${lastIndex}.serial_number`,
+                            `items.${lastIndex}.quantity`,
+                        ]);
+                       
+                        if (!isValid) {
+                            toast.error("माथिको सामान पूरा भर्नुहोस्");
+                            return;
+                        }
+
+                        append({
+                            product_id: "",
+                            name: "",
+                            company: "",
+                            serial_number: "",
+                            unit_of_measurement: "",
+                            quantity: "",
+                            remarks: "",
+                        });
+                    }}
+                >
                     Add Item
                 </button>
+
             </div>
 
             {/* Receiver */}

@@ -52,6 +52,8 @@
     "receiver_office_address": "Receiver office address",
     "phone_number": "Phone number",
     "id_card_number": "Id card number",
+    "id_card_type": "Id card type",
+    "post": "Post",
     "vehiche_number": "Vehicle number",
     "no_receiver_found": "No receivers found in current selected office",
     "submit": "Create Letter",

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './ShowLetterStyle.css';
 import nepal_electricity_authority_logo from 'app/assets/nepal_electricity_authority_logo.png';
 import jsPDF from 'jspdf';
@@ -7,12 +7,16 @@ import { type Letter } from 'app/interfaces/interfaces';
 import { useParams } from 'react-router';
 import api from 'app/utils/api';
 import { engToNep } from 'app/utils/englishtonepaliNumber';
+import { id_types } from 'app/enum/id_types';
 
 const ShowLetter = () => {
     const { id } = useParams();
     const [letter, setLetter] = useState<Letter>();
     const [isLoading, setIsLoading] = useState(false);
     const pageRefs = useRef<HTMLDivElement[]>([]);
+    const idType = useMemo(() => {
+        return id_types.find((id_type) => id_type.value === letter?.receiver.id_card_type)?.name;
+    },[letter])
 
     // Fetch Letter
     useEffect(() => {
@@ -37,7 +41,7 @@ const ShowLetter = () => {
         return chunks;
     };
 
-    const pages = letter ? chunkItems(letter.items, 15) : [];
+    const pages = letter ? chunkItems(letter.items, 12) : [];
 
     // PDF Download Handler
     const handleDownload = async () => {
@@ -52,7 +56,13 @@ const ShowLetter = () => {
 
         for (let i = 0; i < pageRefs.current.length; i++) {
             const element = pageRefs.current[i];
-            const canvas = await html2canvas(element, { scale: 2 });
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#ffffff',
+                removeContainer: true
+            });
             const image = canvas.toDataURL("image/png");
 
             const imgProps = pdf.getImageProperties(image);
@@ -105,7 +115,8 @@ const ShowLetter = () => {
                                 <h1>नेपाल विद्युत् प्राधिकरण</h1>
                                 <h2>(नेपाल सरकारको स्वामित्व)</h2>
                                 <h3>वितरण तथा ग्राहक सेवा निर्देशनालय</h3>
-                                <h3>केन्द्रीय भण्डार, हेटौँडा</h3>
+                                <h3>खरिद व्यवस्थापन महाशाखा</h3>
+                                <h3>जिन्सी व्यवस्थापन शाखा, हेटौंडा</h3>
                             </div>
 
                             <div className="contact-section">
@@ -160,11 +171,11 @@ const ShowLetter = () => {
                             <tbody>
                                 {chunk.map((item, index) => (
                                     <tr key={item.id}>
-                                        <td>{engToNep(`${index + 1 + pageIndex * 15}`)}</td>
+                                        <td>{engToNep(`${index + 1 + pageIndex * 12}`)}</td>
                                         <td>{item.name}</td>
                                         <td>{item.company}</td>
-                                        <td style={{ 
-                                            wordWrap: "break-word", 
+                                        <td style={{
+                                            wordWrap: "break-word",
                                             whiteSpace: "normal",
                                             maxWidth: "120px",
                                             wordBreak: "break-word"
@@ -192,7 +203,7 @@ const ShowLetter = () => {
                                             </tr>
                                             <tr>
                                                 <td>संकेत नं./परिचय पत्र नं.: {engToNep(`${letter?.receiver.id_card_number}`)}</td>
-                                                <td>परिचयपत्रको किसिम: {letter?.receiver.id_card_type}</td>
+                                                <td>परिचयपत्रको किसिम: {idType}</td>
                                             </tr>
                                             <tr>
                                                 <td>कार्यालयको नाम: {letter?.receiver.office_name}</td>
@@ -206,10 +217,10 @@ const ShowLetter = () => {
                                     </table>
                                 </section>
 
-                                <footer className="signature-section" style={{ marginTop: '30px' }}>
+                                <footer className="signature-section" style={{ marginTop: '90px' }}>
                                     <div className="signature-box">
                                         <div className='signature-line'></div>
-                                        सही
+                                        सामान बुझिलिनेको सही
                                     </div>
                                     <div className="signature-box">
                                         <div className="signature-line"></div>
@@ -221,11 +232,14 @@ const ShowLetter = () => {
                                     </div>
                                     <div className="signature-box">
                                         <div className="signature-line"></div>
-                                        स्वर्य स्वीकृत गर्ने
+                                        स्वीकृत गर्ने
                                     </div>
                                 </footer>
                             </>
                         )}
+                        <footer className="page-number">
+                            {engToNep(`${pages.length}`)} मध्ये {engToNep(`${pageIndex + 1}`)}
+                        </footer>
                     </div>
                 ))}
             </div>
