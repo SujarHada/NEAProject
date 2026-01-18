@@ -89,6 +89,7 @@ const ShowLetter = () => {
                 {/* Download Button */}
                 <div className="absolute flex items-center justify-between">
                     <button
+                    type='button'
                         onClick={handleDownload}
                         className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5"
                     >
@@ -99,7 +100,7 @@ const ShowLetter = () => {
                 {/* Multi Pages */}
                 {pages.map((chunk, pageIndex) => (
                     <div
-                        key={pageIndex}
+                        key={chunk?.[0]?.id}
                         className="page"
                         ref={(el) => {
                             if (el) pageRefs.current[pageIndex] = el;
@@ -112,19 +113,22 @@ const ShowLetter = () => {
                             </div>
 
                             <div className="title-section">
-                                <h1>नेपाल विद्युत् प्राधिकरण</h1>
+                                <h1>नेपाल विद्युत प्राधिकरण</h1>
                                 <h2>(नेपाल सरकारको स्वामित्व)</h2>
                                 <h3>वितरण तथा ग्राहक सेवा निर्देशनालय</h3>
                                 <h3>खरिद व्यवस्थापन महाशाखा</h3>
-                                <h3>जिन्सी व्यवस्थापन शाखा, हेटौंडा</h3>
+
+                                <div className="jinsi-line">
+                                    <span>जिन्सी व्यवस्थापन शाखा</span>
+                                </div>
                             </div>
 
                             <div className="contact-section">
-                                फोन नं. ०५७ ५२००००<br />
+                                फोन नं. +977 57-520007<br />
                                 इमेल: centralstore@nea.org.np<br />
                                 nea.centralstore@gmail.com<br />
                                 हेटौँडा उपमहानगरपालिका<br />
-                                वडा नं. ५, मकवानपुर, मकवानपुर
+                                वडा नं. ५, मकवानपुर
                             </div>
                         </header>
 
@@ -132,7 +136,7 @@ const ShowLetter = () => {
                         <section className="ref-section">
                             <div className="ref-left">
                                 <div>
-                                    पत्र सं.: <span className="dynamic">{letter?.letter_count} च.नं.: {letter?.chalani_no}</span>
+                                    प.सं.: <span className="dynamic">{letter?.letter_count} च.नं.: {letter?.chalani_no}</span>
                                 </div>
                                 <div>
                                     श्री {letter?.office_name},<br />
@@ -150,7 +154,7 @@ const ShowLetter = () => {
 
                         <div className="content">
                             उपरोक्त सम्बन्धमा तहाँको प.सं. {letter?.letter_count} च.नं. {letter?.chalani_no} मिति {letter?.request_date} को माग पत्रानुसार तपसिलमा उल्लेखित
-                            विद्युतीय जिन्सी सामानहरु निम्न उल्लेखित कर्मचारी / व्यक्तिहरुद्वारा पठाइएको छ । उक्त सामानहरुको ट्रान्सफर नोट खर्चपुर्जा र मुल्य पछि पठाइने व्यहोरा समेत अनुरोध छ ।
+                            विद्युतीय जिन्सी सामानहरु निम्न उल्लेखित कर्मचारी/व्यक्ति हस्ते पठाइएको छ। उक्त सामानहरुको ट्रान्सफर नोट खर्चपुर्जा र मुल्य पछि पठाइने व्यहोरा समेत अनुरोध छ ।
                         </div>
 
                         <div className="table-title">तपसिल:</div>
@@ -217,7 +221,7 @@ const ShowLetter = () => {
                                     </table>
                                 </section>
 
-                                <footer className="signature-section" style={{ marginTop: '90px' }}>
+                                <footer className="signature-section" style={{ marginTop: '70px' }}>
                                     <div className="signature-box">
                                         <div className='signature-line'></div>
                                         सामान बुझिलिनेको सही
@@ -232,13 +236,13 @@ const ShowLetter = () => {
                                     </div>
                                     <div className="signature-box">
                                         <div className="signature-line"></div>
-                                        स्वीकृत गर्ने
+                                        शाखा प्रमुख
                                     </div>
                                 </footer>
                             </>
                         )}
                         <footer className="page-number">
-                            {engToNep(`${pages.length}`)} मध्ये {engToNep(`${pageIndex + 1}`)}
+                            पाना {engToNep(`${pages.length}`)} मध्ये {engToNep(`${pageIndex + 1}`)}
                         </footer>
                     </div>
                 ))}
