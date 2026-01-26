@@ -1,11 +1,11 @@
-import { Outlet } from "react-router"
+import { Outlet } from "react-router";
 
 const Employee = () => {
-  return (
-    <div>
-      <Outlet/>
-    </div>
-  )
-}
+	return (
+		<div>
+			<Outlet />
+		</div>
+	);
+};
 
-export default Employee
+export default Employee;

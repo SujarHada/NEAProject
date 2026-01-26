@@ -1,302 +1,302 @@
 [
-  {
-    "name": "Aarav Sharma",
-    "email": "aarav.sharma@example.com",
-    "role": "Cashier",
-    "branch": "Biratnagar Branch"
-  },
-  {
-    "name": "Sita Koirala",
-    "email": "sita.koirala@example.com",
-    "role": "Accountant",
-    "branch": "Butwal Branch"
-  },
-  {
-    "name": "Bikash Thapa",
-    "email": "bikash.thapa@example.com",
-    "role": "Security",
-    "branch": "Dharan Branch"
-  },
-  {
-    "name": "Ramesh Adhikari",
-    "email": "ramesh.adhikari@example.com",
-    "role": "Accountant",
-    "branch": "Janakpur Branch"
-  },
-  {
-    "name": "Pratima Rai",
-    "email": "pratima.rai@example.com",
-    "role": "HR Officer",
-    "branch": "Biratnagar Branch"
-  },
-  {
-    "name": "Sunil Gurung",
-    "email": "sunil.gurung@example.com",
-    "role": "HR Officer",
-    "branch": "Kathmandu HQ"
-  },
-  {
-    "name": "Kritika Shrestha",
-    "email": "kritika.shrestha@example.com",
-    "role": "Manager",
-    "branch": "Butwal Branch"
-  },
-  {
-    "name": "Deepak Maharjan",
-    "email": "deepak.maharjan@example.com",
-    "role": "Sales Executive",
-    "branch": "Lalitpur Branch"
-  },
-  {
-    "name": "Manish Shahi",
-    "email": "manish.shahi@example.com",
-    "role": "IT Support",
-    "branch": "Chitwan Branch"
-  },
-  {
-    "name": "Anisha Lama",
-    "email": "anisha.lama@example.com",
-    "role": "Security",
-    "branch": "Janakpur Branch"
-  },
-  {
-    "name": "Roshan Magar",
-    "email": "roshan.magar@example.com",
-    "role": "HR Officer",
-    "branch": "Kathmandu HQ"
-  },
-  {
-    "name": "Binita KC",
-    "email": "binita.kc@example.com",
-    "role": "Sales Executive",
-    "branch": "Butwal Branch"
-  },
-  {
-    "name": "Sandesh Bista",
-    "email": "sandesh.bista@example.com",
-    "role": "IT Support",
-    "branch": "Chitwan Branch"
-  },
-  {
-    "name": "Nirmala Khadka",
-    "email": "nirmala.khadka@example.com",
-    "role": "Receptionist",
-    "branch": "Dharan Branch"
-  },
-  {
-    "name": "Prajwal Shrestha",
-    "email": "prajwal.shrestha@example.com",
-    "role": "IT Support",
-    "branch": "Dharan Branch"
-  },
-  {
-    "name": "Asmita Oli",
-    "email": "asmita.oli@example.com",
-    "role": "Accountant",
-    "branch": "Biratnagar Branch"
-  },
-  {
-    "name": "Prakash Tamang",
-    "email": "prakash.tamang@example.com",
-    "role": "Receptionist",
-    "branch": "Chitwan Branch"
-  },
-  {
-    "name": "Sabina Ghale",
-    "email": "sabina.ghale@example.com",
-    "role": "Receptionist",
-    "branch": "Kathmandu HQ"
-  },
-  {
-    "name": "Suman Neupane",
-    "email": "suman.neupane@example.com",
-    "role": "Cashier",
-    "branch": "Kathmandu HQ"
-  },
-  {
-    "name": "Rekha Chaudhary",
-    "email": "rekha.chaudhary@example.com",
-    "role": "Receptionist",
-    "branch": "Janakpur Branch"
-  },
-  {
-    "name": "Milan Maharjan",
-    "email": "milan.maharjan@example.com",
-    "role": "Sales Executive",
-    "branch": "Janakpur Branch"
-  },
-  {
-    "name": "Sujata Shrestha",
-    "email": "sujata.shrestha@example.com",
-    "role": "Accountant",
-    "branch": "Biratnagar Branch"
-  },
-  {
-    "name": "Kiran Thapa",
-    "email": "kiran.thapa@example.com",
-    "role": "Receptionist",
-    "branch": "Butwal Branch"
-  },
-  {
-    "name": "Pooja Basnet",
-    "email": "pooja.basnet@example.com",
-    "role": "HR Officer",
-    "branch": "Chitwan Branch"
-  },
-  {
-    "name": "Sandeep Giri",
-    "email": "sandeep.giri@example.com",
-    "role": "Cashier",
-    "branch": "Butwal Branch"
-  },
-  {
-    "name": "Prabha Adhikari",
-    "email": "prabha.adhikari@example.com",
-    "role": "Sales Executive",
-    "branch": "Biratnagar Branch"
-  },
-  {
-    "name": "Bimal Gurung",
-    "email": "bimal.gurung@example.com",
-    "role": "Security",
-    "branch": "Lalitpur Branch"
-  },
-  {
-    "name": "Laxmi Shahi",
-    "email": "laxmi.shahi@example.com",
-    "role": "Sales Executive",
-    "branch": "Dharan Branch"
-  },
-  {
-    "name": "Raju KC",
-    "email": "raju.kc@example.com",
-    "role": "Security",
-    "branch": "Janakpur Branch"
-  },
-  {
-    "name": "Sharmila Lama",
-    "email": "sharmila.lama@example.com",
-    "role": "IT Support",
-    "branch": "Lalitpur Branch"
-  },
-  {
-    "name": "Bipin Shrestha",
-    "email": "bipin.shrestha@example.com",
-    "role": "Security",
-    "branch": "Butwal Branch"
-  },
-  {
-    "name": "Anupama Rimal",
-    "email": "anupama.rimal@example.com",
-    "role": "Accountant",
-    "branch": "Butwal Branch"
-  },
-  {
-    "name": "Rajesh Khadka",
-    "email": "rajesh.khadka@example.com",
-    "role": "Manager",
-    "branch": "Kathmandu HQ"
-  },
-  {
-    "name": "Meena Magar",
-    "email": "meena.magar@example.com",
-    "role": "Receptionist",
-    "branch": "Janakpur Branch"
-  },
-  {
-    "name": "Santosh Gautam",
-    "email": "santosh.gautam@example.com",
-    "role": "Security",
-    "branch": "Pokhara Branch"
-  },
-  {
-    "name": "Sweta Poudel",
-    "email": "sweta.poudel@example.com",
-    "role": "Manager",
-    "branch": "Kathmandu HQ"
-  },
-  {
-    "name": "Pawan Oli",
-    "email": "pawan.oli@example.com",
-    "role": "Receptionist",
-    "branch": "Butwal Branch"
-  },
-  {
-    "name": "Kabita KC",
-    "email": "kabita.kc@example.com",
-    "role": "Cashier",
-    "branch": "Kathmandu HQ"
-  },
-  {
-    "name": "Rajendra Shahi",
-    "email": "rajendra.shahi@example.com",
-    "role": "Security",
-    "branch": "Pokhara Branch"
-  },
-  {
-    "name": "Anita Tamang",
-    "email": "anita.tamang@example.com",
-    "role": "Cashier",
-    "branch": "Kathmandu HQ"
-  },
-  {
-    "name": "Mohan Sharma",
-    "email": "mohan.sharma@example.com",
-    "role": "HR Officer",
-    "branch": "Pokhara Branch"
-  },
-  {
-    "name": "Sarita Chaudhary",
-    "email": "sarita.chaudhary@example.com",
-    "role": "Accountant",
-    "branch": "Janakpur Branch"
-  },
-  {
-    "name": "Bishal Rana",
-    "email": "bishal.rana@example.com",
-    "role": "Security",
-    "branch": "Kathmandu HQ"
-  },
-  {
-    "name": "Saraswati Dhakal",
-    "email": "saraswati.dhakal@example.com",
-    "role": "Receptionist",
-    "branch": "Pokhara Branch"
-  },
-  {
-    "name": "Keshav Shrestha",
-    "email": "keshav.shrestha@example.com",
-    "role": "Security",
-    "branch": "Butwal Branch"
-  },
-  {
-    "name": "Sujana Pandey",
-    "email": "sujana.pandey@example.com",
-    "role": "HR Officer",
-    "branch": "Janakpur Branch"
-  },
-  {
-    "name": "Dipesh Giri",
-    "email": "dipesh.giri@example.com",
-    "role": "IT Support",
-    "branch": "Kathmandu HQ"
-  },
-  {
-    "name": "Nisha Thapa",
-    "email": "nisha.thapa@example.com",
-    "role": "Sales Executive",
-    "branch": "Dharan Branch"
-  },
-  {
-    "name": "Suraj Lama",
-    "email": "suraj.lama@example.com",
-    "role": "Security",
-    "branch": "Chitwan Branch"
-  },
-  {
-    "name": "Binod Poudel",
-    "email": "binod.poudel@example.com",
-    "role": "Cashier",
-    "branch": "Dharan Branch"
-  }
+	{
+		"name": "Aarav Sharma",
+		"email": "aarav.sharma@example.com",
+		"role": "Cashier",
+		"branch": "Biratnagar Branch"
+	},
+	{
+		"name": "Sita Koirala",
+		"email": "sita.koirala@example.com",
+		"role": "Accountant",
+		"branch": "Butwal Branch"
+	},
+	{
+		"name": "Bikash Thapa",
+		"email": "bikash.thapa@example.com",
+		"role": "Security",
+		"branch": "Dharan Branch"
+	},
+	{
+		"name": "Ramesh Adhikari",
+		"email": "ramesh.adhikari@example.com",
+		"role": "Accountant",
+		"branch": "Janakpur Branch"
+	},
+	{
+		"name": "Pratima Rai",
+		"email": "pratima.rai@example.com",
+		"role": "HR Officer",
+		"branch": "Biratnagar Branch"
+	},
+	{
+		"name": "Sunil Gurung",
+		"email": "sunil.gurung@example.com",
+		"role": "HR Officer",
+		"branch": "Kathmandu HQ"
+	},
+	{
+		"name": "Kritika Shrestha",
+		"email": "kritika.shrestha@example.com",
+		"role": "Manager",
+		"branch": "Butwal Branch"
+	},
+	{
+		"name": "Deepak Maharjan",
+		"email": "deepak.maharjan@example.com",
+		"role": "Sales Executive",
+		"branch": "Lalitpur Branch"
+	},
+	{
+		"name": "Manish Shahi",
+		"email": "manish.shahi@example.com",
+		"role": "IT Support",
+		"branch": "Chitwan Branch"
+	},
+	{
+		"name": "Anisha Lama",
+		"email": "anisha.lama@example.com",
+		"role": "Security",
+		"branch": "Janakpur Branch"
+	},
+	{
+		"name": "Roshan Magar",
+		"email": "roshan.magar@example.com",
+		"role": "HR Officer",
+		"branch": "Kathmandu HQ"
+	},
+	{
+		"name": "Binita KC",
+		"email": "binita.kc@example.com",
+		"role": "Sales Executive",
+		"branch": "Butwal Branch"
+	},
+	{
+		"name": "Sandesh Bista",
+		"email": "sandesh.bista@example.com",
+		"role": "IT Support",
+		"branch": "Chitwan Branch"
+	},
+	{
+		"name": "Nirmala Khadka",
+		"email": "nirmala.khadka@example.com",
+		"role": "Receptionist",
+		"branch": "Dharan Branch"
+	},
+	{
+		"name": "Prajwal Shrestha",
+		"email": "prajwal.shrestha@example.com",
+		"role": "IT Support",
+		"branch": "Dharan Branch"
+	},
+	{
+		"name": "Asmita Oli",
+		"email": "asmita.oli@example.com",
+		"role": "Accountant",
+		"branch": "Biratnagar Branch"
+	},
+	{
+		"name": "Prakash Tamang",
+		"email": "prakash.tamang@example.com",
+		"role": "Receptionist",
+		"branch": "Chitwan Branch"
+	},
+	{
+		"name": "Sabina Ghale",
+		"email": "sabina.ghale@example.com",
+		"role": "Receptionist",
+		"branch": "Kathmandu HQ"
+	},
+	{
+		"name": "Suman Neupane",
+		"email": "suman.neupane@example.com",
+		"role": "Cashier",
+		"branch": "Kathmandu HQ"
+	},
+	{
+		"name": "Rekha Chaudhary",
+		"email": "rekha.chaudhary@example.com",
+		"role": "Receptionist",
+		"branch": "Janakpur Branch"
+	},
+	{
+		"name": "Milan Maharjan",
+		"email": "milan.maharjan@example.com",
+		"role": "Sales Executive",
+		"branch": "Janakpur Branch"
+	},
+	{
+		"name": "Sujata Shrestha",
+		"email": "sujata.shrestha@example.com",
+		"role": "Accountant",
+		"branch": "Biratnagar Branch"
+	},
+	{
+		"name": "Kiran Thapa",
+		"email": "kiran.thapa@example.com",
+		"role": "Receptionist",
+		"branch": "Butwal Branch"
+	},
+	{
+		"name": "Pooja Basnet",
+		"email": "pooja.basnet@example.com",
+		"role": "HR Officer",
+		"branch": "Chitwan Branch"
+	},
+	{
+		"name": "Sandeep Giri",
+		"email": "sandeep.giri@example.com",
+		"role": "Cashier",
+		"branch": "Butwal Branch"
+	},
+	{
+		"name": "Prabha Adhikari",
+		"email": "prabha.adhikari@example.com",
+		"role": "Sales Executive",
+		"branch": "Biratnagar Branch"
+	},
+	{
+		"name": "Bimal Gurung",
+		"email": "bimal.gurung@example.com",
+		"role": "Security",
+		"branch": "Lalitpur Branch"
+	},
+	{
+		"name": "Laxmi Shahi",
+		"email": "laxmi.shahi@example.com",
+		"role": "Sales Executive",
+		"branch": "Dharan Branch"
+	},
+	{
+		"name": "Raju KC",
+		"email": "raju.kc@example.com",
+		"role": "Security",
+		"branch": "Janakpur Branch"
+	},
+	{
+		"name": "Sharmila Lama",
+		"email": "sharmila.lama@example.com",
+		"role": "IT Support",
+		"branch": "Lalitpur Branch"
+	},
+	{
+		"name": "Bipin Shrestha",
+		"email": "bipin.shrestha@example.com",
+		"role": "Security",
+		"branch": "Butwal Branch"
+	},
+	{
+		"name": "Anupama Rimal",
+		"email": "anupama.rimal@example.com",
+		"role": "Accountant",
+		"branch": "Butwal Branch"
+	},
+	{
+		"name": "Rajesh Khadka",
+		"email": "rajesh.khadka@example.com",
+		"role": "Manager",
+		"branch": "Kathmandu HQ"
+	},
+	{
+		"name": "Meena Magar",
+		"email": "meena.magar@example.com",
+		"role": "Receptionist",
+		"branch": "Janakpur Branch"
+	},
+	{
+		"name": "Santosh Gautam",
+		"email": "santosh.gautam@example.com",
+		"role": "Security",
+		"branch": "Pokhara Branch"
+	},
+	{
+		"name": "Sweta Poudel",
+		"email": "sweta.poudel@example.com",
+		"role": "Manager",
+		"branch": "Kathmandu HQ"
+	},
+	{
+		"name": "Pawan Oli",
+		"email": "pawan.oli@example.com",
+		"role": "Receptionist",
+		"branch": "Butwal Branch"
+	},
+	{
+		"name": "Kabita KC",
+		"email": "kabita.kc@example.com",
+		"role": "Cashier",
+		"branch": "Kathmandu HQ"
+	},
+	{
+		"name": "Rajendra Shahi",
+		"email": "rajendra.shahi@example.com",
+		"role": "Security",
+		"branch": "Pokhara Branch"
+	},
+	{
+		"name": "Anita Tamang",
+		"email": "anita.tamang@example.com",
+		"role": "Cashier",
+		"branch": "Kathmandu HQ"
+	},
+	{
+		"name": "Mohan Sharma",
+		"email": "mohan.sharma@example.com",
+		"role": "HR Officer",
+		"branch": "Pokhara Branch"
+	},
+	{
+		"name": "Sarita Chaudhary",
+		"email": "sarita.chaudhary@example.com",
+		"role": "Accountant",
+		"branch": "Janakpur Branch"
+	},
+	{
+		"name": "Bishal Rana",
+		"email": "bishal.rana@example.com",
+		"role": "Security",
+		"branch": "Kathmandu HQ"
+	},
+	{
+		"name": "Saraswati Dhakal",
+		"email": "saraswati.dhakal@example.com",
+		"role": "Receptionist",
+		"branch": "Pokhara Branch"
+	},
+	{
+		"name": "Keshav Shrestha",
+		"email": "keshav.shrestha@example.com",
+		"role": "Security",
+		"branch": "Butwal Branch"
+	},
+	{
+		"name": "Sujana Pandey",
+		"email": "sujana.pandey@example.com",
+		"role": "HR Officer",
+		"branch": "Janakpur Branch"
+	},
+	{
+		"name": "Dipesh Giri",
+		"email": "dipesh.giri@example.com",
+		"role": "IT Support",
+		"branch": "Kathmandu HQ"
+	},
+	{
+		"name": "Nisha Thapa",
+		"email": "nisha.thapa@example.com",
+		"role": "Sales Executive",
+		"branch": "Dharan Branch"
+	},
+	{
+		"name": "Suraj Lama",
+		"email": "suraj.lama@example.com",
+		"role": "Security",
+		"branch": "Chitwan Branch"
+	},
+	{
+		"name": "Binod Poudel",
+		"email": "binod.poudel@example.com",
+		"role": "Cashier",
+		"branch": "Dharan Branch"
+	}
 ]

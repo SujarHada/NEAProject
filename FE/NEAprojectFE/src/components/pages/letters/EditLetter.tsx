@@ -28,7 +28,8 @@ const EditLetter = () => {
         formState: { isSubmitting, errors },
         setValue,
         reset,
-        watch
+        watch,
+        trigger
     } = useForm<EditLetterI>({
         resolver: zodResolver(EditLetterSchema),
         defaultValues: {
@@ -75,7 +76,7 @@ const EditLetter = () => {
         if (!Offices.length) StoreMethods.getOffices();
         if (!Receivers.length) StoreMethods.getReceivers();
         if (!Products.length) StoreMethods.getProducts();
-    }, []);
+    }, [Offices.length, StoreMethods.getReceivers, StoreMethods.getProducts, StoreMethods.getOffices, Receivers.length, Products.length]);
 
     useEffect(() => {
         const fetchLetter = async () => {
@@ -102,7 +103,7 @@ const EditLetter = () => {
         };
 
             fetchLetter();
-    }, []);
+    }, [id, reset]);
     const handleOfficeChange = (officeId: string) => {
         const selectedOffice = Offices?.find(
             (o) => o.id.toString() === officeId
@@ -130,7 +131,7 @@ const EditLetter = () => {
             if (res.status === 200) {
                 navigate(`/letters/view-letter/${res.data.data.id}`);
             }
-        } catch (err: AxiosError | any) {
+        } catch (err: any) {
             if (err && typeof err === 'object' && 'isAxiosError' in err) {
                 const axiosErr = err as AxiosError<EditLetterI>;
                 if (axiosErr.response?.data?.items?.[0]) {
@@ -156,7 +157,7 @@ const EditLetter = () => {
                         control={control}
                         render={({ field }) => (
                             <div className="bg-[#B5C9DC] border-2 h-8 outline-none z-50 rounded-md border-gray-600">
-                                <NepaliDatePicker {...field} value={nepToEng(field.value)} onChange={(e) => field.onChange(e!.format('YYYY-MM-DD', 'np'))} className='h-8 px-3 cursor-pointer' placeholder="YYYY-MM-DD" />
+                                <NepaliDatePicker {...field} value={nepToEng(field.value)} onChange={(e) => field.onChange(e?.format('YYYY-MM-DD', 'np'))} className='h-8 px-3 cursor-pointer' placeholder="YYYY-MM-DD" />
 
                             </div>
                         )}
@@ -221,7 +222,7 @@ const EditLetter = () => {
                             control={control}
                             render={({ field }) => (
                                 <div className="flex w-full items-center relative">
-                                    <select id="position" {...field} onChange={(e) => { handleOfficeChange(e.target.value) }} className="bg-[#B5C9DC] w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                                    <select id="position" {...field} onChange={(e) => { handleOfficeChange(e.target.value) }} className="bg-[#B5C9DC] w-full border-2 h-8 outline-none px-3 rounded-md border-gray-600">
                                         <option value="" hidden>{t("createLetter.select_office")}</option>
                                         {Offices?.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
                                     </select>
@@ -253,7 +254,7 @@ const EditLetter = () => {
                             control={control}
                             render={({ field }) => (
                                 <div className="bg-[#B5C9DC] border-2 h-8 outline-none z-50 rounded-md border-gray-600">
-                                    <NepaliDatePicker {...field} value={nepToEng(field.value)} format="YYYY-MM-DD" lang="np" onChange={(e) => field.onChange(e!.format('YYYY-MM-DD', 'np'))} className='h-8 px-3 cursor-pointer' placeholder="YYYY-MM-DD" />
+                                    <NepaliDatePicker {...field} value={nepToEng(field.value)} format="YYYY-MM-DD" lang="np" onChange={(e) => field.onChange(e?.format('YYYY-MM-DD', 'np'))} className='h-8 px-3 cursor-pointer' placeholder="YYYY-MM-DD" />
                                 </div>
                             )}
                         />
@@ -327,7 +328,7 @@ const EditLetter = () => {
                                     )}
                                 />
                                 {
-                                    errors.items && errors.items[index] && errors.items[index].name && <span className="text-[#B22222]">{errors.items[index].name.message}</span>
+                                    errors.items?.[index]?.name && <span className="text-[#B22222]">{errors.items[index].name.message}</span>
                                 }
                             </div>
                             <div className="flex flex-2 gap-2 justify-between" >
@@ -352,7 +353,7 @@ const EditLetter = () => {
                                         )}
                                     />
                                     {
-                                        errors.items && errors.items[index] && errors.items[index].name && <span className="text-[#B22222]">{errors.items[index].name.message}</span>
+                                        errors.items?.[index]?.name && <span className="text-[#B22222]">{errors.items[index].name.message}</span>
                                     }
                                 </div>
 
@@ -380,7 +381,7 @@ const EditLetter = () => {
                                             }
                                         />
                                         {
-                                            errors.items && errors.items[index] && errors.items[index].serial_number && <span className="text-[#B22222]">{errors.items[index].serial_number.message}</span>
+                                            errors.items?.[index]?.serial_number && <span className="text-[#B22222]">{errors.items[index].serial_number.message}</span>
                                         }
                                     </div>
                                     <div className="flex max-w-[30%] flex-1 flex-col gap-2">
@@ -390,7 +391,7 @@ const EditLetter = () => {
                                             render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                                         />
                                         {
-                                            errors.items && errors.items[index] && errors.items[index].quantity && <span className="text-[#B22222]">{errors.items[index].quantity.message}</span>
+                                            errors.items?.[index]?.quantity && <span className="text-[#B22222]">{errors.items[index].quantity.message}</span>
                                         }
                                     </div>
                                 </div>
@@ -402,7 +403,7 @@ const EditLetter = () => {
                                     render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                                 />
                                 {
-                                    errors.items && errors.items[index] && errors.items[index].remarks && <span className="text-[#B22222]">{errors.items[index].remarks.message}</span>
+                                    errors.items?.[index]?.remarks && <span className="text-[#B22222]">{errors.items[index].remarks.message}</span>
                                 }
                             </div>
                             <button type="button" className="bg-red-500 self-end text-white shadow px-3 rounded-xl border-1 border-black h-8" onClick={() => remove(index)}>Remove</button>
@@ -410,7 +411,37 @@ const EditLetter = () => {
                     ))}
                 </div>
 
-                <button type="button" className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => append({ product_id: "", name: "", company: "", serial_number: '', unit_of_measurement: "", quantity: '', remarks: "" })}>
+                <button 
+                type="button" 
+                className="bg-blue-500 text-white px-4 py-2 rounded" 
+                // onClick={() => append({ product_id: "", name: "", company: "", serial_number: '', unit_of_measurement: "", quantity: '', remarks: "" })
+                onClick={async () => {
+                                        const lastIndex = fields.length - 1;
+                
+                                        const isValid = await trigger([
+                                            `items.${lastIndex}.product_id`,
+                                            `items.${lastIndex}.name`,
+                                            `items.${lastIndex}.unit_of_measurement`,
+                                            `items.${lastIndex}.serial_number`,
+                                            `items.${lastIndex}.quantity`,
+                                        ]);
+                
+                                        if (!isValid) {
+                                            toast.error("माथिको सामान पूरा भर्नुहोस्");
+                                            return;
+                                        }
+                
+                                        append({
+                                            product_id: "",
+                                            name: "",
+                                            company: "",
+                                            serial_number: "",
+                                            unit_of_measurement: "",
+                                            quantity: "",
+                                            remarks: "",
+                                        });
+                                    }}
+                >
                     Add Item
                 </button>
             </div>
@@ -434,7 +465,7 @@ const EditLetter = () => {
                             }
                         />
                         {
-                            errors.receiver && errors.receiver.name && <span className="text-red-500">{errors.receiver.name.message}</span>
+                            errors.receiver?.name && <span className="text-red-500">{errors.receiver.name.message}</span>
                         }
                     </div>
                     <div className="flex flex-col flex-1">
@@ -445,7 +476,7 @@ const EditLetter = () => {
                             render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                         />
                         {
-                            errors.receiver && errors.receiver.vehicle_number && <span className="text-red-500">{errors.receiver.vehicle_number.message}</span>
+                            errors.receiver?.vehicle_number && <span className="text-red-500">{errors.receiver.vehicle_number.message}</span>
                         }
                     </div>
                     <div className="flex flex-col flex-1">
@@ -456,7 +487,7 @@ const EditLetter = () => {
                             render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                         />
                         {
-                            errors.receiver && errors.receiver.post && <span className="text-red-500">{errors.receiver.post.message}</span>
+                            errors.receiver?.post && <span className="text-red-500">{errors.receiver.post.message}</span>
                         }
                     </div>
                 </div>
@@ -470,7 +501,7 @@ const EditLetter = () => {
                             render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                         />
                         {
-                            errors.receiver && errors.receiver.office_name && <span className="text-red-500">{errors.receiver.office_name.message}</span>
+                            errors.receiver?.office_name && <span className="text-red-500">{errors.receiver.office_name.message}</span>
                         }
                     </div>
                     <div className="flex flex-col flex-1">
@@ -481,7 +512,7 @@ const EditLetter = () => {
                             render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                         />
                         {
-                            errors.receiver && errors.receiver.office_address && <span className="text-red-500">{errors.receiver.office_address.message}</span>
+                            errors.receiver?.office_address && <span className="text-red-500">{errors.receiver.office_address.message}</span>
                         }
                     </div>
                     <div className="flex flex-col flex-1">
@@ -492,7 +523,7 @@ const EditLetter = () => {
                             render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                         />
                         {
-                            errors.receiver && errors.receiver.office_address && <span className="text-red-500">{errors.receiver.office_address.message}</span>
+                            errors.receiver?.office_address && <span className="text-red-500">{errors.receiver.office_address.message}</span>
                         }
                     </div>
                 </div>
@@ -505,7 +536,7 @@ const EditLetter = () => {
                             render={({ field }) => <input {...field} type="text" className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600" />}
                         />
                         {
-                            errors.receiver && errors.receiver.office_address && <span className="text-red-500">{errors.receiver.office_address.message}</span>
+                            errors.receiver?.office_address && <span className="text-red-500">{errors.receiver.office_address.message}</span>
                         }
                     </div>
                     <div className="flex flex-col flex-1">
@@ -515,7 +546,7 @@ const EditLetter = () => {
                             control={control}
                             render={({ field }) => (
                                 <div className="flex w-full items-center relative">
-                                    <select id="position" {...field} className="bg-[#B5C9DC] w-full border-2 h-10 outline-none px-3 rounded-md border-gray-600">
+                                    <select id="position" {...field} className="bg-[#B5C9DC] w-full border-2 h-8 outline-none px-3 rounded-md border-gray-600">
                                         {
                                             id_types.map((idType) => (
                                                 <option key={idType.id} value={idType.value}>{idType.name}</option>
@@ -527,7 +558,7 @@ const EditLetter = () => {
                             }
                         />
                         {
-                            errors.receiver && errors.receiver.office_address && <span className="text-red-500">{errors.receiver.office_address.message}</span>
+                            errors.receiver?.office_address && <span className="text-red-500">{errors.receiver.office_address.message}</span>
                         }
                     </div>
                 </div>

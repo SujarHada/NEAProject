@@ -1,10 +1,10 @@
-import { Outlet } from "react-router"
+import { Outlet } from "react-router";
 const Offices = () => {
-  return (
-    <div>
-      <Outlet />
-    </div>
-  )
-}
+	return (
+		<div>
+			<Outlet />
+		</div>
+	);
+};
 
-export default Offices
+export default Offices;

@@ -1,10 +1,10 @@
-import { Outlet } from "react-router"
+import { Outlet } from "react-router";
 const Receiver = () => {
-  return (
-    <div>
-      <Outlet />
-    </div>
-  )
-}
+	return (
+		<div>
+			<Outlet />
+		</div>
+	);
+};
 
-export default Receiver
+export default Receiver;

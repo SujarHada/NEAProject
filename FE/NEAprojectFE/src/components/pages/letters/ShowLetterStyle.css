@@ -1,253 +1,255 @@
 @font-face {
-  font-family: "Kalimati";
-  src: url("/fonts/Kalimati.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: block; /* IMPORTANT for canvas */
+	font-family: "Kalimati";
+	src: url("/fonts/Kalimati.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+	font-display: block; /* IMPORTANT for canvas */
 }
 
 @page {
-  size: A4;
-  margin: 15mm;
+	size: A4;
+	margin: 15mm;
 }
 
 @media print {
-  body {
-    margin: 0;
-    padding: 0;
-  }
+	body {
+		margin: 0;
+		padding: 0;
+	}
 
-  .page {
-    margin: 0;
-    box-shadow: none;
-    border: none;
-  }
+	.page {
+		margin: 0;
+		box-shadow: none;
+		border: none;
+	}
 }
 
 html {
-  -webkit-print-color-adjust: exact;
-  print-color-adjust: exact;
+	-webkit-print-color-adjust: exact;
+	print-color-adjust: exact;
 }
 
 body {
-  background: #e0e0e0;
+	background: #e0e0e0;
 }
 
 .page {
-  font-family: "Kalimati", sans-serif;
-  width: 210mm;
-  min-height: 297mm;
-  max-height: 297mm; /* ADD THIS - prevents overflow */
-  padding: 10mm 8mm 10mm 25mm;
-  margin: 0 auto;
-  background: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border: 1px solid black;
-  font-size: 11pt;
-  line-height: 1.5;
-  position: relative;
-  box-sizing: border-box; /* ADD THIS - includes padding in height calculation */
-  overflow: hidden; /* ADD THIS - prevents content from spilling out */
+	font-family: "Kalimati", sans-serif;
+	width: 210mm;
+	min-height: 297mm;
+	max-height: 297mm; /* ADD THIS - prevents overflow */
+	padding: 10mm 8mm 10mm 25mm;
+	margin: 0 auto;
+	background: white;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border: 1px solid black;
+	font-size: 11pt;
+	line-height: 1.5;
+	position: relative;
+	box-sizing: border-box; /* ADD THIS - includes padding in height calculation */
+	overflow: hidden; /* ADD THIS - prevents content from spilling out */
 }
 .page-number {
-  position: absolute;
-  bottom: 10mm;   /* tweak if you want */
-  right: 10mm;
-  font-size: 10pt;
-  text-align: right;
+	position: absolute;
+	bottom: 10mm; /* tweak if you want */
+	right: 10mm;
+	font-size: 10pt;
+	text-align: right;
 }
 
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
 }
 
 .logo-section {
-  flex: 0 0 85px;
+	flex: 0 0 85px;
 }
 
 .logo-section img {
-  width: 100%;
-  height: auto;
-  border-radius: 50%;
+	width: 100%;
+	height: auto;
+	border-radius: 50%;
 }
 
 .title-section {
-  flex: 1;
-  text-align: center;
-  padding: 0 15px;
+	flex: 1;
+	text-align: center;
+	padding: 0 15px;
 }
 
 .title-section h1 {
-  font-size: 18pt;
-  font-weight: bold;
-  margin-bottom: 4px;
-  line-height: 1.2;
+	font-size: 18pt;
+	font-weight: bold;
+	margin-bottom: 4px;
+	line-height: 1.2;
 }
 
 .title-section h2 {
-  font-size: 10pt;
-  margin-bottom: 4px;
-  font-weight: normal;
+	font-size: 10pt;
+	margin-bottom: 4px;
+	font-weight: normal;
 }
 
 .title-section h3 {
-  font-size: 13pt;
-  font-weight: bold;
-  margin: 3px 0;
-  line-height: 1.3;
+	font-size: 13pt;
+	font-weight: bold;
+	margin: 3px 0;
+	line-height: 1.3;
 }
 .jinsi-line {
-  font-weight: bold;
-  line-height: 1.3;
-  font-size: 14.5pt;
+	font-weight: bold;
+	line-height: 1.3;
+	font-size: 14.5pt;
 }
 
 .contact-section {
-  font-size: 10pt;
-  line-height: 1.4;
-  text-align: left;
+	font-size: 10pt;
+	line-height: 1.4;
+	text-align: left;
 }
 
 .ref-section {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  font-size: 12pt;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 12px;
+	font-size: 12pt;
 }
 
 .ref-left {
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
+	text-align: left;
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
 }
 
 .ref-right {
-  text-align: left;
-  line-height: 1.5;
+	text-align: left;
+	line-height: 1.5;
 }
 
 .subject {
-  text-align: center;
-  font-weight: bold;
-  margin: 5px 0;
-  text-decoration: underline;
-  font-size: 12pt;
+	text-align: center;
+	font-weight: bold;
+	margin: 5px 0;
+	text-decoration: underline;
+	font-size: 12pt;
 }
 
 .content {
-  text-indent: 2.5em;
-  text-align: justify;
-  margin-bottom: 15px;
-  font-size: 12pt;
-  line-height: 1.6;
+	text-indent: 2.5em;
+	text-align: justify;
+	margin-bottom: 15px;
+	font-size: 12pt;
+	line-height: 1.6;
 }
 
 .table-title {
-  font-weight: bold;
-  text-align: center;
-  margin: 12px 0 8px 0;
-  text-decoration: underline;
-  font-size: 12pt;
+	font-weight: bold;
+	text-align: center;
+	margin: 12px 0 8px 0;
+	text-decoration: underline;
+	font-size: 12pt;
 }
 
 .table {
-  width: 100%;
-  border-collapse: collapse;
-  word-wrap: break-word;
-  white-space: pre-wrap;
+	width: 100%;
+	border-collapse: collapse;
+	word-wrap: break-word;
+	white-space: pre-wrap;
 }
 .table tr {
-  height: 30px; /* Adjust as needed */
-  /* padding-bottom: 5px; */
+	height: 30px; /* Adjust as needed */
+	/* padding-bottom: 5px; */
 }
 
-.table th, .table td {
-  border: 1px solid #000;
-  padding: 6px;
-  text-align: center;
-  align-items: center;
-  vertical-align: middle;
-  font-size: 10pt;
+.table th,
+.table td {
+	border: 1px solid #000;
+	padding: 6px;
+	text-align: center;
+	align-items: center;
+	vertical-align: middle;
+	font-size: 10pt;
 }
-.table tbody td, .table thead th {
-  padding-bottom: 20px;
+.table tbody td,
+.table thead th {
+	padding-bottom: 20px;
 }
 
 .table td:nth-child(2) {
-  text-align: left;
+	text-align: left;
 }
 
 .table th {
-  font-weight: bold;
-  background-color: #f5f5f5;
+	font-weight: bold;
+	background-color: #f5f5f5;
 }
 
 .serial {
-  width: 35px;
+	width: 35px;
 }
 
 .item-name {
-  width: 180px;
+	width: 180px;
 }
 
 .company {
-  width: 85px;
+	width: 85px;
 }
 
 .serial-no {
-  width: 100px;
+	width: 100px;
 }
 
 .quantity {
-  width: 50px;
+	width: 50px;
 }
 
 .unit {
-  width: 50px;
+	width: 50px;
 }
 
 .remarks {
-  width: 85px;
+	width: 85px;
 }
 
 .supplier-info {
-  margin-top: 15px;
-  font-size: 12pt;
+	margin-top: 15px;
+	font-size: 12pt;
 }
 .supplier-info table {
-  border-collapse: separate;
-  width: 100%
+	border-collapse: separate;
+	width: 100%;
 }
 
 .supplier-info td {
-  border: none;
-  text-align: left;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #000;
-  font-size: 12pt;
+	border: none;
+	text-align: left;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #000;
+	font-size: 12pt;
 }
 
 .supplier-info td:first-child {
-  width: 50%;
+	width: 50%;
 }
 
 .signature-section {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 40px;
-  font-size: 11pt;
+	display: flex;
+	justify-content: space-between;
+	margin-top: 40px;
+	font-size: 11pt;
 }
 
 .signature-box {
-  text-align: center;
-  width: 23%;
+	text-align: center;
+	width: 23%;
 }
 
 .signature-line {
-  border-top: 1px dashed #000;
-  margin-bottom: 5px;
-  width: 100%;
+	border-top: 1px dashed #000;
+	margin-bottom: 5px;
+	width: 100%;
 }

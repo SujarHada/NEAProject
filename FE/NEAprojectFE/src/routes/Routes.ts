@@ -41,118 +41,134 @@ import Profile from "../components/pages/Profile";
 import AuthCheck from "../components/auth/AuthCheck";
 import NotFoundPage from "../components/pages/NotFoundPage";
 const router = createBrowserRouter([
-    {
-        path: "/login",
-        element: createElement(Login),
-    },
-    {
-        path: "/",
-        element: createElement(AuthCheck, null, createElement(Home)),
-        children: [
-            { index: true, element: createElement(Navigate, { to: "/home", replace: true }) },
-            { path: "home", element: createElement(HomeScreen) },
+	{
+		path: "/login",
+		element: createElement(Login),
+	},
+	{
+		path: "/",
+		element: createElement(AuthCheck, null, createElement(Home)),
+		children: [
+			{
+				index: true,
+				element: createElement(Navigate, { to: "/home", replace: true }),
+			},
+			{ path: "home", element: createElement(HomeScreen) },
 
-            {
-                path: "letters",
-                element: createElement(Letters),
-                children: [
-                    { path: "all-letters", element: createElement(AllLetters) },
-                    { path: "view-letter/:id", element: createElement(ShowLetter) },
-                    { path: "letter-bin", element: createElement(LettersBin) },
-                    {
-                        element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
-                        children: [{ path: "create-letter", element: createElement(CreateLetter) },
-                            {path: ":id/edit", element: createElement(EditLetter)}
-                        ],
-                    },
-                ],
-            },
+			{
+				path: "letters",
+				element: createElement(Letters),
+				children: [
+					{ path: "all-letters", element: createElement(AllLetters) },
+					{ path: "view-letter/:id", element: createElement(ShowLetter) },
+					{ path: "letter-bin", element: createElement(LettersBin) },
+					{
+						element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
+						children: [
+							{ path: "create-letter", element: createElement(CreateLetter) },
+							{ path: ":id/edit", element: createElement(EditLetter) },
+						],
+					},
+				],
+			},
 
-            {
-                path: "products",
-                element: createElement(Product),
-                children: [
-                    { path: "active-products", element: createElement(ActiveProducts) },
-                    { path: "bin-product", element: createElement(ProductsBin) },
-                    {
-                        element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
-                        children: [
-                            { path: "create-product", element: createElement(CreateProducts) },
-                            { path: "edit/:id", element: createElement(EditProduct) },
-                        ],
-                    },
-                ],
-            },
+			{
+				path: "products",
+				element: createElement(Product),
+				children: [
+					{ path: "active-products", element: createElement(ActiveProducts) },
+					{ path: "bin-product", element: createElement(ProductsBin) },
+					{
+						element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
+						children: [
+							{
+								path: "create-product",
+								element: createElement(CreateProducts),
+							},
+							{ path: "edit/:id", element: createElement(EditProduct) },
+						],
+					},
+				],
+			},
 
-            {
-                path: "offices",
-                element: createElement(Offices),
-                children: [
-                    { path: "office-list", element: createElement(OfficeList) },
-                    {
-                        element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
-                        children: [
-                            { path: "create-office", element: createElement(CreateOffice) },
-                            { path: "edit/:id", element: createElement(EditOffice) },
-                        ],
-                    },
-                ],
-            },
+			{
+				path: "offices",
+				element: createElement(Offices),
+				children: [
+					{ path: "office-list", element: createElement(OfficeList) },
+					{
+						element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
+						children: [
+							{ path: "create-office", element: createElement(CreateOffice) },
+							{ path: "edit/:id", element: createElement(EditOffice) },
+						],
+					},
+				],
+			},
 
-            {
-                path: "receiver",
-                element: createElement(Receiver),
-                children: [
-                    { path: "receiver-list", element: createElement(ReceiverList) },
-                    {
-                        element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
-                        children: [
-                            { path: "create-receiver", element: createElement(CreateReceiver) },
-                            { path: "edit/:id", element: createElement(EditReceiver) },
-                        ],
-                    },
-                ],
-            },
+			{
+				path: "receiver",
+				element: createElement(Receiver),
+				children: [
+					{ path: "receiver-list", element: createElement(ReceiverList) },
+					{
+						element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
+						children: [
+							{
+								path: "create-receiver",
+								element: createElement(CreateReceiver),
+							},
+							{ path: "edit/:id", element: createElement(EditReceiver) },
+						],
+					},
+				],
+			},
 
-            {
-                path: "branches",
-                element: createElement(Branches),
-                children: [
-                    { path: "all-branches", element: createElement(AllBranches) },
-                    {
-                        element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
-                        children: [
-                            { path: "create-branch", element: createElement(CreateBranches) },
-                            { path: ":id/edit", element: createElement(EditBranch) },
-                            { path: ":id/employee/create-employee", element: createElement(CreateEmployee) },
-                        ],
-                    },
-                    { path: ":id/employee/all-employees", element: createElement(AllEmployees) },
-                ],
-            },
+			{
+				path: "branches",
+				element: createElement(Branches),
+				children: [
+					{ path: "all-branches", element: createElement(AllBranches) },
+					{
+						element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
+						children: [
+							{ path: "create-branch", element: createElement(CreateBranches) },
+							{ path: ":id/edit", element: createElement(EditBranch) },
+							{
+								path: ":id/employee/create-employee",
+								element: createElement(CreateEmployee),
+							},
+						],
+					},
+					{
+						path: ":id/employee/all-employees",
+						element: createElement(AllEmployees),
+					},
+				],
+			},
 
-            {
-                path: "employees",
-                element: createElement(Employee),
-                children: [
-                    { path: "manage", element: createElement(AllEmployees) },
-                    {
-                        element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
-                        children: [
-                            { path: "create", element: createElement(CreateEmployee) },
-                            { path: "edit/:id", element: createElement(EditEmployee) },
-                        ],
-                    },
-                ],
-            },
+			{
+				path: "employees",
+				element: createElement(Employee),
+				children: [
+					{ path: "manage", element: createElement(AllEmployees) },
+					{
+						element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
+						children: [
+							{ path: "create", element: createElement(CreateEmployee) },
+							{ path: "edit/:id", element: createElement(EditEmployee) },
+						],
+					},
+				],
+			},
 
-            { path: "profile", element: createElement(Profile) },
-        ],
-    },
-    {
-        path: "*",
-        element: createElement(NotFoundPage),
-    }
+			{ path: "profile", element: createElement(Profile) },
+		],
+	},
+	{
+		path: "*",
+		element: createElement(NotFoundPage),
+	},
 ]);
 
 export default router;

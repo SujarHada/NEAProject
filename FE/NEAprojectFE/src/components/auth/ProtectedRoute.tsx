@@ -2,13 +2,17 @@ import { Navigate, Outlet } from "react-router";
 import useAuthStore from "app/store/useAuthStore";
 
 interface ProtectedRouteProps {
-  allowedRoles: string[];
+	allowedRoles: string[];
 }
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
-  const userRole = useAuthStore((state) => state.user?.role) || '';
+	const userRole = useAuthStore((state) => state.user?.role) || "";
 
-  return allowedRoles.includes(userRole) ? <Outlet /> : <Navigate to="/home" replace />;
+	return allowedRoles.includes(userRole) ? (
+		<Outlet />
+	) : (
+		<Navigate to="/home" replace />
+	);
 };
 
 export default ProtectedRoute;

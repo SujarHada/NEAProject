@@ -1,513 +1,513 @@
 {
-  "dashboard": {
-    "title": "Dashboard Overview",
-    "loading": "Loading dashboard…",
-    "error": "Failed to load data",
-    "last_updated": "Last updated",
-    "active_products": "Active Products",
-    "active_branches": "Active Branches",
-    "active_offices": "Active Offices",
-    "active_employees": "Active Employees",
-    "total_receivers": "Total Receivers",
-    "letters": "Letters",
-    "draft_letters": "Draft Letters",
-    "sent_letters": "Sent Letters"
-  },
-  "profile": {
-  "title": "Profile Dashboard",
-  "changePassword": "Change Password",
-  "createUser": "Create User",
-  "currentPassword": "Current Password",
-  "newPassword": "New Password",
-  "confirmPassword": "Confirm Password",
-  "updatePassword": "Update Password",
-  "name": "Name",
-  "email": "Email",
-  "password": "Password",
-  "viewer": "Viewer",
-  "admin": "Admin",
-  "createAccount": "Create Account",
-  "logout": "Logout"
-},
-  "createLetter": {
-    "title": "Create Letter",
-    "date": "Date",
-    "letter_count": "Letter count",
-    "chalani_no": "Chalani No",
-    "voucher_no": "Voucher No",
-    "gatepass_no": "GatePass No",
-    "select_office": "Select Office",
-    "subject": "Subject",
-    "request_date": "Request date",
-    "request_chalani_number": "Request chalani number",
-    "request_letter_count": "Request letter count",
-    "items": "Items",
-    "serial_number": "Serial number",
-    "product": "Product",
-    "unit": "Unit",
-    "quantity": "Quantity",
-    "remarks": "Remarks",
-    "select_receiver": "Select Receiver",
-    "office_name": "Receiver office",
-    "receiver_office_address": "Receiver office address",
-    "phone_number": "Phone number",
-    "id_card_number": "Id card number",
-    "id_card_type": "Id card type",
-    "post": "Post",
-    "vehiche_number": "Vehicle number",
-    "no_receiver_found": "No receivers found in current selected office",
-    "submit": "Create Letter",
-    "creating": "Creating..."
-},
-  "allLettersPage": {
-    "title": "List your all letters"
-  },
-  "lettersBinPage": {
-    "title": "Letters Bin"
-  },
-  "editLetter": {
-    "title": "Edit Letter",
-    "date": "Date",
-    "letter_count": "Letter count",
-    "chalani_no": "Chalani No",
-    "voucher_no": "Voucher No",
-    "gatepass_no": "GatePass No",
-    "subject": "Subject",
-    "select_office": "Select Office",
-    "select_receiver": "Select Receiver",
-    "request_date": "Request date",
-    "request_chalani_number": "Request chalani number",
-    "request_letter_count": "Request letter count",
-    "items": "Items",
-    "product": "Product",
-    "quantity": "Quantity",
-    "remarks": "Remarks",
-    "add_item": "Add Item",
-    "remove": "Remove",
-    "update": "Update Letter",
-    "updating": "Saving...",
-    "validation": {
-      "required": "This field is required",
-      "invalid": "Invalid value"
-    }
-  },
-  "createProductPage": {
-    "title": "Create Product",
-    "productName": "Product Name *",
-    "companyName": "Company Name *",
-    "quantity": "Quantity *",
-    "remarks":"Remarks",
-    "unit": "Unit",
-    "submitButton": "Create Product",
-    "creatingButton": "Creating...",
-    "errors": {
-      "productNameRequired": "Product Name is required",
-      "companyNameRequired": "Company Name is required",
-      "unitRequired": "Unit is required",
-      "quantityRequired": "Quantity is required",
-      "quantityNumber": "Quantity must be a number"
-    },
-    "units": {
-      "kg": "KG",
-      "nos": "Nos.",
-      "set": "Set",
-      "ltr": "Ltr",
-      "pcs": "Pcs."
-    }
-  },
-  "editProductPage": {
-    "title": "Edit Product",
-    "productName": "Product Name *",
-    "companyName": "Company Name *",
-    "quantity": "Quantity *",
-    "unit": "Unit",
-    "submitButton": "Save",
-    "savingButton": "Saving...",
-    "errors": {
-      "productNameRequired": "Product Name is required",
-      "companyNameRequired": "Company Name is required",
-      "unitRequired": "Unit is required",
-      "quantityRequired": "Quantity is required",
-      "quantityNumber": "Quantity must be a number"
-    },
-    "units": {
-      "kg": "KG",
-      "nos": "Nos.",
-      "set": "Set",
-      "ltr": "Ltr",
-      "pcs": "Pcs."
-    }
-  },
-  "activeProductsPage": {
-    "title": "Product List",
-    "table": {
-      "sn": "S.N",
-      "sku": "SKU Id",
-      "name": "Name",
-      "company": "Company",
-      "unit": "Unit",
-      "action": "Action"
-    },
-    "noProducts": "No Products Found",
-    "dropdown": { "edit": "Edit", "moveToBin": "Move to bin" },
-    "pagination": { "previous": "Previous", "next": "Next" }
-  },
-  "productsBinPage": {
-    "title": "Product Bin",
-    "table": {
-      "sn": "S.N",
-      "sku": "SKU Id",
-      "name": "Name",
-      "company": "Company",
-      "unit": "Unit",
-      "action": "Action"
-    },
-    "noProducts": "No Products Found",
-    "dropdown": { "goLive": "Go Live" },
-    "pagination": { "previous": "Previous", "next": "Next" }
-  },
-  "createOffice": {
-    "title": "Create Office",
-    "fields": {
-      "name": "Name",
-      "email": "Email",
-      "address": "Address",
-      "phone": "Phone Number"
-    },
-    "errors": {
-      "nameRequired": "Name is required",
-      "emailRequired": "Email is required",
-      "emailInvalid": "Email is invalid",
-      "addressRequired": "Address is required",
-      "phoneRequired": "Phone Number is required",
-      "phoneNumber": "Phone Number must be a number",
-      "phoneMax": "Phone Number must be 10 digits max"
-    },
-    "buttons": {
-      "create": "Create Office",
-      "creating": "Creating..."
-    }
-  },
-  "officeList": {
-    "title": "Office List",
-    "table": {
-      "id": "Id",
-      "name": "Name",
-      "address": "Address",
-      "email": "Email",
-      "contact": "Contact",
-      "action": "Actions"
-    },
-    "actions": {
-      "edit": "Edit",
-      "delete": "Delete"
-    },
-    "noData": "No offices found",
-    "pagination": {
-      "previous": "Previous",
-      "next": "Next"
-    }
-  },
-  "editOffice": {
-    "title": "Edit Office",
-    "form": {
-      "name": "Name",
-      "address": "Address",
-      "email": "Email",
-      "phone": "Phone Number"
-    },
-    "validation": {
-      "name": "Name is required",
-      "email": "Email is required",
-      "emailInvalid": "Email is invalid",
-      "address": "Address is required",
-      "phone": "Phone Number is required",
-      "phoneNumber": "Phone Number must be a number",
-      "phoneMax": "Phone Number must be 10 digits max"
-    },
-    "loading": "Loading...",
-    "fetchError": "Failed to fetch office",
-    "updateError": "Failed to update office",
-    "save": "Save",
-    "saving": "Saving..."
-  },
-  "createBranch": {
-    "title": "Create Branch",
-    "form": {
-      "name": "Branch Name",
-      "email": "Email",
-      "address": "Address",
-      "bankName": "Bank Name",
-      "accountName": "Account Name",
-      "accountNumber": "Account Number",
-      "phone": "Phone Number"
-    },
-    "validation": {
-      "name": "Branch Name is required",
-      "email": "Email is required",
-      "emailInvalid": "Email is invalid",
-      "address": "Address is required",
-      "bankName": "Bank Name is required",
-      "accountName": "Account Name is required",
-      "accountNumber": "Account Number is required",
-      "accountNumberNum": "Account Number must be a number",
-      "accountNumberMax": "Account Number must be 15 digits max",
-      "phone": "Phone Number is required",
-      "phoneNum": "Phone Number must be a number",
-      "phoneMax": "Phone Number must be 10 digits max"
-    },
-    "create": "Create Branch",
-    "creating": "Creating..."
-  },
-  "editBranch": {
-    "title": "Edit Branch",
-    "form": {
-      "name": "Branch Name",
-      "email": "Email",
-      "address": "Address",
-      "bankName": "Bank Name",
-      "accountName": "Account Name",
-      "accountNumber": "Account Number",
-      "phone": "Phone Number"
-    },
-    "validation": {
-      "name": "Branch Name is required",
-      "email": "Email is required",
-      "emailInvalid": "Email is invalid",
-      "address": "Address is required",
-      "bankName": "Bank Name is required",
-      "accountName": "Account Name is required",
-      "accountNumber": "Account Number is required",
-      "accountNumberNum": "Account Number must be a number",
-      "accountNumberMax": "Account Number must be 15 digits max",
-      "phone": "Phone Number is required",
-      "phoneNum": "Phone Number must be a number",
-      "phoneMax": "Phone Number must be 10 digits max"
-    },
-    "save": "Save",
-    "saving": "Saving...",
-    "loading": "Loading..."
-  },
-  "allBranches": {
-    "title": "Branches List",
-    "table": {
-      "id": "Id",
-      "name": "Branch Name",
-      "email": "Email",
-      "phone": "Phone",
-      "address": "Address",
-      "action": "Action"
-    },
-    "noBranches": "No Branches Found",
-    "actions": {
-      "edit": "Edit",
-      "addEmployees": "Add Employees",
-      "allEmployees": "All Employees"
-    }
-  },
-  "createEmployee": {
-    "title": "Create Employee",
-    "labels": {
-      "branchId": "Branch",
-      "firstName": "First Name",
-      "middleName": "Middle Name",
-      "lastName": "Last Name",
-      "email": "Email",
-      "position": "Position",
-      "password": "Password"
-    },
-    "placeholders": {
-      "position": "Select Role*",
-      "branches": "Select Branch*"
-    },
-    "positions": {
-      "admin": "Admin",
-      "viewer": "Viewer",
-      "accountant": "Accountant",
-      "peon": "Peon"
-    },
-    "button": {
-      "create": "Create User",
-      "creating": "Creating..."
-    },
-    "errors": {
-      "firstName": "First Name is required",
-      "lastName": "Last Name is required",
-      "emailInvalid": "Email is invalid",
-      "emailRequired": "Email is required",
-      "branchId": "Branch Id is required",
-      "position": "Position is required",
-      "passwordLength": "Password must be at least 8 characters long"
-    }
-  },
-  "editEmployee": {
-    "title": "Edit Employee",
-    "labels": {
-      "branchId": "Branch Id",
-      "firstName": "First Name",
-      "middleName": "Middle Name",
-      "lastName": "Last Name",
-      "email": "Email",
-      "position": "Position",
-      "password": "Password",
-      "confirmPassword": "Confirm Password"
-    },
-    "placeholders": {
-      "position": "Select Position *"
-    },
-    "positions": {
-      "admin": "Admin",
-      "viewer": "Viewer",
-      "accountant": "Accountant",
-      "peon": "Peon"
-    },
-    "button": {
-      "save": "Save",
-      "saving": "Saving..."
-    },
-    "errors": {
-      "firstName": "First Name is required",
-      "lastName": "Last Name is required",
-      "emailInvalid": "Email is invalid",
-      "emailRequired": "Email is required",
-      "branchId": "Branch Id is required",
-      "position": "Position is required"
-    },
-    "loading": "Loading..."
-  },
-  "allEmployees": {
-    "title": "Employees List",
-    "headers": {
-      "id": "Id",
-      "name": "Name",
-      "email": "Email",
-      "role": "Level",
-      "branch": "Branch",
-      "action": "Action"
-    },
-    "noData": "No employees found",
-    "edit": "Edit"
-  },
-  "createReceiver": {
-    "title": "Create Receiver",
-    "labels": {
-      "name": "Name *",
-      "post":"Post *",
-      "idNo": "Id card No. *",
-      "idType": "Id card type *",
-      "deptName": "Department Name *",
-      "deptAddress":"Department Address *",
-      "vehicleNo": "Vehicle No. *",
-      "phone": "Phone Number *",
-      "createReceiver":"Create receiver",
-      "creating":"Creating..."
-    },
-    "placeholders": {
-      "name": "Enter Name",
-      "email": "Enter Email",
-      "address": "Enter Address",
-      "phone": "Enter Phone Number"
-    },
-    "errors": {
-      "nameRequired": "Receiver Name is required",
-      "deptRequired":"Department Name is required",
-      "deptAddressRequired":"Department Address is required",
-      "idNo":"ID card number is required",
-      "idType":"ID card type is required",
-      "phone": "Phone Number is required",
-      "phoneNum": "Phone Number must be only numbers",
-      "phoneMax": "Only 10 digits allowed",
-      "post": "Post is required",
-      "vehicleNo": "Vehicle No is required"
-    }
-  },
-  "allreceivers": {
-    "title": "Receiver List",
-    "headers": {
-      "id": "Id",
-      "name": "Name",
-      "email": "Email",
-      "role": "Role",
-      "branch": "Branch",
-      "action": "Action"
-    },
-    "table": {
-      "name": "Name",
-      "post": "Post",
-      "idcardNumber": "Id card no.",
-      "phoneNumber": "Phone number",
-      "action": "Actions"
-    },
-    "actions": {
-      "edit": "Edit",
-      "delete": "Delete"
-    },
-    "noData": "No receivers found",
-    "edit": "Edit"
-  },
-  "editReceiver": {
-    "title": "Edit Receiver",
-    "labels": {
-      "name": "Name *",
-      "post":"Post *",
-      "idNo": "Id card No. *",
-      "idType": "Id card type *",
-      "deptName": "Department Name *",
-      "deptAddress":"Department Address *",
-      "vehicleNo": "Vehicle No. *",
-      "phone": "Phone Number *",
-      "createReceiver":"Save",
-      "creating":"Saving..."
-    },
-    "placeholders": {
-      "name": "Enter Name",
-      "email": "Enter Email",
-      "address": "Enter Address",
-      "phone": "Enter Phone Number"
-    },
-    "errors": {
-      "nameRequired": "Receiver Name is required",
-      "deptRequired":"Department Name is required",
-      "deptAddressRequired":"Department Address is required",
-      "idNo":"ID card number is required",
-      "idType":"ID card type is required",
-      "phone": "Phone Number is required",
-      "phoneNum": "Phone Number must be only numbers",
-      "phoneMax": "Only 10 digits allowed",
-      "post": "Post is required",
-      "vehicleNo": "Vehicle No is required"
-    }
-  },
-    "allletters": {
-    "title": "All Letters",
-    "download": "Download",
-    "noletters": "No letters found.",
-    "table": {
-      "receiver_office_name": "Receiver Office",
-      "voucher_no": "Voucher No",
-      "chalani_no": "Chalani No",
-      "gatepass_no": "Gatepass No",
-      "subject": "Subject",
-      "request_date": "Request Date",
-      "receiver_name": "Receiver Name",
-      "receiver_id_card_number": "Receiver ID Card No",
-      "receiver_phone_number": "Receiver Phone",
-      "action": "Actions"
-    },
-    "actions": {
-      "delete": "Delete",
-      "edit": "Edit",
-      "view": "View"
-    },
-    "messages": {
-      "deleteSuccess": "Letter deleted successfully!",
-      "deleteError": "Failed to delete letter.",
-      "fetchError": "Unable to fetch letters.",
-      "downloadError": "Failed to download CSV file."
-    },
-    "pagination": {
-      "previous": "Previous",
-      "next": "Next"
-    }
-  }
+	"dashboard": {
+		"title": "Dashboard Overview",
+		"loading": "Loading dashboard…",
+		"error": "Failed to load data",
+		"last_updated": "Last updated",
+		"active_products": "Active Products",
+		"active_branches": "Active Branches",
+		"active_offices": "Active Offices",
+		"active_employees": "Active Employees",
+		"total_receivers": "Total Receivers",
+		"letters": "Letters",
+		"draft_letters": "Draft Letters",
+		"sent_letters": "Sent Letters"
+	},
+	"profile": {
+		"title": "Profile Dashboard",
+		"changePassword": "Change Password",
+		"createUser": "Create User",
+		"currentPassword": "Current Password",
+		"newPassword": "New Password",
+		"confirmPassword": "Confirm Password",
+		"updatePassword": "Update Password",
+		"name": "Name",
+		"email": "Email",
+		"password": "Password",
+		"viewer": "Viewer",
+		"admin": "Admin",
+		"createAccount": "Create Account",
+		"logout": "Logout"
+	},
+	"createLetter": {
+		"title": "Create Letter",
+		"date": "Date",
+		"letter_count": "Letter count",
+		"chalani_no": "Chalani No",
+		"voucher_no": "Voucher No",
+		"gatepass_no": "GatePass No",
+		"select_office": "Select Office",
+		"subject": "Subject",
+		"request_date": "Request date",
+		"request_chalani_number": "Request chalani number",
+		"request_letter_count": "Request letter count",
+		"items": "Items",
+		"serial_number": "Serial number",
+		"product": "Product",
+		"unit": "Unit",
+		"quantity": "Quantity",
+		"remarks": "Remarks",
+		"select_receiver": "Select Receiver",
+		"office_name": "Receiver office",
+		"receiver_office_address": "Receiver office address",
+		"phone_number": "Phone number",
+		"id_card_number": "Id card number",
+		"id_card_type": "Id card type",
+		"post": "Post",
+		"vehiche_number": "Vehicle number",
+		"no_receiver_found": "No receivers found in current selected office",
+		"submit": "Create Letter",
+		"creating": "Creating..."
+	},
+	"allLettersPage": {
+		"title": "List your all letters"
+	},
+	"lettersBinPage": {
+		"title": "Letters Bin"
+	},
+	"editLetter": {
+		"title": "Edit Letter",
+		"date": "Date",
+		"letter_count": "Letter count",
+		"chalani_no": "Chalani No",
+		"voucher_no": "Voucher No",
+		"gatepass_no": "GatePass No",
+		"subject": "Subject",
+		"select_office": "Select Office",
+		"select_receiver": "Select Receiver",
+		"request_date": "Request date",
+		"request_chalani_number": "Request chalani number",
+		"request_letter_count": "Request letter count",
+		"items": "Items",
+		"product": "Product",
+		"quantity": "Quantity",
+		"remarks": "Remarks",
+		"add_item": "Add Item",
+		"remove": "Remove",
+		"update": "Update Letter",
+		"updating": "Saving...",
+		"validation": {
+			"required": "This field is required",
+			"invalid": "Invalid value"
+		}
+	},
+	"createProductPage": {
+		"title": "Create Product",
+		"productName": "Product Name *",
+		"companyName": "Company Name *",
+		"quantity": "Quantity *",
+		"remarks": "Remarks",
+		"unit": "Unit",
+		"submitButton": "Create Product",
+		"creatingButton": "Creating...",
+		"errors": {
+			"productNameRequired": "Product Name is required",
+			"companyNameRequired": "Company Name is required",
+			"unitRequired": "Unit is required",
+			"quantityRequired": "Quantity is required",
+			"quantityNumber": "Quantity must be a number"
+		},
+		"units": {
+			"kg": "KG",
+			"nos": "Nos.",
+			"set": "Set",
+			"ltr": "Ltr",
+			"pcs": "Pcs."
+		}
+	},
+	"editProductPage": {
+		"title": "Edit Product",
+		"productName": "Product Name *",
+		"companyName": "Company Name *",
+		"quantity": "Quantity *",
+		"unit": "Unit",
+		"submitButton": "Save",
+		"savingButton": "Saving...",
+		"errors": {
+			"productNameRequired": "Product Name is required",
+			"companyNameRequired": "Company Name is required",
+			"unitRequired": "Unit is required",
+			"quantityRequired": "Quantity is required",
+			"quantityNumber": "Quantity must be a number"
+		},
+		"units": {
+			"kg": "KG",
+			"nos": "Nos.",
+			"set": "Set",
+			"ltr": "Ltr",
+			"pcs": "Pcs."
+		}
+	},
+	"activeProductsPage": {
+		"title": "Product List",
+		"table": {
+			"sn": "S.N",
+			"sku": "SKU Id",
+			"name": "Name",
+			"company": "Company",
+			"unit": "Unit",
+			"action": "Action"
+		},
+		"noProducts": "No Products Found",
+		"dropdown": { "edit": "Edit", "moveToBin": "Move to bin" },
+		"pagination": { "previous": "Previous", "next": "Next" }
+	},
+	"productsBinPage": {
+		"title": "Product Bin",
+		"table": {
+			"sn": "S.N",
+			"sku": "SKU Id",
+			"name": "Name",
+			"company": "Company",
+			"unit": "Unit",
+			"action": "Action"
+		},
+		"noProducts": "No Products Found",
+		"dropdown": { "goLive": "Go Live" },
+		"pagination": { "previous": "Previous", "next": "Next" }
+	},
+	"createOffice": {
+		"title": "Create Office",
+		"fields": {
+			"name": "Name",
+			"email": "Email",
+			"address": "Address",
+			"phone": "Phone Number"
+		},
+		"errors": {
+			"nameRequired": "Name is required",
+			"emailRequired": "Email is required",
+			"emailInvalid": "Email is invalid",
+			"addressRequired": "Address is required",
+			"phoneRequired": "Phone Number is required",
+			"phoneNumber": "Phone Number must be a number",
+			"phoneMax": "Phone Number must be 10 digits max"
+		},
+		"buttons": {
+			"create": "Create Office",
+			"creating": "Creating..."
+		}
+	},
+	"officeList": {
+		"title": "Office List",
+		"table": {
+			"id": "Id",
+			"name": "Name",
+			"address": "Address",
+			"email": "Email",
+			"contact": "Contact",
+			"action": "Actions"
+		},
+		"actions": {
+			"edit": "Edit",
+			"delete": "Delete"
+		},
+		"noData": "No offices found",
+		"pagination": {
+			"previous": "Previous",
+			"next": "Next"
+		}
+	},
+	"editOffice": {
+		"title": "Edit Office",
+		"form": {
+			"name": "Name",
+			"address": "Address",
+			"email": "Email",
+			"phone": "Phone Number"
+		},
+		"validation": {
+			"name": "Name is required",
+			"email": "Email is required",
+			"emailInvalid": "Email is invalid",
+			"address": "Address is required",
+			"phone": "Phone Number is required",
+			"phoneNumber": "Phone Number must be a number",
+			"phoneMax": "Phone Number must be 10 digits max"
+		},
+		"loading": "Loading...",
+		"fetchError": "Failed to fetch office",
+		"updateError": "Failed to update office",
+		"save": "Save",
+		"saving": "Saving..."
+	},
+	"createBranch": {
+		"title": "Create Branch",
+		"form": {
+			"name": "Branch Name",
+			"email": "Email",
+			"address": "Address",
+			"bankName": "Bank Name",
+			"accountName": "Account Name",
+			"accountNumber": "Account Number",
+			"phone": "Phone Number"
+		},
+		"validation": {
+			"name": "Branch Name is required",
+			"email": "Email is required",
+			"emailInvalid": "Email is invalid",
+			"address": "Address is required",
+			"bankName": "Bank Name is required",
+			"accountName": "Account Name is required",
+			"accountNumber": "Account Number is required",
+			"accountNumberNum": "Account Number must be a number",
+			"accountNumberMax": "Account Number must be 15 digits max",
+			"phone": "Phone Number is required",
+			"phoneNum": "Phone Number must be a number",
+			"phoneMax": "Phone Number must be 10 digits max"
+		},
+		"create": "Create Branch",
+		"creating": "Creating..."
+	},
+	"editBranch": {
+		"title": "Edit Branch",
+		"form": {
+			"name": "Branch Name",
+			"email": "Email",
+			"address": "Address",
+			"bankName": "Bank Name",
+			"accountName": "Account Name",
+			"accountNumber": "Account Number",
+			"phone": "Phone Number"
+		},
+		"validation": {
+			"name": "Branch Name is required",
+			"email": "Email is required",
+			"emailInvalid": "Email is invalid",
+			"address": "Address is required",
+			"bankName": "Bank Name is required",
+			"accountName": "Account Name is required",
+			"accountNumber": "Account Number is required",
+			"accountNumberNum": "Account Number must be a number",
+			"accountNumberMax": "Account Number must be 15 digits max",
+			"phone": "Phone Number is required",
+			"phoneNum": "Phone Number must be a number",
+			"phoneMax": "Phone Number must be 10 digits max"
+		},
+		"save": "Save",
+		"saving": "Saving...",
+		"loading": "Loading..."
+	},
+	"allBranches": {
+		"title": "Branches List",
+		"table": {
+			"id": "Id",
+			"name": "Branch Name",
+			"email": "Email",
+			"phone": "Phone",
+			"address": "Address",
+			"action": "Action"
+		},
+		"noBranches": "No Branches Found",
+		"actions": {
+			"edit": "Edit",
+			"addEmployees": "Add Employees",
+			"allEmployees": "All Employees"
+		}
+	},
+	"createEmployee": {
+		"title": "Create Employee",
+		"labels": {
+			"branchId": "Branch",
+			"firstName": "First Name",
+			"middleName": "Middle Name",
+			"lastName": "Last Name",
+			"email": "Email",
+			"position": "Position",
+			"password": "Password"
+		},
+		"placeholders": {
+			"position": "Select Role*",
+			"branches": "Select Branch*"
+		},
+		"positions": {
+			"admin": "Admin",
+			"viewer": "Viewer",
+			"accountant": "Accountant",
+			"peon": "Peon"
+		},
+		"button": {
+			"create": "Create User",
+			"creating": "Creating..."
+		},
+		"errors": {
+			"firstName": "First Name is required",
+			"lastName": "Last Name is required",
+			"emailInvalid": "Email is invalid",
+			"emailRequired": "Email is required",
+			"branchId": "Branch Id is required",
+			"position": "Position is required",
+			"passwordLength": "Password must be at least 8 characters long"
+		}
+	},
+	"editEmployee": {
+		"title": "Edit Employee",
+		"labels": {
+			"branchId": "Branch Id",
+			"firstName": "First Name",
+			"middleName": "Middle Name",
+			"lastName": "Last Name",
+			"email": "Email",
+			"position": "Position",
+			"password": "Password",
+			"confirmPassword": "Confirm Password"
+		},
+		"placeholders": {
+			"position": "Select Position *"
+		},
+		"positions": {
+			"admin": "Admin",
+			"viewer": "Viewer",
+			"accountant": "Accountant",
+			"peon": "Peon"
+		},
+		"button": {
+			"save": "Save",
+			"saving": "Saving..."
+		},
+		"errors": {
+			"firstName": "First Name is required",
+			"lastName": "Last Name is required",
+			"emailInvalid": "Email is invalid",
+			"emailRequired": "Email is required",
+			"branchId": "Branch Id is required",
+			"position": "Position is required"
+		},
+		"loading": "Loading..."
+	},
+	"allEmployees": {
+		"title": "Employees List",
+		"headers": {
+			"id": "Id",
+			"name": "Name",
+			"email": "Email",
+			"role": "Level",
+			"branch": "Branch",
+			"action": "Action"
+		},
+		"noData": "No employees found",
+		"edit": "Edit"
+	},
+	"createReceiver": {
+		"title": "Create Receiver",
+		"labels": {
+			"name": "Name *",
+			"post": "Post *",
+			"idNo": "Id card No. *",
+			"idType": "Id card type *",
+			"deptName": "Department Name *",
+			"deptAddress": "Department Address *",
+			"vehicleNo": "Vehicle No. *",
+			"phone": "Phone Number *",
+			"createReceiver": "Create receiver",
+			"creating": "Creating..."
+		},
+		"placeholders": {
+			"name": "Enter Name",
+			"email": "Enter Email",
+			"address": "Enter Address",
+			"phone": "Enter Phone Number"
+		},
+		"errors": {
+			"nameRequired": "Receiver Name is required",
+			"deptRequired": "Department Name is required",
+			"deptAddressRequired": "Department Address is required",
+			"idNo": "ID card number is required",
+			"idType": "ID card type is required",
+			"phone": "Phone Number is required",
+			"phoneNum": "Phone Number must be only numbers",
+			"phoneMax": "Only 10 digits allowed",
+			"post": "Post is required",
+			"vehicleNo": "Vehicle No is required"
+		}
+	},
+	"allreceivers": {
+		"title": "Receiver List",
+		"headers": {
+			"id": "Id",
+			"name": "Name",
+			"email": "Email",
+			"role": "Role",
+			"branch": "Branch",
+			"action": "Action"
+		},
+		"table": {
+			"name": "Name",
+			"post": "Post",
+			"idcardNumber": "Id card no.",
+			"phoneNumber": "Phone number",
+			"action": "Actions"
+		},
+		"actions": {
+			"edit": "Edit",
+			"delete": "Delete"
+		},
+		"noData": "No receivers found",
+		"edit": "Edit"
+	},
+	"editReceiver": {
+		"title": "Edit Receiver",
+		"labels": {
+			"name": "Name *",
+			"post": "Post *",
+			"idNo": "Id card No. *",
+			"idType": "Id card type *",
+			"deptName": "Department Name *",
+			"deptAddress": "Department Address *",
+			"vehicleNo": "Vehicle No. *",
+			"phone": "Phone Number *",
+			"createReceiver": "Save",
+			"creating": "Saving..."
+		},
+		"placeholders": {
+			"name": "Enter Name",
+			"email": "Enter Email",
+			"address": "Enter Address",
+			"phone": "Enter Phone Number"
+		},
+		"errors": {
+			"nameRequired": "Receiver Name is required",
+			"deptRequired": "Department Name is required",
+			"deptAddressRequired": "Department Address is required",
+			"idNo": "ID card number is required",
+			"idType": "ID card type is required",
+			"phone": "Phone Number is required",
+			"phoneNum": "Phone Number must be only numbers",
+			"phoneMax": "Only 10 digits allowed",
+			"post": "Post is required",
+			"vehicleNo": "Vehicle No is required"
+		}
+	},
+	"allletters": {
+		"title": "All Letters",
+		"download": "Download",
+		"noletters": "No letters found.",
+		"table": {
+			"receiver_office_name": "Receiver Office",
+			"voucher_no": "Voucher No",
+			"chalani_no": "Chalani No",
+			"gatepass_no": "Gatepass No",
+			"subject": "Subject",
+			"request_date": "Request Date",
+			"receiver_name": "Receiver Name",
+			"receiver_id_card_number": "Receiver ID Card No",
+			"receiver_phone_number": "Receiver Phone",
+			"action": "Actions"
+		},
+		"actions": {
+			"delete": "Delete",
+			"edit": "Edit",
+			"view": "View"
+		},
+		"messages": {
+			"deleteSuccess": "Letter deleted successfully!",
+			"deleteError": "Failed to delete letter.",
+			"fetchError": "Unable to fetch letters.",
+			"downloadError": "Failed to download CSV file."
+		},
+		"pagination": {
+			"previous": "Previous",
+			"next": "Next"
+		}
+	}
 }

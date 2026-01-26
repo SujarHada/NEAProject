@@ -1,503 +1,503 @@
 {
-   "dashboard": {
-    "title": "ड्यासबोर्ड अवलोकन",
-    "loading": "ड्यासबोर्ड लोड हुँदैछ…",
-    "error": "डेटा लोड गर्न असफल",
-    "last_updated": "अन्तिम अद्यावधिक",
-    "active_products": "सक्रिय वस्तुहरू",
-    "active_branches": "सक्रिय शाखाहरू",
-    "active_offices": "सक्रिय कार्यालयहरू",
-    "active_employees": "सक्रिय कर्मचारीहरू",
-    "total_receivers": "कुल प्राप्तकर्ताहरू",
-    "letters": "पत्रहरू",
-    "draft_letters": "ड्राफ्ट पत्रहरू",
-    "sent_letters": "पठाइएका पत्रहरू"
-  },
-  "profile": {
-  "title": "प्रोफाइल ड्यासबोर्ड",
-  "changePassword": "पासवर्ड परिवर्तन गर्नुहोस्",
-  "createUser": "प्रयोगकर्ता बनाउनुहोस्",
-  "currentPassword": "पुरानो पासवर्ड",
-  "newPassword": "नयाँ पासवर्ड",
-  "confirmPassword": "पासवर्ड पुष्टि गर्नुहोस्",
-  "updatePassword": "पासवर्ड अपडेट गर्नुहोस्",
-  "name": "नाम",
-  "email": "इमेल",
-  "password": "पासवर्ड",
-  "viewer": "हेर्ने प्रयोगकर्ता",
-  "admin": "प्रशासक",
-  "createAccount": "खाता बनाउनुहोस्",
-  "logout": "लगआउट गर्नुहोस्"
-  },  
-  "createLetter": {
-    "title": "पत्र सिर्जना गर्नुहोस्",
-    "date": "मिति",
-    "letter_count": "पत्र संख्या",
-    "chalani_no": "चलानी नं",
-    "voucher_no": "भौचर नं",
-    "gatepass_no": "गेटपास नं",
-    "select_office": "कार्यालय छान्नुहोस्",
-    "subject": "विषय",
-    "request_date": "अनुरोध मिति",
-    "request_chalani_number": "अनुरोध चलानी नं",
-    "request_letter_count": "अनुरोध पत्र संख्या",
-    "items": "सामग्रीहरू",
-    "serial_number": "सरियल नं",
-    "product": "उत्पाद",
-    "quantity": "मात्रा",
-    "remarks": "टिप्पणीहरू",
-    "select_receiver": "प्राप्तकर्ता छान्नुहोस्",
-    "id_card_number": "आइडी कार्ड नं",
-    "id_card_type": "आइडी कार्ड प्रकार",
-    "post": "पोस्ट",
-    "vehiche_number": "गाडी नं",
-    "office_name": "प्राप्तकर्ता कार्यालय",
-    "receiver_office_address": "प्राप्तकर्ता कार्यालय ठेगाना",
-    "no_receiver_found": "हाल चयन गरिएको कार्यालयमा कुनै प्राप्तकर्ता छैन",
-    "submit": "पत्र सिर्जना गर्नुहोस्",
-    "creating": "सिर्जना हुँदैछ..."
-  },
-  "lettersBinPage": {
-    "title": "पत्र बिन"
-  },
-  "editLetter": {
-    "title": "पत्र सम्पादन",
-    "date": "मिति",
-    "letter_count": "पत्र संख्या",
-    "chalani_no": "चलानी नं",
-    "voucher_no": "भौचर नं",
-    "gatepass_no": "गेट पास नं",
-    "subject": "विषय",
-    "select_office": "कार्यालय चयन गर्नुहोस्",
-    "select_receiver": "प्राप्तकर्ता चयन गर्नुहोस्",
-    "request_date": "अनुरोध मिति",
-    "request_chalani_number": "अनुरोध चलानी नं",
-    "request_letter_count": "अनुरोध पत्र संख्या",
-    "items": "वस्तुहरू",
-    "product": "उत्पाद",
-    "quantity": "परिमाण",
-    "remarks": "कैफियत",
-    "add_item": "वस्तु थप्नुहोस्",
-    "remove": "हटाउनुहोस्",
-    "update": "पत्र अद्यावधिक गर्नुहोस्",
-    "updating": "सुरक्षित गर्दै...",
-    "validation": {
-      "required": "यो फिल्ड आवश्यक छ",
-      "invalid": "अवैध मान"
-    }
-  },
-  "createProductPage": {
-    "title": "उत्पादन सिर्जना गर्नुहोस्",
-    "productName": "उत्पादको नाम *",
-    "companyName": "कम्पनीको नाम *",
-    "quantity": "परिमाण *",
-    "unit": "एकाइ",
-    "submitButton": "उत्पादन सिर्जना गर्नुहोस्",
-    "creatingButton": "सिर्जना भइरहेको छ...",
-    "errors": {
-      "productNameRequired": "उत्पादको नाम आवश्यक छ",
-      "companyNameRequired": "कम्पनीको नाम आवश्यक छ",
-      "unitRequired": "एकाइ आवश्यक छ",
-      "quantityRequired": "परिमाण आवश्यक छ",
-      "quantityNumber": "परिमाण संख्यात्मक हुनुपर्छ"
-    },
-    "units": {
-      "kg": "किग्रा",
-      "nos": "नम्वर",
-      "set": "सेट",
-      "ltr": "लि.",
-      "pcs": "पिस"
-    }
-  },
-  "editProductPage": {
-    "title": "उत्पादन सम्पादन गर्नुहोस्",
-    "productName": "उत्पादको नाम *",
-    "companyName": "कम्पनीको नाम *",
-    "quantity": "परिमाण *",
-    "unit": "एकाइ",
-    "submitButton": "सेभ गर्नुहोस्",
-    "savingButton": "सेभ हुँदैछ...",
-    "errors": {
-      "productNameRequired": "उत्पादको नाम आवश्यक छ",
-      "companyNameRequired": "कम्पनीको नाम आवश्यक छ",
-      "unitRequired": "एकाइ आवश्यक छ",
-      "quantityRequired": "परिमाण आवश्यक छ",
-      "quantityNumber": "परिमाण संख्यात्मक हुनुपर्छ"
-    },
-    "units": {
-      "kg": "किग्रा",
-      "nos": "नम्वर",
-      "set": "सेट",
-      "ltr": "लि.",
-      "pcs": "पिस"
-    }
-  },
-  "activeProductsPage": {
-    "title": "उत्पादन सूची",
-    "table": {
-      "sn": "क्र.स.",
-      "sku": "SKU आईडी",
-      "name": "नाम",
-      "company": "कम्पनी",
-      "unit": "एकाइ",
-      "action": "कार्य"
-    },
-    "noProducts": "कुनै उत्पादन फेला परेन",
-    "dropdown": {
-      "edit": "सम्पादन गर्नुहोस्",
-      "moveToBin": "बिनमा सार्नुहोस्"
-    },
-    "pagination": { "previous": "अघिल्लो", "next": "अर्को" }
-  },
-  "productsBinPage": {
-    "title": "उत्पादन बिन",
-    "table": {
-      "sn": "क्र.स.",
-      "sku": "SKU आईडी",
-      "name": "नाम",
-      "company": "कम्पनी",
-      "unit": "एकाइ",
-      "action": "कार्य"
-    },
-    "noProducts": "कुनै उत्पादन फेला परेन",
-    "dropdown": { "goLive": "सक्रिय बनाउनुहोस्" },
-    "pagination": { "previous": "अघिल्लो", "next": "अर्को" }
-  },
-  "createOffice": {
-    "title": "कार्यालय सिर्जना गर्नुहोस्",
-    "fields": {
-      "name": "नाम",
-      "email": "इमेल",
-      "address": "ठेगाना",
-      "phone": "फोन नम्बर"
-    },
-    "errors": {
-      "nameRequired": "नाम आवश्यक छ",
-      "emailRequired": "इमेल आवश्यक छ",
-      "emailInvalid": "इमेल अमान्य छ",
-      "addressRequired": "ठेगाना आवश्यक छ",
-      "phoneRequired": "फोन नम्बर आवश्यक छ",
-      "phoneNumber": "फोन नम्बरमा मात्र अंक हुनुपर्छ",
-      "phoneMax": "फोन नम्बर अधिकतम १० अंक हुनुपर्छ"
-    },
-    "buttons": {
-      "create": "कार्यालय सिर्जना गर्नुहोस्",
-      "creating": "सिर्जना हुँदैछ..."
-    }
-  },
-  "officeList": {
-    "title": "कार्यालय सूची",
-    "table": {
-      "id": "आईडी",
-      "name": "कार्यालय नाम",
-      "address": "ठेगाना",
-      "email": "इमेल",
-      "contact": "सम्पर्क",
-      "action": "कार्य"
-    },
-    "actions": {
-      "edit": "सम्पादन गर्नुहोस्",
-      "delete": "मेटाउनुहोस्"
-    },
-    "noData": "कुनै कार्यालय फेला परेन",
-    "pagination": {
-      "previous": "अघिल्लो",
-      "next": "अर्को"
-    }
-  },
-  "editOffice": {
-    "title": "कार्यालय सम्पादन गर्नुहोस्",
-    "form": {
-      "name": "नाम",
-      "address": "ठेगाना",
-      "email": "इमेल",
-      "phone": "फोन नम्बर"
-    },
-    "validation": {
-      "name": "नाम आवश्यक छ",
-      "email": "इमेल आवश्यक छ",
-      "emailInvalid": "इमेल अमान्य छ",
-      "address": "ठेगाना आवश्यक छ",
-      "phone": "फोन नम्बर आवश्यक छ",
-      "phoneNumber": "फोन नम्बर संख्यामा मात्र हुनुपर्छ",
-      "phoneMax": "फोन नम्बर अधिकतम १० अंक हुनुपर्छ"
-    },
-    "loading": "लोड हुँदैछ...",
-    "fetchError": "कार्यालय प्राप्त गर्न असफल भयो",
-    "updateError": "कार्यालय अपडेट गर्न असफल भयो",
-    "save": "सेभ गर्नुहोस्",
-    "saving": "सेभ हुँदैछ..."
-  },
-  "createBranch": {
-    "title": "शाखा सिर्जना गर्नुहोस्",
-    "form": {
-      "name": "शाखा नाम",
-      "email": "इमेल",
-      "address": "ठेगाना",
-      "bankName": "बैंकको नाम",
-      "accountName": "खाताको नाम",
-      "accountNumber": "खाताको नम्बर",
-      "phone": "फोन नम्बर"
-    },
-    "validation": {
-      "name": "शाखा नाम आवश्यक छ",
-      "email": "इमेल आवश्यक छ",
-      "emailInvalid": "इमेल अमान्य छ",
-      "address": "ठेगाना आवश्यक छ",
-      "bankName": "बैंकको नाम आवश्यक छ",
-      "accountName": "खाताको नाम आवश्यक छ",
-      "accountNumber": "खाताको नम्बर आवश्यक छ",
-      "accountNumberNum": "खाताको नम्बर संख्यामा मात्र हुनुपर्छ",
-      "accountNumberMax": "खाताको नम्बर अधिकतम १५ अंक हुनुपर्छ",
-      "phone": "फोन नम्बर आवश्यक छ",
-      "phoneNum": "फोन नम्बर संख्यामा मात्र हुनुपर्छ",
-      "phoneMax": "फोन नम्बर अधिकतम १० अंक हुनुपर्छ"
-    },
-    "create": "शाखा सिर्जना गर्नुहोस्",
-    "creating": "सिर्जना हुँदैछ..."
-  },
-  "editBranch": {
-    "title": "शाखा सम्पादन गर्नुहोस्",
-    "form": {
-      "name": "शाखा नाम",
-      "email": "इमेल",
-      "address": "ठेगाना",
-      "bankName": "बैंकको नाम",
-      "accountName": "खाताको नाम",
-      "accountNumber": "खाताको नम्बर",
-      "phone": "फोन नम्बर"
-    },
-    "validation": {
-      "name": "शाखा नाम आवश्यक छ",
-      "email": "इमेल आवश्यक छ",
-      "emailInvalid": "इमेल अमान्य छ",
-      "address": "ठेगाना आवश्यक छ",
-      "bankName": "बैंकको नाम आवश्यक छ",
-      "accountName": "खाताको नाम आवश्यक छ",
-      "accountNumber": "खाताको नम्बर आवश्यक छ",
-      "accountNumberNum": "खाताको नम्बर संख्यामा मात्र हुनुपर्छ",
-      "accountNumberMax": "खाताको नम्बर अधिकतम १५ अंक हुनुपर्छ",
-      "phone": "फोन नम्बर आवश्यक छ",
-      "phoneNum": "फोन नम्बर संख्यामा मात्र हुनुपर्छ",
-      "phoneMax": "फोन नम्बर अधिकतम १० अंक हुनुपर्छ"
-    },
-    "save": "सेभ गर्नुहोस्",
-    "saving": "सेभ हुँदैछ...",
-    "loading": "लोड हुँदैछ..."
-  },
-  "allBranches": {
-    "title": "शाखाहरूको सूची",
-    "table": {
-      "id": "आईडी",
-      "name": "शाखा नाम",
-      "email": "इमेल",
-      "phone": "फोन",
-      "address": "ठेगाना",
-      "action": "क्रिया"
-    },
-    "noBranches": "कुनै शाखा फेला परेन",
-    "actions": {
-      "edit": "सम्पादन गर्नुहोस्",
-      "addEmployees": "कर्मचारी थप्नुहोस्",
-      "allEmployees": "सबै कर्मचारीहरू"
-    }
-  },
-  "createEmployee": {
-    "title": "कर्मचारी सिर्जना गर्नुहोस्",
-    "labels": {
-      "branchId": "शाखा",
-      "firstName": "पहिलो नाम",
-      "middleName": "मध्य नाम",
-      "lastName": "थर",
-      "email": "इमेल",
-      "position": "तह"
-    },
-    "placeholders": {
-      "position": "भूमिका छान्नुहोस् *",
-      "branches": "शाखा छान्नुहोस् *"
-    },
-    "positions": {
-      "admin": "प्रशासक",
-      "viewer": "दर्शक"
-    },
-    "button": {
-      "create": "कर्मचारी सिर्जना गर्नुहोस्",
-      "creating": "सिर्जना हुँदैछ..."
-    },
-    "errors": {
-      "firstName": "पहिलो नाम आवश्यक छ",
-      "lastName": "थर आवश्यक छ",
-      "emailInvalid": "इमेल अमान्य छ",
-      "emailRequired": "इमेल आवश्यक छ",
-      "branchId": "शाखा आईडी आवश्यक छ",
-      "position": "तह आवश्यक छ"
-    }
-  },
-  "editEmployee": {
-    "title": "कर्मचारी सम्पादन गर्नुहोस्",
-    "labels": {
-      "branchId": "शाखा आईडी",
-      "firstName": "पहिलो नाम",
-      "middleName": "मध्य नाम",
-      "lastName": "थर",
-      "email": "इमेल",
-      "position": "तह",
-      "password": "पासवर्ड",
-      "confirmPassword": "पासवर्ड निश्चित गर्नुहोस्"
-    },
-    "placeholders": {
-      "position": "तह छान्नुहोस् *"
-    },
-    "positions": {
-      "admin": "प्रशासक",
-      "viewer": "दर्शक"
-    },
-    "button": {
-      "save": "सुरक्षित गर्नुहोस्",
-      "saving": "सुरक्षित गर्दैछ..."
-    },
-    "errors": {
-      "firstName": "पहिलो नाम आवश्यक छ",
-      "lastName": "थर आवश्यक छ",
-      "emailInvalid": "इमेल अमान्य छ",
-      "emailRequired": "इमेल आवश्यक छ",
-      "branchId": "शाखा आईडी आवश्यक छ",
-      "position": "पद आवश्यक छ"
-    },
-    "loading": "लोड हुँदैछ..."
-  },
-  "allEmployees": {
-    "title": "कर्मचारी सूची",
-    "headers": {
-      "id": "आईडी",
-      "name": "नाम",
-      "email": "इमेल",
-      "role": "तह",
-      "branch": "शाखा",
-      "action": "कार्य"
-    },
-    "noData": "कुनै कर्मचारी फेला परेनन्",
-    "edit": "सम्पादन गर्नुहोस्"
-  },
-  "createReceiver": {
-    "title": "प्रापक सिर्जना गर्नुहोस्",
-    "labels": {
-      "name": "नाम *",
-      "post": "पद *",
-      "idNo": "पहिचान पत्र नम्बर *",
-      "idType": "पहिचान पत्र प्रकार *",
-      "deptName": "विभागको नाम *",
-      "deptAddress": "विभागको ठेगाना *",
-      "vehicleNo": "सवारी साधन नम्बर *",
-      "phone": "फोन नम्बर *",
-      "createReceiver": "प्रापक सिर्जना गर्नुहोस्",
-      "creating": "सिर्जना गर्दैछ..."
-    },
-    "placeholders": {
-      "name": "नाम प्रविष्ट गर्नुहोस्",
-      "email": "इमेल प्रविष्ट गर्नुहोस्",
-      "address": "ठेगाना प्रविष्ट गर्नुहोस्",
-      "phone": "फोन नम्बर प्रविष्ट गर्नुहोस्"
-    },
-    "errors": {
-      "nameRequired": "प्रापकको नाम आवश्यक छ",
-      "deptRequired": "विभागको नाम आवश्यक छ",
-      "deptAddressRequired": "विभागको ठेगाना आवश्यक छ",
-      "idNo": "पहिचान पत्र नम्बर आवश्यक छ",
-      "idType": "पहिचान पत्र प्रकार आवश्यक छ",
-      "phone": "फोन नम्बर आवश्यक छ",
-      "phoneNum": "फोन नम्बरमा केवल अंक हुनुपर्छ",
-      "phoneMax": "केवल १० अंक मात्र अनुमति छ",
-      "post": "पद आवश्यक छ",
-      "vehicleNo": "सवारी साधन नम्बर आवश्यक छ"
-    }
-  },
-  "allreceivers": {
-    "title": "प्रापकहरूको सूची",
-    "headers": {
-      "id": "आईडी",
-      "name": "नाम",
-      "email": "इमेल",
-      "role": "भूमिका",
-      "branch": "शाखा",
-      "action": "कार्य"
-    },
-    "table": {
-      "name": "नाम",
-      "post": "पद",
-      "idcardNumber": "पहिचान पत्र नम्बर",
-      "phoneNumber": "फोन नम्बर",
-      "action": "कार्यहरू"
-    },
-    "actions": {
-      "edit": "सम्पादन गर्नुहोस्",
-      "delete": "मेटाउनुहोस्"
-    },
-    "noData": "कुनै प्रापक फेला परेन",
-    "edit": "सम्पादन गर्नुहोस्"
-  },
-  "editReceiver": {
-    "title": "प्रापक सम्पादन गर्नुहोस्",
-    "labels": {
-      "name": "नाम *",
-      "post": "पद *",
-      "idNo": "परिचयपत्र नम्बर *",
-      "idType": "परिचयपत्र प्रकार *",
-      "deptName": "विभागको नाम *",
-      "deptAddress": "विभागको ठेगाना *",
-      "vehicleNo": "सवारी नम्बर *",
-      "phone": "फोन नम्बर *",
-      "createReceiver": "सेभ गर्नुहोस्",
-      "creating": "सेभ हुँदैछ..."
-    },
-    "placeholders": {
-      "name": "नाम लेख्नुहोस्",
-      "email": "इमेल लेख्नुहोस्",
-      "address": "ठेगाना लेख्नुहोस्",
-      "phone": "फोन नम्बर लेख्नुहोस्"
-    },
-    "errors": {
-      "nameRequired": "प्रापकको नाम आवश्यक छ",
-      "deptRequired": "विभागको नाम आवश्यक छ",
-      "deptAddressRequired": "विभागको ठेगाना आवश्यक छ",
-      "idNo": "परिचयपत्र नम्बर आवश्यक छ",
-      "idType": "परिचयपत्र प्रकार आवश्यक छ",
-      "phone": "फोन नम्बर आवश्यक छ",
-      "phoneNum": "फोन नम्बरमा अंक मात्र हुनुपर्छ",
-      "phoneMax": "१० अंक मात्र अनुमति छ",
-      "post": "पद आवश्यक छ",
-      "vehicleNo": "सवारी नम्बर आवश्यक छ"
-    }
-  },
-  "allletters": {
-    "title": "सबै पत्रहरू",
-    "download": "डाउनलोड",
-    "noletters": "कुनै पत्र फेला परेन।",
-    "table": {
-      "receiver_office_name": "प्रापक कार्यालय",
-      "voucher_no": "भौचर नम्बर",
-      "chalani_no": "चलानी नम्बर",
-      "gatepass_no": "गेटपास नम्बर",
-      "subject": "विषय",
-      "request_date": "अनुरोध मिति",
-      "receiver_name": "प्रापकको नाम",
-      "receiver_id_card_number": "प्रापकको परिचयपत्र नम्बर",
-      "receiver_phone_number": "प्रापकको फोन नम्बर",
-      "action": "कार्यहरू"
-    },
-    "actions": {
-      "delete": "मेटाउनुहोस्",
-      "edit": "सम्पादन गर्नुहोस्"
-    },
-    "messages": {
-      "deleteSuccess": "पत्र सफलतापूर्वक मेटाइयो!",
-      "deleteError": "पत्र मेटाउन असफल भयो।",
-      "fetchError": "पत्रहरू ल्याउन सकिएन।",
-      "downloadError": "CSV फाइल डाउनलोड गर्न असफल।"
-    },
-    "pagination": {
-      "previous": "अघिल्लो",
-      "next": "अर्को"
-    }
-  }
+	"dashboard": {
+		"title": "ड्यासबोर्ड अवलोकन",
+		"loading": "ड्यासबोर्ड लोड हुँदैछ…",
+		"error": "डेटा लोड गर्न असफल",
+		"last_updated": "अन्तिम अद्यावधिक",
+		"active_products": "सक्रिय वस्तुहरू",
+		"active_branches": "सक्रिय शाखाहरू",
+		"active_offices": "सक्रिय कार्यालयहरू",
+		"active_employees": "सक्रिय कर्मचारीहरू",
+		"total_receivers": "कुल प्राप्तकर्ताहरू",
+		"letters": "पत्रहरू",
+		"draft_letters": "ड्राफ्ट पत्रहरू",
+		"sent_letters": "पठाइएका पत्रहरू"
+	},
+	"profile": {
+		"title": "प्रोफाइल ड्यासबोर्ड",
+		"changePassword": "पासवर्ड परिवर्तन गर्नुहोस्",
+		"createUser": "प्रयोगकर्ता बनाउनुहोस्",
+		"currentPassword": "पुरानो पासवर्ड",
+		"newPassword": "नयाँ पासवर्ड",
+		"confirmPassword": "पासवर्ड पुष्टि गर्नुहोस्",
+		"updatePassword": "पासवर्ड अपडेट गर्नुहोस्",
+		"name": "नाम",
+		"email": "इमेल",
+		"password": "पासवर्ड",
+		"viewer": "हेर्ने प्रयोगकर्ता",
+		"admin": "प्रशासक",
+		"createAccount": "खाता बनाउनुहोस्",
+		"logout": "लगआउट गर्नुहोस्"
+	},
+	"createLetter": {
+		"title": "पत्र सिर्जना गर्नुहोस्",
+		"date": "मिति",
+		"letter_count": "पत्र संख्या",
+		"chalani_no": "चलानी नं",
+		"voucher_no": "भौचर नं",
+		"gatepass_no": "गेटपास नं",
+		"select_office": "कार्यालय छान्नुहोस्",
+		"subject": "विषय",
+		"request_date": "अनुरोध मिति",
+		"request_chalani_number": "अनुरोध चलानी नं",
+		"request_letter_count": "अनुरोध पत्र संख्या",
+		"items": "सामग्रीहरू",
+		"serial_number": "सरियल नं",
+		"product": "उत्पाद",
+		"quantity": "मात्रा",
+		"remarks": "टिप्पणीहरू",
+		"select_receiver": "प्राप्तकर्ता छान्नुहोस्",
+		"id_card_number": "आइडी कार्ड नं",
+		"id_card_type": "आइडी कार्ड प्रकार",
+		"post": "पोस्ट",
+		"vehiche_number": "गाडी नं",
+		"office_name": "प्राप्तकर्ता कार्यालय",
+		"receiver_office_address": "प्राप्तकर्ता कार्यालय ठेगाना",
+		"no_receiver_found": "हाल चयन गरिएको कार्यालयमा कुनै प्राप्तकर्ता छैन",
+		"submit": "पत्र सिर्जना गर्नुहोस्",
+		"creating": "सिर्जना हुँदैछ..."
+	},
+	"lettersBinPage": {
+		"title": "पत्र बिन"
+	},
+	"editLetter": {
+		"title": "पत्र सम्पादन",
+		"date": "मिति",
+		"letter_count": "पत्र संख्या",
+		"chalani_no": "चलानी नं",
+		"voucher_no": "भौचर नं",
+		"gatepass_no": "गेट पास नं",
+		"subject": "विषय",
+		"select_office": "कार्यालय चयन गर्नुहोस्",
+		"select_receiver": "प्राप्तकर्ता चयन गर्नुहोस्",
+		"request_date": "अनुरोध मिति",
+		"request_chalani_number": "अनुरोध चलानी नं",
+		"request_letter_count": "अनुरोध पत्र संख्या",
+		"items": "वस्तुहरू",
+		"product": "उत्पाद",
+		"quantity": "परिमाण",
+		"remarks": "कैफियत",
+		"add_item": "वस्तु थप्नुहोस्",
+		"remove": "हटाउनुहोस्",
+		"update": "पत्र अद्यावधिक गर्नुहोस्",
+		"updating": "सुरक्षित गर्दै...",
+		"validation": {
+			"required": "यो फिल्ड आवश्यक छ",
+			"invalid": "अवैध मान"
+		}
+	},
+	"createProductPage": {
+		"title": "उत्पादन सिर्जना गर्नुहोस्",
+		"productName": "उत्पादको नाम *",
+		"companyName": "कम्पनीको नाम *",
+		"quantity": "परिमाण *",
+		"unit": "एकाइ",
+		"submitButton": "उत्पादन सिर्जना गर्नुहोस्",
+		"creatingButton": "सिर्जना भइरहेको छ...",
+		"errors": {
+			"productNameRequired": "उत्पादको नाम आवश्यक छ",
+			"companyNameRequired": "कम्पनीको नाम आवश्यक छ",
+			"unitRequired": "एकाइ आवश्यक छ",
+			"quantityRequired": "परिमाण आवश्यक छ",
+			"quantityNumber": "परिमाण संख्यात्मक हुनुपर्छ"
+		},
+		"units": {
+			"kg": "किग्रा",
+			"nos": "नम्वर",
+			"set": "सेट",
+			"ltr": "लि.",
+			"pcs": "पिस"
+		}
+	},
+	"editProductPage": {
+		"title": "उत्पादन सम्पादन गर्नुहोस्",
+		"productName": "उत्पादको नाम *",
+		"companyName": "कम्पनीको नाम *",
+		"quantity": "परिमाण *",
+		"unit": "एकाइ",
+		"submitButton": "सेभ गर्नुहोस्",
+		"savingButton": "सेभ हुँदैछ...",
+		"errors": {
+			"productNameRequired": "उत्पादको नाम आवश्यक छ",
+			"companyNameRequired": "कम्पनीको नाम आवश्यक छ",
+			"unitRequired": "एकाइ आवश्यक छ",
+			"quantityRequired": "परिमाण आवश्यक छ",
+			"quantityNumber": "परिमाण संख्यात्मक हुनुपर्छ"
+		},
+		"units": {
+			"kg": "किग्रा",
+			"nos": "नम्वर",
+			"set": "सेट",
+			"ltr": "लि.",
+			"pcs": "पिस"
+		}
+	},
+	"activeProductsPage": {
+		"title": "उत्पादन सूची",
+		"table": {
+			"sn": "क्र.स.",
+			"sku": "SKU आईडी",
+			"name": "नाम",
+			"company": "कम्पनी",
+			"unit": "एकाइ",
+			"action": "कार्य"
+		},
+		"noProducts": "कुनै उत्पादन फेला परेन",
+		"dropdown": {
+			"edit": "सम्पादन गर्नुहोस्",
+			"moveToBin": "बिनमा सार्नुहोस्"
+		},
+		"pagination": { "previous": "अघिल्लो", "next": "अर्को" }
+	},
+	"productsBinPage": {
+		"title": "उत्पादन बिन",
+		"table": {
+			"sn": "क्र.स.",
+			"sku": "SKU आईडी",
+			"name": "नाम",
+			"company": "कम्पनी",
+			"unit": "एकाइ",
+			"action": "कार्य"
+		},
+		"noProducts": "कुनै उत्पादन फेला परेन",
+		"dropdown": { "goLive": "सक्रिय बनाउनुहोस्" },
+		"pagination": { "previous": "अघिल्लो", "next": "अर्को" }
+	},
+	"createOffice": {
+		"title": "कार्यालय सिर्जना गर्नुहोस्",
+		"fields": {
+			"name": "नाम",
+			"email": "इमेल",
+			"address": "ठेगाना",
+			"phone": "फोन नम्बर"
+		},
+		"errors": {
+			"nameRequired": "नाम आवश्यक छ",
+			"emailRequired": "इमेल आवश्यक छ",
+			"emailInvalid": "इमेल अमान्य छ",
+			"addressRequired": "ठेगाना आवश्यक छ",
+			"phoneRequired": "फोन नम्बर आवश्यक छ",
+			"phoneNumber": "फोन नम्बरमा मात्र अंक हुनुपर्छ",
+			"phoneMax": "फोन नम्बर अधिकतम १० अंक हुनुपर्छ"
+		},
+		"buttons": {
+			"create": "कार्यालय सिर्जना गर्नुहोस्",
+			"creating": "सिर्जना हुँदैछ..."
+		}
+	},
+	"officeList": {
+		"title": "कार्यालय सूची",
+		"table": {
+			"id": "आईडी",
+			"name": "कार्यालय नाम",
+			"address": "ठेगाना",
+			"email": "इमेल",
+			"contact": "सम्पर्क",
+			"action": "कार्य"
+		},
+		"actions": {
+			"edit": "सम्पादन गर्नुहोस्",
+			"delete": "मेटाउनुहोस्"
+		},
+		"noData": "कुनै कार्यालय फेला परेन",
+		"pagination": {
+			"previous": "अघिल्लो",
+			"next": "अर्को"
+		}
+	},
+	"editOffice": {
+		"title": "कार्यालय सम्पादन गर्नुहोस्",
+		"form": {
+			"name": "नाम",
+			"address": "ठेगाना",
+			"email": "इमेल",
+			"phone": "फोन नम्बर"
+		},
+		"validation": {
+			"name": "नाम आवश्यक छ",
+			"email": "इमेल आवश्यक छ",
+			"emailInvalid": "इमेल अमान्य छ",
+			"address": "ठेगाना आवश्यक छ",
+			"phone": "फोन नम्बर आवश्यक छ",
+			"phoneNumber": "फोन नम्बर संख्यामा मात्र हुनुपर्छ",
+			"phoneMax": "फोन नम्बर अधिकतम १० अंक हुनुपर्छ"
+		},
+		"loading": "लोड हुँदैछ...",
+		"fetchError": "कार्यालय प्राप्त गर्न असफल भयो",
+		"updateError": "कार्यालय अपडेट गर्न असफल भयो",
+		"save": "सेभ गर्नुहोस्",
+		"saving": "सेभ हुँदैछ..."
+	},
+	"createBranch": {
+		"title": "शाखा सिर्जना गर्नुहोस्",
+		"form": {
+			"name": "शाखा नाम",
+			"email": "इमेल",
+			"address": "ठेगाना",
+			"bankName": "बैंकको नाम",
+			"accountName": "खाताको नाम",
+			"accountNumber": "खाताको नम्बर",
+			"phone": "फोन नम्बर"
+		},
+		"validation": {
+			"name": "शाखा नाम आवश्यक छ",
+			"email": "इमेल आवश्यक छ",
+			"emailInvalid": "इमेल अमान्य छ",
+			"address": "ठेगाना आवश्यक छ",
+			"bankName": "बैंकको नाम आवश्यक छ",
+			"accountName": "खाताको नाम आवश्यक छ",
+			"accountNumber": "खाताको नम्बर आवश्यक छ",
+			"accountNumberNum": "खाताको नम्बर संख्यामा मात्र हुनुपर्छ",
+			"accountNumberMax": "खाताको नम्बर अधिकतम १५ अंक हुनुपर्छ",
+			"phone": "फोन नम्बर आवश्यक छ",
+			"phoneNum": "फोन नम्बर संख्यामा मात्र हुनुपर्छ",
+			"phoneMax": "फोन नम्बर अधिकतम १० अंक हुनुपर्छ"
+		},
+		"create": "शाखा सिर्जना गर्नुहोस्",
+		"creating": "सिर्जना हुँदैछ..."
+	},
+	"editBranch": {
+		"title": "शाखा सम्पादन गर्नुहोस्",
+		"form": {
+			"name": "शाखा नाम",
+			"email": "इमेल",
+			"address": "ठेगाना",
+			"bankName": "बैंकको नाम",
+			"accountName": "खाताको नाम",
+			"accountNumber": "खाताको नम्बर",
+			"phone": "फोन नम्बर"
+		},
+		"validation": {
+			"name": "शाखा नाम आवश्यक छ",
+			"email": "इमेल आवश्यक छ",
+			"emailInvalid": "इमेल अमान्य छ",
+			"address": "ठेगाना आवश्यक छ",
+			"bankName": "बैंकको नाम आवश्यक छ",
+			"accountName": "खाताको नाम आवश्यक छ",
+			"accountNumber": "खाताको नम्बर आवश्यक छ",
+			"accountNumberNum": "खाताको नम्बर संख्यामा मात्र हुनुपर्छ",
+			"accountNumberMax": "खाताको नम्बर अधिकतम १५ अंक हुनुपर्छ",
+			"phone": "फोन नम्बर आवश्यक छ",
+			"phoneNum": "फोन नम्बर संख्यामा मात्र हुनुपर्छ",
+			"phoneMax": "फोन नम्बर अधिकतम १० अंक हुनुपर्छ"
+		},
+		"save": "सेभ गर्नुहोस्",
+		"saving": "सेभ हुँदैछ...",
+		"loading": "लोड हुँदैछ..."
+	},
+	"allBranches": {
+		"title": "शाखाहरूको सूची",
+		"table": {
+			"id": "आईडी",
+			"name": "शाखा नाम",
+			"email": "इमेल",
+			"phone": "फोन",
+			"address": "ठेगाना",
+			"action": "क्रिया"
+		},
+		"noBranches": "कुनै शाखा फेला परेन",
+		"actions": {
+			"edit": "सम्पादन गर्नुहोस्",
+			"addEmployees": "कर्मचारी थप्नुहोस्",
+			"allEmployees": "सबै कर्मचारीहरू"
+		}
+	},
+	"createEmployee": {
+		"title": "कर्मचारी सिर्जना गर्नुहोस्",
+		"labels": {
+			"branchId": "शाखा",
+			"firstName": "पहिलो नाम",
+			"middleName": "मध्य नाम",
+			"lastName": "थर",
+			"email": "इमेल",
+			"position": "तह"
+		},
+		"placeholders": {
+			"position": "भूमिका छान्नुहोस् *",
+			"branches": "शाखा छान्नुहोस् *"
+		},
+		"positions": {
+			"admin": "प्रशासक",
+			"viewer": "दर्शक"
+		},
+		"button": {
+			"create": "कर्मचारी सिर्जना गर्नुहोस्",
+			"creating": "सिर्जना हुँदैछ..."
+		},
+		"errors": {
+			"firstName": "पहिलो नाम आवश्यक छ",
+			"lastName": "थर आवश्यक छ",
+			"emailInvalid": "इमेल अमान्य छ",
+			"emailRequired": "इमेल आवश्यक छ",
+			"branchId": "शाखा आईडी आवश्यक छ",
+			"position": "तह आवश्यक छ"
+		}
+	},
+	"editEmployee": {
+		"title": "कर्मचारी सम्पादन गर्नुहोस्",
+		"labels": {
+			"branchId": "शाखा आईडी",
+			"firstName": "पहिलो नाम",
+			"middleName": "मध्य नाम",
+			"lastName": "थर",
+			"email": "इमेल",
+			"position": "तह",
+			"password": "पासवर्ड",
+			"confirmPassword": "पासवर्ड निश्चित गर्नुहोस्"
+		},
+		"placeholders": {
+			"position": "तह छान्नुहोस् *"
+		},
+		"positions": {
+			"admin": "प्रशासक",
+			"viewer": "दर्शक"
+		},
+		"button": {
+			"save": "सुरक्षित गर्नुहोस्",
+			"saving": "सुरक्षित गर्दैछ..."
+		},
+		"errors": {
+			"firstName": "पहिलो नाम आवश्यक छ",
+			"lastName": "थर आवश्यक छ",
+			"emailInvalid": "इमेल अमान्य छ",
+			"emailRequired": "इमेल आवश्यक छ",
+			"branchId": "शाखा आईडी आवश्यक छ",
+			"position": "पद आवश्यक छ"
+		},
+		"loading": "लोड हुँदैछ..."
+	},
+	"allEmployees": {
+		"title": "कर्मचारी सूची",
+		"headers": {
+			"id": "आईडी",
+			"name": "नाम",
+			"email": "इमेल",
+			"role": "तह",
+			"branch": "शाखा",
+			"action": "कार्य"
+		},
+		"noData": "कुनै कर्मचारी फेला परेनन्",
+		"edit": "सम्पादन गर्नुहोस्"
+	},
+	"createReceiver": {
+		"title": "प्रापक सिर्जना गर्नुहोस्",
+		"labels": {
+			"name": "नाम *",
+			"post": "पद *",
+			"idNo": "पहिचान पत्र नम्बर *",
+			"idType": "पहिचान पत्र प्रकार *",
+			"deptName": "विभागको नाम *",
+			"deptAddress": "विभागको ठेगाना *",
+			"vehicleNo": "सवारी साधन नम्बर *",
+			"phone": "फोन नम्बर *",
+			"createReceiver": "प्रापक सिर्जना गर्नुहोस्",
+			"creating": "सिर्जना गर्दैछ..."
+		},
+		"placeholders": {
+			"name": "नाम प्रविष्ट गर्नुहोस्",
+			"email": "इमेल प्रविष्ट गर्नुहोस्",
+			"address": "ठेगाना प्रविष्ट गर्नुहोस्",
+			"phone": "फोन नम्बर प्रविष्ट गर्नुहोस्"
+		},
+		"errors": {
+			"nameRequired": "प्रापकको नाम आवश्यक छ",
+			"deptRequired": "विभागको नाम आवश्यक छ",
+			"deptAddressRequired": "विभागको ठेगाना आवश्यक छ",
+			"idNo": "पहिचान पत्र नम्बर आवश्यक छ",
+			"idType": "पहिचान पत्र प्रकार आवश्यक छ",
+			"phone": "फोन नम्बर आवश्यक छ",
+			"phoneNum": "फोन नम्बरमा केवल अंक हुनुपर्छ",
+			"phoneMax": "केवल १० अंक मात्र अनुमति छ",
+			"post": "पद आवश्यक छ",
+			"vehicleNo": "सवारी साधन नम्बर आवश्यक छ"
+		}
+	},
+	"allreceivers": {
+		"title": "प्रापकहरूको सूची",
+		"headers": {
+			"id": "आईडी",
+			"name": "नाम",
+			"email": "इमेल",
+			"role": "भूमिका",
+			"branch": "शाखा",
+			"action": "कार्य"
+		},
+		"table": {
+			"name": "नाम",
+			"post": "पद",
+			"idcardNumber": "पहिचान पत्र नम्बर",
+			"phoneNumber": "फोन नम्बर",
+			"action": "कार्यहरू"
+		},
+		"actions": {
+			"edit": "सम्पादन गर्नुहोस्",
+			"delete": "मेटाउनुहोस्"
+		},
+		"noData": "कुनै प्रापक फेला परेन",
+		"edit": "सम्पादन गर्नुहोस्"
+	},
+	"editReceiver": {
+		"title": "प्रापक सम्पादन गर्नुहोस्",
+		"labels": {
+			"name": "नाम *",
+			"post": "पद *",
+			"idNo": "परिचयपत्र नम्बर *",
+			"idType": "परिचयपत्र प्रकार *",
+			"deptName": "विभागको नाम *",
+			"deptAddress": "विभागको ठेगाना *",
+			"vehicleNo": "सवारी नम्बर *",
+			"phone": "फोन नम्बर *",
+			"createReceiver": "सेभ गर्नुहोस्",
+			"creating": "सेभ हुँदैछ..."
+		},
+		"placeholders": {
+			"name": "नाम लेख्नुहोस्",
+			"email": "इमेल लेख्नुहोस्",
+			"address": "ठेगाना लेख्नुहोस्",
+			"phone": "फोन नम्बर लेख्नुहोस्"
+		},
+		"errors": {
+			"nameRequired": "प्रापकको नाम आवश्यक छ",
+			"deptRequired": "विभागको नाम आवश्यक छ",
+			"deptAddressRequired": "विभागको ठेगाना आवश्यक छ",
+			"idNo": "परिचयपत्र नम्बर आवश्यक छ",
+			"idType": "परिचयपत्र प्रकार आवश्यक छ",
+			"phone": "फोन नम्बर आवश्यक छ",
+			"phoneNum": "फोन नम्बरमा अंक मात्र हुनुपर्छ",
+			"phoneMax": "१० अंक मात्र अनुमति छ",
+			"post": "पद आवश्यक छ",
+			"vehicleNo": "सवारी नम्बर आवश्यक छ"
+		}
+	},
+	"allletters": {
+		"title": "सबै पत्रहरू",
+		"download": "डाउनलोड",
+		"noletters": "कुनै पत्र फेला परेन।",
+		"table": {
+			"receiver_office_name": "प्रापक कार्यालय",
+			"voucher_no": "भौचर नम्बर",
+			"chalani_no": "चलानी नम्बर",
+			"gatepass_no": "गेटपास नम्बर",
+			"subject": "विषय",
+			"request_date": "अनुरोध मिति",
+			"receiver_name": "प्रापकको नाम",
+			"receiver_id_card_number": "प्रापकको परिचयपत्र नम्बर",
+			"receiver_phone_number": "प्रापकको फोन नम्बर",
+			"action": "कार्यहरू"
+		},
+		"actions": {
+			"delete": "मेटाउनुहोस्",
+			"edit": "सम्पादन गर्नुहोस्"
+		},
+		"messages": {
+			"deleteSuccess": "पत्र सफलतापूर्वक मेटाइयो!",
+			"deleteError": "पत्र मेटाउन असफल भयो।",
+			"fetchError": "पत्रहरू ल्याउन सकिएन।",
+			"downloadError": "CSV फाइल डाउनलोड गर्न असफल।"
+		},
+		"pagination": {
+			"previous": "अघिल्लो",
+			"next": "अर्को"
+		}
+	}
 }

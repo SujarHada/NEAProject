@@ -1,11 +1,11 @@
-import { Outlet } from "react-router"
+import { Outlet } from "react-router";
 
 const Product = () => {
-  return (
-    <div>
-      <Outlet />
-    </div>
-  )
-}
+	return (
+		<div>
+			<Outlet />
+		</div>
+	);
+};
 
-export default Product
+export default Product;
