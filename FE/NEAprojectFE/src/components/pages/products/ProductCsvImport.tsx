@@ -1,3 +1,4 @@
+import api from "app/utils/api";
 import { useState } from "react";
 
 export default function ProductCsvImport() {
@@ -37,24 +38,16 @@ export default function ProductCsvImport() {
 		formData.append("file", file);
 
 		try {
-			const res = await fetch(
-				"http://127.0.0.1:8000/api/products/import_csv/",
-				{
-					method: "POST",
-					headers: {
-						Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-					},
-					body: formData,
-				},
+			const res = await api.post(
+				"/api/products/import_csv/",
+				formData
 			);
+			console.log(res)
 
-			const data = await res.json();
-
-			if (!res.ok) {
-				throw new Error(data.message || "Import failed");
+			if (res.status !== 201) {
+				throw new Error(res.data.message || "Import failed");
 			}
-
-			setMessage(data.message || "CSV imported successfully");
+			setMessage(res.data.message || "CSV imported successfully");
 		} catch (err: any) {
 			setError(err.message || "Something went wrong");
 		} finally {

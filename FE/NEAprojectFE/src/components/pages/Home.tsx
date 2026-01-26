@@ -92,13 +92,15 @@ const Home = () => {
 
 				{/* Info icon and card */}
 				<div className="fixed bottom-6 right-6 z-50">
-					<div
+					
+					<button
+					type="button"
 						onClick={() => setShowInfo((prev) => !prev)}
 						className="cursor-pointer text-white bg-blue-600 hover:bg-blue-700 p-2 rounded-full shadow-lg transition-all duration-300"
 						title="Click for info"
 					>
 						<FaInfoCircle size={16} />
-					</div>
+					</button>
 
 					<div
 						ref={cardRef}

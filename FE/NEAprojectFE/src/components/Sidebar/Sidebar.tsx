@@ -1,4 +1,4 @@
-import { useState, type ReactElement } from "react";
+import { useEffect, useRef, useState, type ReactElement } from "react";
 import {
 	FaHome,
 	FaRegEnvelope,
@@ -147,9 +147,22 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 		{ id: "profile", label: user?.name!, icon: <FaUserCircle /> },
 	];
 
+	const divRef = useRef<HTMLDivElement>(null);
+	useEffect(() => {
+	  const el = divRef.current
+	  if (!el) return
+	
+	  const enter = () => setCollapsed(false)
+	  const leave = () => setCollapsed(true)
+	
+	  el.onmouseenter = enter
+	  el.onmouseleave = leave
+	}, [])
+
 	return (
 		<div
-			className={`flex max-h-screen flex-col ${collapsed ? "w-10" : "w-55"} bg-gray-800 text-white min-h-screen max-md:absolute z-[99999]`}
+			ref={divRef}
+			className={`flex max-h-screen flex-col ${collapsed ? "w-10" : "w-55"} bg-gray-800 text-white min-h-screen transition-all ease-in-out max-md:absolute z-[99999]`}
 		>
 			<div
 				className={`flex items-center ${collapsed ? "justify-center" : "justify-between"} p-4`}
@@ -160,6 +173,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 					</h2>
 				)}
 				<button
+				type="button"
 					onClick={toggleCollapse}
 					className="text-white hover:text-gray-300"
 				>
@@ -173,8 +187,9 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 			>
 				{menuItems.map((item) => (
 					<li key={item.id}>
-						<div
-							className="flex items-center gap-3 p-3 justify-center cursor-pointer hover:bg-gray-700"
+						<button
+						type="button"
+							className="flex-1 flex w-full items-center gap-3 p-3 justify-center cursor-pointer hover:bg-gray-700"
 							onClick={() =>
 								item.children
 									? collapsed
@@ -183,29 +198,32 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 									: onSelect(item.id)
 							}
 						>
-							<span className="text-xl">{item.icon}</span>
-							{!collapsed && (
-								<span className="truncate flex-1">{item.label}</span>
-							)}
+							<div className="flex flex-1 gap-4">
+								<span className="text-xl">{item.icon}</span>
+								{!collapsed && (
+									<span className="truncate">{item.label}</span>
+								)}
+							</div>
 							{!collapsed && item.children && (
 								<span className="text-sm">
 									{openMenus[item.id] ? <FaAngleUp /> : <FaAngleDown />}
 								</span>
 							)}
-						</div>
+						</button>
 
 						{!collapsed &&
 							item.children &&
 							openMenus[item.id] &&
 							item.children.map((child) => (
 								<ul key={child.id} className="ml-8">
-									<li
+									<button
+									type="button"
 										onClick={() => handleSelect(child.id)}
-										className="flex items-center gap-3 p-2 cursor-pointer hover:bg-gray-700 text-sm"
+										className="flex w-full items-center gap-3 p-2 cursor-pointer hover:bg-gray-700 text-sm"
 									>
 										<span className="text-base">{child.icon}</span>
 										<span className="truncate">{child.label}</span>
-									</li>
+									</button>
 								</ul>
 							))}
 					</li>

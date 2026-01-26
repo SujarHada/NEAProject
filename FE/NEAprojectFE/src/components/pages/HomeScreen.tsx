@@ -104,12 +104,13 @@ export default function HomeScreen() {
 			<div className="flex justify-between items-center mb-8 flex-wrap gap-5">
 				<h1 className="text-2xl font-bold">{t("dashboard.title")}</h1>
 				<div className="flex items-center gap-2 text-gray-400 text-sm ">
-					<div
-						className="border-2 p-2 rounded-full cursor-pointer"
+					<button
+						type="button"
+						className="border-2 size-10 flex justify-center items-center p-2 rounded-full cursor-pointer"
 						onClick={handleDownload}
 					>
 						<Download size={16} />
-					</div>
+					</button>
 					<span className="flex gap-2 items-center">
 						{<RefreshCcw size={20} />}:
 						{new Date(stats.last_updated).toLocaleString()}
