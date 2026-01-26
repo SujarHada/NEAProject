@@ -327,9 +327,12 @@ const ShowLetter = () => {
                             <ContentSection />
                         </div>
 
-                        {/* Subsequent Page Header Content (Minimal) */}
+                        {/* Subsequent Page Header Content (Identical to First Page now) */}
                         <div ref={subsequentPageTopRef} style={{ display: 'flow-root' }}>
                             <HeaderSection />
+                            <RefSection />
+                            <SubjectSection />
+                            <ContentSection />
                         </div>
 
                         {/* Table Title (Measured Separately) */}
@@ -395,14 +398,10 @@ const ShowLetter = () => {
                     >
                         <HeaderSection />
 
-                        {/* Render Ref/Subject/Content ONLY on first page. Note: These must remain visible even if the table is empty. */}
-                        {pageIndex === 0 && (
-                            <>
-                                <RefSection />
-                                <SubjectSection />
-                                <ContentSection />
-                            </>
-                        )}
+                        {/* Render Ref/Subject/Content on ALL pages */}
+                        <RefSection />
+                        <SubjectSection />
+                        <ContentSection />
 
                         {/* Condition to hide table header if no items in this chunk */}
                         {chunk.length > 0 && (
