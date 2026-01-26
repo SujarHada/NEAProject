@@ -5,6 +5,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useOnClickOutside } from 'usehooks-ts'
 import { useTranslation } from "react-i18next"
 import api from "app/utils/api"
+import ProductCsvImport from "./ProductCsvImport"
 
 
 const ActiveProducts = () => {
@@ -100,6 +101,7 @@ const ActiveProducts = () => {
                     Download
                 </button>
             </div>
+            <ProductCsvImport/>
             <div className="w-full  overflow-x-auto overflow-y-visible" style={{ scrollbarWidth: 'thin' }} >
             <table className="w-full text-sm text-left text-gray-400">
                 <thead className="text-xs uppercase bg-gray-700 text-gray-400 border-b">
