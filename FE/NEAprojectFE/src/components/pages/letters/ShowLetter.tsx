@@ -14,11 +14,15 @@ const ShowLetter = () => {
     const [letter, setLetter] = useState<Letter>();
     const [isLoading, setIsLoading] = useState(false);
     const pageRefs = useRef<HTMLDivElement[]>([]);
-    
+
     // Dynamic Pagination Refs and State
     const [paginatedItems, setPaginatedItems] = useState<Letter['items'][]>([]);
     const hiddenContainerRef = useRef<HTMLDivElement>(null);
-    const topContentRef = useRef<HTMLDivElement>(null);
+
+    // Refs for height measurement
+    const firstPageTopRef = useRef<HTMLDivElement>(null);
+    const subsequentPageTopRef = useRef<HTMLDivElement>(null);
+    const tableTitleRef = useRef<HTMLDivElement>(null);
     const tableHeaderRef = useRef<HTMLTableSectionElement>(null);
     const footerRef = useRef<HTMLElement>(null);
     const lastPageContentRef = useRef<HTMLDivElement>(null);
@@ -55,34 +59,50 @@ const ShowLetter = () => {
             const paddingTop = parseFloat(computedStyle.paddingTop);
             const paddingBottom = parseFloat(computedStyle.paddingBottom);
             // Height of A4 (297mm) in pixels usually around 1122px, but we rely on the rendered height
-            const totalPageHeight = container.clientHeight; 
+            const totalPageHeight = container.clientHeight;
             const availableHeight = totalPageHeight - paddingTop - paddingBottom;
 
             // Measure static sections
-            const topContentHeight = topContentRef.current?.offsetHeight || 0;
+            const firstPageTopHeight = firstPageTopRef.current?.offsetHeight || 0;
+            const subsequentPageTopHeight = subsequentPageTopRef.current?.offsetHeight || 0;
+            const tableTitleHeight = tableTitleRef.current?.offsetHeight || 0;
             const tableHeaderHeight = tableHeaderRef.current?.offsetHeight || 0;
             const footerHeight = footerRef.current?.offsetHeight || 0; // Page number footer
             const lastPageExtraHeight = lastPageContentRef.current?.offsetHeight || 0; // Supplier + Signatures
 
-            // Header height repeated on every page
-            const fixedHeaderHeight = topContentHeight + tableHeaderHeight + footerHeight;
+            // Calculate Fixed Header Heights
+            // Page 1: Full Header + Title + Table Header + Footer
+            const firstPageFixedHeight = firstPageTopHeight + tableTitleHeight + tableHeaderHeight + footerHeight;
+
+            // Page 2+: Minimal Header + Title + Table Header + Footer
+            const subsequentPageFixedHeight = subsequentPageTopHeight + tableTitleHeight + tableHeaderHeight + footerHeight;
 
             // Measure rows
             const rowHeights = letter.items.map((_, i) => itemRefs.current[i]?.offsetHeight || 0);
 
             const chunks: Letter['items'][] = [];
             let currentChunk: Letter['items'] = [];
-            let currentHeight = fixedHeaderHeight;
+
+            // Start with First Page Height
+            let currentHeight = firstPageFixedHeight;
+            let isFirstPage = true;
 
             for (let i = 0; i < letter.items.length; i++) {
                 const itemH = rowHeights[i];
 
-                // If a single item is taller than the entire page (edge case), force it on a new page
-                // Or if adding it exceeds limit
+                // Determine which fixed height to use for the NEXT page if we break here
+                // If we are currently on Page 1, next page will be Page 2 (Subsequent)
+                // If we are on Page 2, next page is also Page 2+ (Subsequent)
+                // The currentHeight tracks the accumulated height on the CURRENT page.
+
+                // Check overflow
                 if (currentChunk.length > 0 && currentHeight + itemH > availableHeight) {
                     chunks.push(currentChunk);
                     currentChunk = [];
-                    currentHeight = fixedHeaderHeight;
+
+                    // New Page settings
+                    isFirstPage = false;
+                    currentHeight = subsequentPageFixedHeight;
                 }
 
                 currentChunk.push(letter.items[i]);
@@ -90,11 +110,10 @@ const ShowLetter = () => {
             }
 
             // Check last page extras
-            // Note: currentHeight already includes fixedHeaderHeight + sum(itemHeights)
+            // Note: currentHeight already includes fixedHeader (for current page) + sum(itemHeights)
             // We need to add lastPageExtraHeight
             if (currentHeight + lastPageExtraHeight > availableHeight) {
                 // If it doesn't fit, we need a new page for the signatures
-                // But we must preserve the items in the current chunk if they fit without signatures
                 chunks.push(currentChunk);
                 chunks.push([]); // Empty chunk to trigger a page with just signatures
             } else {
@@ -104,9 +123,7 @@ const ShowLetter = () => {
             setPaginatedItems(chunks);
         };
 
-        // Run measurement (and potentially rerun on resize if we added a listener, but for print layout it's usually static)
-        // We use a timeout to ensure fonts/images might have settled slightly, though useLayoutEffect is synchronous after DOM mutation.
-        // For accurate height with images, we might need onLoad handlers, but the logo is small.
+        // Run measurement
         measurePagination();
 
     }, [letter]);
@@ -126,7 +143,7 @@ const ShowLetter = () => {
         for (let i = 0; i < pageRefs.current.length; i++) {
             const element = pageRefs.current[i];
             if (!element) continue;
-            
+
             const canvas = await html2canvas(element, {
                 scale: 2,
                 useCORS: true,
@@ -302,55 +319,66 @@ const ShowLetter = () => {
                             overflow: 'hidden'
                         }}
                     >
-                        <div ref={topContentRef} style={{ display: 'flow-root' }}>
+                        {/* Page 1 Header Content */}
+                        <div ref={firstPageTopRef} style={{ display: 'flow-root' }}>
                             <HeaderSection />
                             <RefSection />
                             <SubjectSection />
                             <ContentSection />
-                            <div className="table-title">तपसिल:</div>
                         </div>
 
-                        <table className="table">
-                            <thead ref={tableHeaderRef}>
-                                <tr>
-                                    <th>सि.नं.</th>
-                                    <th>सामानको नाम</th>
-                                    <th>कम्पनी</th>
-                                    <th>सिरियल नं.</th>
-                                    <th>इकाई</th>
-                                    <th>इकाईको परिमाण</th>
-                                    <th>कैफियत</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {letter.items.map((item, index) => (
-                                    <tr key={item.id} ref={(el) => { itemRefs.current[index] = el }}>
-                                        <td>{engToNep(`${index + 1}`)}</td>
-                                        <td>{item.name}</td>
-                                        <td>{item.company}</td>
-                                        <td style={{
-                                            wordWrap: "break-word",
-                                            whiteSpace: "normal",
-                                            maxWidth: "120px",
-                                            wordBreak: "break-word"
-                                        }}>
-                                            {item.serial_number}
-                                        </td>
-                                        <td>{item.unit_of_measurement}</td>
-                                        <td>{item.quantity}</td>
-                                        <td>{item.remarks}</td>
+                        {/* Subsequent Page Header Content (Minimal) */}
+                        <div ref={subsequentPageTopRef} style={{ display: 'flow-root' }}>
+                            <HeaderSection />
+                        </div>
+
+                        {/* Table Title (Measured Separately) */}
+                        <div ref={tableTitleRef} className="table-title">तपसिल:</div>
+
+                        {/* Full Table Structure for Row Measurement */}
+                        {letter.items.length > 0 && (
+                            <table className="table">
+                                <thead ref={tableHeaderRef}>
+                                    <tr>
+                                        <th>सि.नं.</th>
+                                        <th>सामानको नाम</th>
+                                        <th>कम्पनी</th>
+                                        <th>सिरियल नं.</th>
+                                        <th>इकाई</th>
+                                        <th>इकाईको परिमाण</th>
+                                        <th>कैफियत</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {letter.items.map((item, index) => (
+                                        <tr key={item.id} ref={(el) => { itemRefs.current[index] = el }}>
+                                            <td>{engToNep(`${index + 1}`)}</td>
+                                            <td>{item.name}</td>
+                                            <td>{item.company}</td>
+                                            <td style={{
+                                                wordWrap: "break-word",
+                                                whiteSpace: "normal",
+                                                maxWidth: "120px",
+                                                wordBreak: "break-word"
+                                            }}>
+                                                {item.serial_number}
+                                            </td>
+                                            <td>{item.unit_of_measurement}</td>
+                                            <td>{item.quantity}</td>
+                                            <td>{item.remarks}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
 
                         <div ref={lastPageContentRef} style={{ display: 'flow-root' }}>
                             <SupplierInfo />
                             <SignatureSection />
                         </div>
-                        
+
                         <footer className="page-number" ref={footerRef}>
-                             पाना १ मध्ये १
+                            पाना १ मध्ये १
                         </footer>
                     </div>
                 )}
@@ -366,46 +394,57 @@ const ShowLetter = () => {
                         }}
                     >
                         <HeaderSection />
-                        <RefSection />
-                        <SubjectSection />
-                        <ContentSection />
 
-                        <div className="table-title">तपसिल:</div>
+                        {/* Render Ref/Subject/Content ONLY on first page. Note: These must remain visible even if the table is empty. */}
+                        {pageIndex === 0 && (
+                            <>
+                                <RefSection />
+                                <SubjectSection />
+                                <ContentSection />
+                            </>
+                        )}
 
-                        {/* ITEMS TABLE */}
-                        <table className="table">
-                            <TableHeader />
-                            <tbody>
-                                {chunk.map((item, chunkItemIndex) => {
-                                    // Calculate global index
-                                    // We need to know the count of items in previous pages
-                                    let previousCount = 0;
-                                    for(let i=0; i<pageIndex; i++) {
-                                        previousCount += paginatedItems[i].length;
-                                    }
-                                    const globalIndex = previousCount + chunkItemIndex;
+                        {/* Condition to hide table header if no items in this chunk */}
+                        {chunk.length > 0 && (
+                            <>
+                                <div className="table-title">तपसिल:</div>
 
-                                    return (
-                                        <tr key={item.id || chunkItemIndex}>
-                                            <td>{engToNep(`${globalIndex + 1}`)}</td>
-                                            <td>{item.name}</td>
-                                            <td>{item.company}</td>
-                                            <td style={{
-                                                wordWrap: "break-word",
-                                                whiteSpace: "normal",
-                                                maxWidth: "120px",
-                                                wordBreak: "break-word"
-                                            }}>
-                                                {item.serial_number}
-                                            </td>
-                                            <td>{item.unit_of_measurement}</td>
-                                            <td>{item.quantity}</td>
-                                            <td>{item.remarks}</td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
+                                {/* ITEMS TABLE */}
+                                <table className="table">
+                                    <TableHeader />
+                                    <tbody>
+                                        {chunk.map((item, chunkItemIndex) => {
+                                            // Calculate global index
+                                            // We need to know the count of items in previous pages
+                                            let previousCount = 0;
+                                            for (let i = 0; i < pageIndex; i++) {
+                                                previousCount += paginatedItems[i].length;
+                                            }
+                                            const globalIndex = previousCount + chunkItemIndex;
+
+                                            return (
+                                                <tr key={item.id || chunkItemIndex}>
+                                                    <td>{engToNep(`${globalIndex + 1}`)}</td>
+                                                    <td>{item.name}</td>
+                                                    <td>{item.company}</td>
+                                                    <td style={{
+                                                        wordWrap: "break-word",
+                                                        whiteSpace: "normal",
+                                                        maxWidth: "120px",
+                                                        wordBreak: "break-word"
+                                                    }}>
+                                                        {item.serial_number}
+                                                    </td>
+                                                    <td>{item.unit_of_measurement}</td>
+                                                    <td>{item.quantity}</td>
+                                                    <td>{item.remarks}</td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </>
+                        )}
 
                         {/* SHOW ONLY ON LAST PAGE */}
                         {pageIndex === paginatedItems.length - 1 && (
