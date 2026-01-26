@@ -21,7 +21,7 @@ const CreateLetter = () => {
         defaultValues: {
             letter_count: "",
             office_id: "",
-            receiver_id:"",
+            receiver_id: "",
             items: [{ name: "", company: "", serial_number: "", unit_of_measurement: "", quantity: "", remarks: "" }],
             receiver: { name: "", post: "", id_card_number: "", id_card_type: "unknown", office_name: "", office_address: "", phone_number: "", vehicle_number: "" },
             date: new NepaliDate().format('YYYY-MM-DD', 'np'), chalani_no: '', voucher_no: '', gatepass_no: '',
@@ -77,8 +77,8 @@ const CreateLetter = () => {
         }
         trigger('receiver')
     };
- console.log(watch())
- console.log(errors)
+    console.log(watch())
+    console.log(errors)
     const { fields, append, remove } = useFieldArray({ control, name: "items" });
 
     const onSubmit = async (data: CreateLetterI) => {
@@ -309,7 +309,7 @@ const CreateLetter = () => {
                                             name={`items.${index}.serial_number`}
                                             control={control}
                                             render={({ field }) =>
-                                                <input
+                                                <textarea
                                                     {...field}
                                                     onChange={async (e) => {
                                                         const value = e.target.value;
@@ -325,8 +325,7 @@ const CreateLetter = () => {
                                                         });
                                                         await trigger([`items.${index}.serial_number`, `items.${index}.quantity`]);
                                                     }}
-                                                    type="text"
-                                                    className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+                                                    className="bg-[#B5C9DC] border-1 h-auto min-h-[2rem] max-h-20 overflow-y-auto outline-none pl-3 rounded-md border-gray-600 resize-y py-1"
                                                 />
                                             }
                                         />
@@ -384,7 +383,7 @@ const CreateLetter = () => {
                             `items.${lastIndex}.serial_number`,
                             `items.${lastIndex}.quantity`,
                         ]);
-                       
+
                         if (!isValid) {
                             toast.error("माथिको सामान पूरा भर्नुहोस्");
                             return;

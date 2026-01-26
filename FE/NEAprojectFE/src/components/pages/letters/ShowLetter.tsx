@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react';
 import './ShowLetterStyle.css';
 import nepal_electricity_authority_logo from 'app/assets/nepal_electricity_authority_logo.png';
 import jsPDF from 'jspdf';
@@ -14,9 +14,19 @@ const ShowLetter = () => {
     const [letter, setLetter] = useState<Letter>();
     const [isLoading, setIsLoading] = useState(false);
     const pageRefs = useRef<HTMLDivElement[]>([]);
+    
+    // Dynamic Pagination Refs and State
+    const [paginatedItems, setPaginatedItems] = useState<Letter['items'][]>([]);
+    const hiddenContainerRef = useRef<HTMLDivElement>(null);
+    const topContentRef = useRef<HTMLDivElement>(null);
+    const tableHeaderRef = useRef<HTMLTableSectionElement>(null);
+    const footerRef = useRef<HTMLElement>(null);
+    const lastPageContentRef = useRef<HTMLDivElement>(null);
+    const itemRefs = useRef<(HTMLTableRowElement | null)[]>([]);
+
     const idType = useMemo(() => {
         return id_types.find((id_type) => id_type.value === letter?.receiver.id_card_type)?.name;
-    },[letter])
+    }, [letter]);
 
     // Fetch Letter
     useEffect(() => {
@@ -32,16 +42,75 @@ const ShowLetter = () => {
         fetchLetter();
     }, [id]);
 
-    // Splits items into chunks of 12 per page for safer pagination
-    const chunkItems = (items: Letter['items'], size: number) => {
-        const chunks = [];
-        for (let i = 0; i < items.length; i += size) {
-            chunks.push(items.slice(i, i + size));
-        }
-        return chunks;
-    };
+    // Dynamic Pagination Logic
+    useLayoutEffect(() => {
+        if (!letter || !hiddenContainerRef.current) return;
 
-    const pages = letter ? chunkItems(letter.items, 12) : [];
+        const measurePagination = () => {
+            const container = hiddenContainerRef.current;
+            if (!container) return;
+
+            // Get available height
+            const computedStyle = window.getComputedStyle(container);
+            const paddingTop = parseFloat(computedStyle.paddingTop);
+            const paddingBottom = parseFloat(computedStyle.paddingBottom);
+            // Height of A4 (297mm) in pixels usually around 1122px, but we rely on the rendered height
+            const totalPageHeight = container.clientHeight; 
+            const availableHeight = totalPageHeight - paddingTop - paddingBottom;
+
+            // Measure static sections
+            const topContentHeight = topContentRef.current?.offsetHeight || 0;
+            const tableHeaderHeight = tableHeaderRef.current?.offsetHeight || 0;
+            const footerHeight = footerRef.current?.offsetHeight || 0; // Page number footer
+            const lastPageExtraHeight = lastPageContentRef.current?.offsetHeight || 0; // Supplier + Signatures
+
+            // Header height repeated on every page
+            const fixedHeaderHeight = topContentHeight + tableHeaderHeight + footerHeight;
+
+            // Measure rows
+            const rowHeights = letter.items.map((_, i) => itemRefs.current[i]?.offsetHeight || 0);
+
+            const chunks: Letter['items'][] = [];
+            let currentChunk: Letter['items'] = [];
+            let currentHeight = fixedHeaderHeight;
+
+            for (let i = 0; i < letter.items.length; i++) {
+                const itemH = rowHeights[i];
+
+                // If a single item is taller than the entire page (edge case), force it on a new page
+                // Or if adding it exceeds limit
+                if (currentChunk.length > 0 && currentHeight + itemH > availableHeight) {
+                    chunks.push(currentChunk);
+                    currentChunk = [];
+                    currentHeight = fixedHeaderHeight;
+                }
+
+                currentChunk.push(letter.items[i]);
+                currentHeight += itemH;
+            }
+
+            // Check last page extras
+            // Note: currentHeight already includes fixedHeaderHeight + sum(itemHeights)
+            // We need to add lastPageExtraHeight
+            if (currentHeight + lastPageExtraHeight > availableHeight) {
+                // If it doesn't fit, we need a new page for the signatures
+                // But we must preserve the items in the current chunk if they fit without signatures
+                chunks.push(currentChunk);
+                chunks.push([]); // Empty chunk to trigger a page with just signatures
+            } else {
+                chunks.push(currentChunk);
+            }
+
+            setPaginatedItems(chunks);
+        };
+
+        // Run measurement (and potentially rerun on resize if we added a listener, but for print layout it's usually static)
+        // We use a timeout to ensure fonts/images might have settled slightly, though useLayoutEffect is synchronous after DOM mutation.
+        // For accurate height with images, we might need onLoad handlers, but the logo is small.
+        measurePagination();
+
+    }, [letter]);
+
 
     // PDF Download Handler
     const handleDownload = async () => {
@@ -56,6 +125,8 @@ const ShowLetter = () => {
 
         for (let i = 0; i < pageRefs.current.length; i++) {
             const element = pageRefs.current[i];
+            if (!element) continue;
+            
             const canvas = await html2canvas(element, {
                 scale: 2,
                 useCORS: true,
@@ -77,6 +148,125 @@ const ShowLetter = () => {
         setIsLoading(false);
     };
 
+    // Helper components to avoid code duplication
+    const HeaderSection = () => (
+        <header>
+            <div className="logo-section">
+                <img src={nepal_electricity_authority_logo} alt="" />
+            </div>
+
+            <div className="title-section">
+                <h1>नेपाल विद्युत प्राधिकरण</h1>
+                <h2>(नेपाल सरकारको स्वामित्व)</h2>
+                <h3>वितरण तथा ग्राहक सेवा निर्देशनालय</h3>
+                <h3>खरिद व्यवस्थापन महाशाखा</h3>
+
+                <div className="jinsi-line">
+                    <span>जिन्सी व्यवस्थापन शाखा</span>
+                </div>
+            </div>
+
+            <div className="contact-section">
+                फोन नं. +977 57-520007<br />
+                इमेल: centralstore@nea.org.np<br />
+                nea.centralstore@gmail.com<br />
+                हेटौँडा उपमहानगरपालिका<br />
+                वडा नं. ५, मकवानपुर
+            </div>
+        </header>
+    );
+
+    const RefSection = () => (
+        <section className="ref-section">
+            <div className="ref-left">
+                <div>
+                    प.सं.: <span className="dynamic">{letter?.letter_count} च.नं.: {letter?.chalani_no}</span>
+                </div>
+                <div>
+                    श्री {letter?.office_name},<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;{letter?.receiver_address}
+                </div>
+            </div>
+            <div className="ref-right">
+                मिति: <span className="dynamic">{letter?.date}</span><br />
+                मे. मौ. नं.: {letter?.voucher_no}<br />
+                गेटपास नं: {letter?.gatepass_no}
+            </div>
+        </section>
+    );
+
+    const SubjectSection = () => (
+        <div className="subject">विषय: {letter?.subject}</div>
+    );
+
+    const ContentSection = () => (
+        <div className="content">
+            उपरोक्त सम्बन्धमा तहाँको प.सं. {letter?.letter_count} च.नं. {letter?.chalani_no} मिति {letter?.request_date} को माग पत्रानुसार तपसिलमा उल्लेखित
+            विद्युतीय जिन्सी सामानहरु निम्न उल्लेखित कर्मचारी/व्यक्ति हस्ते पठाइएको छ। उक्त सामानहरुको ट्रान्सफर नोट खर्चपुर्जा र मुल्य पछि पठाइने व्यहोरा समेत अनुरोध छ ।
+        </div>
+    );
+
+    const TableHeader = () => (
+        <thead>
+            <tr>
+                <th>सि.नं.</th>
+                <th>सामानको नाम</th>
+                <th>कम्पनी</th>
+                <th>सिरियल नं.</th>
+                <th>इकाई</th>
+                <th>इकाईको परिमाण</th>
+                <th>कैफियत</th>
+            </tr>
+        </thead>
+    );
+
+    const SupplierInfo = () => (
+        <section className="supplier-info" style={{ marginTop: '20px' }}>
+            <strong>सामान बुझ्नेको</strong>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>पुरा नाम, थर: {letter?.receiver.name}</td>
+                        <td>पद: {letter?.receiver.post}</td>
+                    </tr>
+                    <tr>
+                        <td>संकेत नं./परिचय पत्र नं.: {engToNep(`${letter?.receiver.id_card_number}`)}</td>
+                        <td>परिचयपत्रको किसिम: {idType}</td>
+                    </tr>
+                    <tr>
+                        <td>कार्यालयको नाम: {letter?.receiver.office_name}</td>
+                        <td>कार्यालयको ठेगाना: {letter?.receiver.office_address}</td>
+                    </tr>
+                    <tr>
+                        <td>गाडी नं.: {letter?.receiver.vehicle_number}</td>
+                        <td>मोबाईल नं: {engToNep(`${letter?.receiver.phone_number}`)}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    );
+
+    const SignatureSection = () => (
+        <footer className="signature-section" style={{ marginTop: '70px' }}>
+            <div className="signature-box">
+                <div className='signature-line'></div>
+                सामान बुझिलिनेको सही
+            </div>
+            <div className="signature-box">
+                <div className="signature-line"></div>
+                तयार गर्ने
+            </div>
+            <div className="signature-box">
+                <div className="signature-line"></div>
+                चेक गर्ने
+            </div>
+            <div className="signature-box">
+                <div className="signature-line"></div>
+                शाखा प्रमुख
+            </div>
+        </footer>
+    );
+
     return (
         <>
             {isLoading && (
@@ -89,7 +279,7 @@ const ShowLetter = () => {
                 {/* Download Button */}
                 <div className="absolute flex items-center justify-between">
                     <button
-                    type='button'
+                        type='button'
                         onClick={handleDownload}
                         className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5"
                     >
@@ -97,71 +287,31 @@ const ShowLetter = () => {
                     </button>
                 </div>
 
-                {/* Multi Pages */}
-                {pages.map((chunk, pageIndex) => (
+                {/* HIDDEN MEASUREMENT CONTAINER */}
+                {letter && (
                     <div
-                        key={chunk?.[0]?.id}
                         className="page"
-                        ref={(el) => {
-                            if (el) pageRefs.current[pageIndex] = el;
+                        ref={hiddenContainerRef}
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            zIndex: -1000,
+                            visibility: 'hidden',
+                            height: '297mm', // Enforce A4 height for measurement
+                            overflow: 'hidden'
                         }}
                     >
-                        {/* HEADER */}
-                        <header>
-                            <div className="logo-section">
-                                <img src={nepal_electricity_authority_logo} alt="" />
-                            </div>
-
-                            <div className="title-section">
-                                <h1>नेपाल विद्युत प्राधिकरण</h1>
-                                <h2>(नेपाल सरकारको स्वामित्व)</h2>
-                                <h3>वितरण तथा ग्राहक सेवा निर्देशनालय</h3>
-                                <h3>खरिद व्यवस्थापन महाशाखा</h3>
-
-                                <div className="jinsi-line">
-                                    <span>जिन्सी व्यवस्थापन शाखा</span>
-                                </div>
-                            </div>
-
-                            <div className="contact-section">
-                                फोन नं. +977 57-520007<br />
-                                इमेल: centralstore@nea.org.np<br />
-                                nea.centralstore@gmail.com<br />
-                                हेटौँडा उपमहानगरपालिका<br />
-                                वडा नं. ५, मकवानपुर
-                            </div>
-                        </header>
-
-                        {/* REF Section */}
-                        <section className="ref-section">
-                            <div className="ref-left">
-                                <div>
-                                    प.सं.: <span className="dynamic">{letter?.letter_count} च.नं.: {letter?.chalani_no}</span>
-                                </div>
-                                <div>
-                                    श्री {letter?.office_name},<br />
-                                    &nbsp;&nbsp;&nbsp;&nbsp;{letter?.receiver_address}
-                                </div>
-                            </div>
-                            <div className="ref-right">
-                                मिति: <span className="dynamic">{letter?.date}</span><br />
-                                मे. मौ. नं.: {letter?.voucher_no}<br />
-                                गेटपास नं: {letter?.gatepass_no}
-                            </div>
-                        </section>
-
-                        <div className="subject">विषय: {letter?.subject}</div>
-
-                        <div className="content">
-                            उपरोक्त सम्बन्धमा तहाँको प.सं. {letter?.letter_count} च.नं. {letter?.chalani_no} मिति {letter?.request_date} को माग पत्रानुसार तपसिलमा उल्लेखित
-                            विद्युतीय जिन्सी सामानहरु निम्न उल्लेखित कर्मचारी/व्यक्ति हस्ते पठाइएको छ। उक्त सामानहरुको ट्रान्सफर नोट खर्चपुर्जा र मुल्य पछि पठाइने व्यहोरा समेत अनुरोध छ ।
+                        <div ref={topContentRef} style={{ display: 'flow-root' }}>
+                            <HeaderSection />
+                            <RefSection />
+                            <SubjectSection />
+                            <ContentSection />
+                            <div className="table-title">तपसिल:</div>
                         </div>
 
-                        <div className="table-title">तपसिल:</div>
-
-                        {/* ITEMS TABLE */}
                         <table className="table">
-                            <thead>
+                            <thead ref={tableHeaderRef}>
                                 <tr>
                                     <th>सि.नं.</th>
                                     <th>सामानको नाम</th>
@@ -173,9 +323,9 @@ const ShowLetter = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {chunk.map((item, index) => (
-                                    <tr key={item.id}>
-                                        <td>{engToNep(`${index + 1 + pageIndex * 12}`)}</td>
+                                {letter.items.map((item, index) => (
+                                    <tr key={item.id} ref={(el) => { itemRefs.current[index] = el }}>
+                                        <td>{engToNep(`${index + 1}`)}</td>
                                         <td>{item.name}</td>
                                         <td>{item.company}</td>
                                         <td style={{
@@ -194,55 +344,78 @@ const ShowLetter = () => {
                             </tbody>
                         </table>
 
-                        {/* SHOW ONLY ON LAST PAGE */}
-                        {pageIndex === pages.length - 1 && (
-                            <>
-                                <section className="supplier-info" style={{ marginTop: '20px' }}>
-                                    <strong>सामान बुझ्नेको</strong>
-                                    <table>
-                                        <tbody>
-                                            <tr>
-                                                <td>पुरा नाम, थर: {letter?.receiver.name}</td>
-                                                <td>पद: {letter?.receiver.post}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>संकेत नं./परिचय पत्र नं.: {engToNep(`${letter?.receiver.id_card_number}`)}</td>
-                                                <td>परिचयपत्रको किसिम: {idType}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>कार्यालयको नाम: {letter?.receiver.office_name}</td>
-                                                <td>कार्यालयको ठेगाना: {letter?.receiver.office_address}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>गाडी नं.: {letter?.receiver.vehicle_number}</td>
-                                                <td>मोबाईल नं: {engToNep(`${letter?.receiver.phone_number}`)}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </section>
+                        <div ref={lastPageContentRef} style={{ display: 'flow-root' }}>
+                            <SupplierInfo />
+                            <SignatureSection />
+                        </div>
+                        
+                        <footer className="page-number" ref={footerRef}>
+                             पाना १ मध्ये १
+                        </footer>
+                    </div>
+                )}
 
-                                <footer className="signature-section" style={{ marginTop: '70px' }}>
-                                    <div className="signature-box">
-                                        <div className='signature-line'></div>
-                                        सामान बुझिलिनेको सही
-                                    </div>
-                                    <div className="signature-box">
-                                        <div className="signature-line"></div>
-                                        तयार गर्ने
-                                    </div>
-                                    <div className="signature-box">
-                                        <div className="signature-line"></div>
-                                        चेक गर्ने
-                                    </div>
-                                    <div className="signature-box">
-                                        <div className="signature-line"></div>
-                                        शाखा प्रमुख
-                                    </div>
-                                </footer>
+
+                {/* VISIBLE PAGES */}
+                {paginatedItems.map((chunk, pageIndex) => (
+                    <div
+                        key={pageIndex}
+                        className="page"
+                        ref={(el) => {
+                            if (el) pageRefs.current[pageIndex] = el;
+                        }}
+                    >
+                        <HeaderSection />
+                        <RefSection />
+                        <SubjectSection />
+                        <ContentSection />
+
+                        <div className="table-title">तपसिल:</div>
+
+                        {/* ITEMS TABLE */}
+                        <table className="table">
+                            <TableHeader />
+                            <tbody>
+                                {chunk.map((item, chunkItemIndex) => {
+                                    // Calculate global index
+                                    // We need to know the count of items in previous pages
+                                    let previousCount = 0;
+                                    for(let i=0; i<pageIndex; i++) {
+                                        previousCount += paginatedItems[i].length;
+                                    }
+                                    const globalIndex = previousCount + chunkItemIndex;
+
+                                    return (
+                                        <tr key={item.id || chunkItemIndex}>
+                                            <td>{engToNep(`${globalIndex + 1}`)}</td>
+                                            <td>{item.name}</td>
+                                            <td>{item.company}</td>
+                                            <td style={{
+                                                wordWrap: "break-word",
+                                                whiteSpace: "normal",
+                                                maxWidth: "120px",
+                                                wordBreak: "break-word"
+                                            }}>
+                                                {item.serial_number}
+                                            </td>
+                                            <td>{item.unit_of_measurement}</td>
+                                            <td>{item.quantity}</td>
+                                            <td>{item.remarks}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+
+                        {/* SHOW ONLY ON LAST PAGE */}
+                        {pageIndex === paginatedItems.length - 1 && (
+                            <>
+                                <SupplierInfo />
+                                <SignatureSection />
                             </>
                         )}
                         <footer className="page-number">
-                            पाना {engToNep(`${pages.length}`)} मध्ये {engToNep(`${pageIndex + 1}`)}
+                            पाना {engToNep(`${paginatedItems.length}`)} मध्ये {engToNep(`${pageIndex + 1}`)}
                         </footer>
                     </div>
                 ))}
