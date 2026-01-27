@@ -142,7 +142,7 @@ const ActiveProducts = () => {
 						</tr>
 					</thead>
 					<tbody>
-						{products.length === 0 ? (
+						{ !products || products?.length === 0 ? (
 							<tr className="border-b bg-gray-800 border-gray-700">
 								<td
 									className="px-6 py-4 font-medium text-center text-white"
@@ -152,7 +152,7 @@ const ActiveProducts = () => {
 								</td>
 							</tr>
 						) : (
-							products.map((product) => (
+							products?.map((product) => (
 								<tr
 									key={product.serial_number}
 									className="border-b bg-gray-800 border-gray-700"
