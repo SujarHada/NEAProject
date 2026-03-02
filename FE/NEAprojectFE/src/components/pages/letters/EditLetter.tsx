@@ -139,8 +139,10 @@ const EditLetter = () => {
                     const errKey = Object.keys(errObj)[0]
                     const errMsg = Object.values(errObj)[0][0]
                     toast.error(`${`${errKey}`}: ${`${errMsg}`}`)
+                    return
                 }
             }
+            toast.error("Something went wrong!!")
         }
     };
 
