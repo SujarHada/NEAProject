@@ -9,7 +9,7 @@ import { Toaster } from "react-hot-toast";
 const Home = () => {
 	const navigate = useNavigate();
 	const [showInfo, setShowInfo] = useState(false);
-	const cardRef = useRef<any>(null);
+	const cardRef = useRef<HTMLDivElement>(null);
 
 	const renderPage = (activePage: string) => {
 		switch (activePage) {
@@ -82,7 +82,7 @@ const Home = () => {
 		}
 	};
 
-	useOnClickOutside(cardRef, () => setShowInfo(false));
+	useOnClickOutside(cardRef as unknown as React.RefObject<HTMLElement>, () => setShowInfo(false));
 
 	return (
 		<div className="flex relative">

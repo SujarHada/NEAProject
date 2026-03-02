@@ -22,7 +22,7 @@ const CreateAccount = () => {
 			setEmail("");
 			setPassword("");
 			setRole("viewer");
-		} catch (err: any) {
+		} catch (err: unknown) {
 			console.error(err);
 			setMessage("Failed to create user ");
 		} finally {

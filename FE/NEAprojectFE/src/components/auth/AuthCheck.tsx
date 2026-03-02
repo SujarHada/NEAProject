@@ -21,7 +21,7 @@ const AuthCheck = ({ children }: { children: JSX.Element }) => {
 				const res = await api.get<meResponse>("/api/auth/me/");
 				setUser(res.data);
 				setLoading(false);
-			} catch (err) {
+			} catch {
 				clearAuth();
 				navigate("/login");
 			}

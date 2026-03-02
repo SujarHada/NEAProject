@@ -34,9 +34,4 @@ export const id_types = [
 		name: "कर्मचारी परिचय पत्र",
 		value: "employee_id",
 	},
-	{
-		id: 8,
-		name: "अज्ञात",
-		value: "unknown",
-	},
 ];

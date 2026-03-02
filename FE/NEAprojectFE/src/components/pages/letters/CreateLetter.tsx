@@ -17,6 +17,19 @@ import { productUnits } from "app/enum/productUnits";
 import { id_types } from "app/enum/id_types";
 import toast from "react-hot-toast";
 
+interface ReceiverEntry {
+	id: string;
+	name: string;
+	post: string;
+	id_card_number: string;
+	id_card_type: string;
+	office_name: string;
+	office_address: string;
+	phone_number: string;
+	vehicle_number: string;
+	isManual: boolean;
+}
+
 const CreateLetter = () => {
 	const { t } = useTranslation();
 	const {
@@ -25,7 +38,6 @@ const CreateLetter = () => {
 		formState: { isSubmitting, errors },
 		setValue,
 		trigger,
-		watch,
 	} = useForm<CreateLetterI>({
 		resolver: zodResolver(createLetterSchema),
 		defaultValues: {
@@ -69,6 +81,21 @@ const CreateLetter = () => {
 	const { Offices, Receivers, Products, LetterCreationData, ...StoreMethods } =
 		useDataStore();
 	const [filteredReceivers, setFilteredReceivers] = useState<Receiver[]>([]);
+	const [selectedReceivers, setSelectedReceivers] = useState<ReceiverEntry[]>([]);
+	const [editingReceiverId, setEditingReceiverId] = useState<string | null>(null);
+	const [showManualEntry, setShowManualEntry] = useState(false);
+	const [manualReceiver, setManualReceiver] = useState<ReceiverEntry>({
+		id: "",
+		name: "",
+		post: "",
+		id_card_number: "",
+		id_card_type: "unknown",
+		office_name: "",
+		office_address: "",
+		phone_number: "",
+		vehicle_number: "",
+		isManual: true,
+	});
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -103,6 +130,21 @@ const CreateLetter = () => {
 	const handleReceiverChange = (receiverId: string) => {
 		const selected = Receivers?.find((r) => r.id.toString() === receiverId);
 		if (selected) {
+			const newReceiver: ReceiverEntry = {
+				id: selected.id.toString(),
+				name: selected.name,
+				post: selected.post,
+				id_card_number: selected.id_card_number,
+				id_card_type: selected.id_card_type,
+				office_name: selected.office_name,
+				office_address: selected.office_address,
+				phone_number: selected.phone_number,
+				vehicle_number: selected.vehicle_number,
+				isManual: false,
+			};
+			if (!selectedReceivers.find((r) => r.id === newReceiver.id)) {
+				setSelectedReceivers([...selectedReceivers, newReceiver]);
+			}
 			setValue("receiver_id", selected.id.toString());
 			setValue("receiver.name", selected.name);
 			setValue("receiver.post", selected.post);
@@ -115,21 +157,113 @@ const CreateLetter = () => {
 		}
 		trigger("receiver");
 	};
-	console.log(watch());
-	console.log(errors);
-	const { fields, append, remove } = useFieldArray({ control, name: "items" });
 
-	const onSubmit = async (data: CreateLetterI) => {
-		const res = await api.post("/api/letters/", data);
-		if (res.status === 201) {
-			toast.success("Letter created successfully", {
-				position: "top-center",
-				duration: 1000,
-				removeDelay: 1000,
-			});
-			navigate(`/letters/view-letter/${res.data.data.id}`);
+	const handleRemoveReceiver = (id: string) => {
+		setSelectedReceivers(selectedReceivers.filter((r) => r.id !== id));
+	};
+
+	const handleEditReceiver = (id: string) => {
+		setEditingReceiverId(id);
+		const receiver = selectedReceivers.find((r) => r.id === id);
+		if (receiver) {
+			setManualReceiver({ ...receiver, isManual: true });
 		}
 	};
+
+	const handleSaveEditedReceiver = () => {
+		if (editingReceiverId) {
+			setSelectedReceivers(
+				selectedReceivers.map((r) =>
+					r.id === editingReceiverId ? { ...manualReceiver, id: editingReceiverId } : r
+				)
+			);
+			setEditingReceiverId(null);
+			setManualReceiver({
+				id: "",
+				name: "",
+				post: "",
+				id_card_number: "",
+				id_card_type: "unknown",
+				office_name: "",
+				office_address: "",
+				phone_number: "",
+				vehicle_number: "",
+				isManual: true,
+			});
+		}
+	};
+
+	const handleAddManualReceiver = () => {
+		if (manualReceiver.name && manualReceiver.post && manualReceiver.phone_number) {
+			const newReceiver: ReceiverEntry = {
+				...manualReceiver,
+				id: `manual-${Date.now()}`,
+			};
+			setSelectedReceivers([...selectedReceivers, newReceiver]);
+			setManualReceiver({
+				id: "",
+				name: "",
+				post: "",
+				id_card_number: "",
+				id_card_type: "unknown",
+				office_name: "",
+				office_address: "",
+				phone_number: "",
+				vehicle_number: "",
+				isManual: true,
+			});
+		} else {
+			toast.error("कृपया सबै आवश्यक फिल्डहरू भर्नुहोस्");
+		}
+	};
+
+	const handleSubmitWrapper = () => {
+		handleSubmit(onSubmit)();
+	};
+
+	const onSubmit = async (data: CreateLetterI) => {
+		if (selectedReceivers.length === 0) {
+			toast.error("कृपया कम्तीमा एक प्राप्तकर्ता चयन गर्नुहोस्");
+			return;
+		}
+
+		const combinedData = {
+			...data,
+			receiver: {
+				name: selectedReceivers.map((r) => r.name).join(", "),
+				post: selectedReceivers.map((r) => r.post).join(", "),
+				id_card_number: selectedReceivers.map((r) => r.id_card_number).join(", "),
+				id_card_type: selectedReceivers[0]?.id_card_type || "unknown",
+				office_name: selectedReceivers.map((r) => r.office_name).join(", "),
+				office_address: selectedReceivers.map((r) => r.office_address).join(", "),
+				phone_number: selectedReceivers.map((r) => r.phone_number).join(", "),
+				vehicle_number: selectedReceivers.map((r) => r.vehicle_number).join(", "),
+			},
+		};
+
+		try {
+			const res = await api.post("/api/letters/", combinedData);
+			if (res.status === 201) {
+				toast.success(t("createLetter.success_message"), {
+					position: "top-center",
+					duration: 1000,
+					removeDelay: 1000,
+				});
+				navigate(`/letters/view-letter/${res.data.data.id}`);
+			}
+		} catch (error: unknown) {
+			console.error("Error creating letter:", error);
+			if (error && typeof error === 'object' && 'response' in error) {
+				const axiosError = error as { response?: { data?: { message?: string } } };
+				const message = axiosError.response?.data?.message || t("createLetter.error_message");
+				toast.error(message);
+			} else {
+				toast.error(t("createLetter.error_message"));
+			}
+		}
+	};
+
+	const { fields, append, remove } = useFieldArray({ control, name: "items" });
 
 	return (
 		<div className="flex flex-col gap-3">
@@ -399,7 +533,7 @@ const CreateLetter = () => {
 								<Controller
 									name={`items.${index}.product_id`}
 									control={control}
-									render={({ field }) => (
+									render={({ field, fieldState }) => (
 										<select
 											{...field}
 											value={field.value}
@@ -416,10 +550,8 @@ const CreateLetter = () => {
 													p.unit_of_measurement,
 												);
 												trigger(`items`);
-
-												// Only validate the name field (which is the one that shows errors)
 											}}
-											className="bg-[#B5C9DC] w-full min-w-[203px] border-2 h-8 outline-none px-3 rounded-md border-gray-600"
+											className={`bg-[#B5C9DC] w-full min-w-[203px] border-2 h-8 outline-none px-3 rounded-md ${fieldState.error ? 'border-red-500' : 'border-gray-600'}`}
 										>
 											<option value="" hidden>
 												{t("createLetter.product")}
@@ -432,18 +564,13 @@ const CreateLetter = () => {
 										</select>
 									)}
 								/>
-								{errors.items?.[index]?.product_id && (
-										<span className="text-[#B22222]">
-											{errors.items[index].product_id.message}
-										</span>
-									)}
 							</div>
 							<div className="flex flex-2 gap-2 justify-between">
 								<div className="flex max-w-[30%] flex-col flex-1 gap-2">
 									<Controller
 										name={`items.${index}.unit_of_measurement`}
 										control={control}
-										render={({ field }) => (
+										render={({ field, fieldState }) => (
 											<select
 												value={field.value}
 												onChange={async (e) => {
@@ -456,7 +583,7 @@ const CreateLetter = () => {
 													);
 													await trigger(`items.${index}.unit_of_measurement`);
 												}}
-												className="bg-[#B5C9DC] w-full border-2 h-8 outline-none px-3 rounded-md border-gray-600"
+												className={`bg-[#B5C9DC] w-full border-2 h-8 outline-none px-3 rounded-md ${fieldState.error ? 'border-red-500' : 'border-gray-600'}`}
 											>
 												<option value="" hidden>
 													{t("createLetter.unit")}
@@ -469,11 +596,6 @@ const CreateLetter = () => {
 											</select>
 										)}
 									/>
-									{errors.items?.[index]?.unit_of_measurement && (
-											<span className="text-[#B22222]">
-												{errors.items[index].unit_of_measurement.message}
-											</span>
-										)}
 								</div>
 
 								<div className="flex flex-1 flex-wrap justify-between  flex-row gap-2">
@@ -481,7 +603,7 @@ const CreateLetter = () => {
 										<Controller
 											name={`items.${index}.serial_number`}
 											control={control}
-											render={({ field }) => (
+											render={({ field, fieldState }) => (
 												<input
 													{...field}
 													onChange={async (e) => {
@@ -491,7 +613,7 @@ const CreateLetter = () => {
 														if (trimmed === "" || trimmed === "-") {
 															await trigger(`items.${index}.serial_number`);
 															return;
-														}
+								}
 														const count = trimmed
 															.split(",")
 															.map((s) => s.trim())
@@ -504,21 +626,16 @@ const CreateLetter = () => {
 															`items.${index}.quantity`,
 														]);
 													}}
-													className="bg-[#B5C9DC] border-1 h-auto min-h-[2rem] max-h-20 overflow-y-auto outline-none pl-3 rounded-md border-gray-600 resize-y py-1"
+													className={`bg-[#B5C9DC] border-1 h-auto min-h-[2rem] max-h-20 overflow-y-auto outline-none pl-3 rounded-md ${fieldState.error ? 'border-red-500 border-2' : 'border-gray-600'} resize-y py-1`}
 												/>
 											)}
 										/>
-										{errors.items?.[index]?.serial_number && (
-											<span className="text-[#B22222]">
-												{errors.items[index].serial_number.message}
-											</span>
-										)}
 									</div>
 									<div className="flex max-w-[30%] flex-1 flex-col gap-2">
 										<Controller
 											name={`items.${index}.quantity`}
 											control={control}
-											render={({ field }) => (
+											render={({ field, fieldState }) => (
 												<input
 													{...field}
 													onChange={async (e) => {
@@ -526,15 +643,10 @@ const CreateLetter = () => {
 														await trigger(`items.${index}.quantity`);
 													}}
 													type="text"
-													className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+													className={`bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md ${fieldState.error ? 'border-red-500 border-2' : 'border-gray-600'}`}
 												/>
 											)}
 										/>
-										{errors.items?.[index]?.quantity && (
-											<span className="text-[#B22222]">
-												{errors.items[index].quantity.message}
-											</span>
-										)}
 									</div>
 								</div>
 							</div>
@@ -550,11 +662,6 @@ const CreateLetter = () => {
 										/>
 									)}
 								/>
-								{errors.items?.[index]?.remarks && (
-									<span className="text-[#B22222]">
-										{errors.items[index].remarks.message}
-									</span>
-								)}
 							</div>
 							<button
 								type="button"
@@ -602,200 +709,457 @@ const CreateLetter = () => {
 			</div>
 
 			{/* Receiver */}
-			<div className="flex w-full flex-col gap-2 ">
-				<div className="w-full flex gap-4  flex-wrap ">
-					<div className="flex flex-col flex-1">
-						<label htmlFor="receiverSelect">
-							{t("createLetter.select_receiver")} *
-						</label>
-						<select
-							id="receiverSelect"
-							onChange={(e) => handleReceiverChange(e.target.value)}
-							disabled={!filteredReceivers.length}
-							className="bg-[#B5C9DC] border-2 h-8 outline-none px-3 rounded-md border-gray-600"
-						>
-							<option value="" hidden>
-								{filteredReceivers.length
-									? t("createLetter.select_receiver")
-									: t("createLetter.no_receiver_found")}
-							</option>
-							{filteredReceivers.map((r) => (
-								<option key={r.id} value={r.id}>
-									{r.name}
-								</option>
-							))}
-						</select>
-						{errors.receiver?.name && (
-							<span className="text-[#B22222]">
-								{errors.receiver.name.message}
-							</span>
-						)}
-					</div>
-					<div className="flex flex-col flex-1">
-						<label htmlFor="receiverSelect">
-							{t("createLetter.vehiche_number")} *
-						</label>
-						<Controller
-							name="receiver.vehicle_number"
-							control={control}
-							render={({ field }) => (
-								<input
-									{...field}
-									type="text"
-									className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
-								/>
-							)}
-						/>
-						{errors.receiver?.vehicle_number && (
-							<span className="text-[#B22222]">
-								{errors.receiver.vehicle_number.message}
-							</span>
-						)}
-					</div>
-					<div className="flex flex-col flex-1">
-						<label htmlFor="receiverSelect">{t("createLetter.post")} *</label>
-						<Controller
-							name="receiver.post"
-							control={control}
-							render={({ field }) => (
-								<input
-									{...field}
-									type="text"
-									className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
-								/>
-							)}
-						/>
-						{errors.receiver?.post && (
-							<span className="text-[#B22222]">
-								{errors.receiver.post.message}
-							</span>
-						)}
-					</div>
-				</div>
-				<div className="w-full flex gap-4  flex-wrap ">
-					<div className="flex flex-col flex-1">
-						<label htmlFor="receiverSelect">
-							{t("createLetter.office_name")} *
-						</label>
-						<Controller
-							name="receiver.office_name"
-							control={control}
-							render={({ field }) => (
-								<input
-									{...field}
-									type="text"
-									className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
-								/>
-							)}
-						/>
-						{errors.receiver?.office_name && (
-							<span className="text-[#B22222]">
-								{errors.receiver.office_name.message}
-							</span>
-						)}
-					</div>
-					<div className="flex flex-col flex-1">
-						<label htmlFor="receiverSelect">
-							{t("createLetter.receiver_office_address")} *
-						</label>
-						<Controller
-							name="receiver.office_address"
-							control={control}
-							render={({ field }) => (
-								<input
-									{...field}
-									type="text"
-									className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
-								/>
-							)}
-						/>
-						{errors.receiver?.office_address && (
-							<span className="text-[#B22222]">
-								{errors.receiver.office_address.message}
-							</span>
-						)}
-					</div>
-					<div className="flex flex-col flex-1">
-						<label htmlFor="receiverSelect">
-							{t("createLetter.phone_number")} *
-						</label>
-						<Controller
-							name="receiver.phone_number"
-							control={control}
-							render={({ field }) => (
-								<input
-									{...field}
-									type="text"
-									className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
-								/>
-							)}
-						/>
-						{errors.receiver?.office_address && (
-							<span className="text-[#B22222]">
-								{errors.receiver.office_address.message}
-							</span>
-						)}
-					</div>
-				</div>
-				<div className="w-full flex gap-4  flex-wrap ">
-					<div className="flex flex-col flex-1">
-						<label htmlFor="receiverSelect">
-							{t("createLetter.id_card_number")} *
-						</label>
-						<Controller
-							name="receiver.id_card_number"
-							control={control}
-							render={({ field }) => (
-								<input
-									{...field}
-									type="text"
-									className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
-								/>
-							)}
-						/>
-						{errors.receiver?.office_address && (
-							<span className="text-[#B22222]">
-								{errors.receiver.office_address.message}
-							</span>
-						)}
-					</div>
-					<div className="flex flex-col flex-1">
-						<label htmlFor="receiverSelect">
-							{t("createLetter.id_card_number")} *
-						</label>
-						<Controller
-							name="receiver.id_card_type"
-							control={control}
-							render={({ field }) => (
-								<div className="flex w-full items-center relative">
-									<select
-										id="position"
-										{...field}
-										className="bg-[#B5C9DC] w-full border-2 h-8 outline-none px-3 rounded-md border-gray-600"
-									>
-										{id_types.map((idType) => (
-											<option key={idType.id} value={idType.value}>
-												{idType.name}
-											</option>
-										))}
-									</select>
+			{(() => {
+				const availableReceivers = filteredReceivers.filter(
+					(r) => !selectedReceivers.find((sr) => sr.id === r.id.toString())
+				);
+
+				return (
+					<div className="flex w-full flex-col gap-2">
+						{/* Dropdown to select receiver */}
+						<div className="w-full flex gap-4 flex-wrap">
+							<div className="flex flex-col flex-1">
+								<label htmlFor="receiverSelect">
+									{t("createLetter.select_receiver")}
+								</label>
+								<select
+									id="receiverSelect"
+									onChange={(e) => handleReceiverChange(e.target.value)}
+									disabled={!availableReceivers.length}
+									className="bg-[#B5C9DC] border-2 h-8 outline-none px-3 rounded-md border-gray-600"
+								>
+									<option value="" hidden>
+										{availableReceivers.length
+											? t("createLetter.select_receiver")
+											: t("createLetter.no_receiver_found")}
+									</option>
+									{availableReceivers.map((r) => (
+										<option key={r.id} value={r.id}>
+											{r.name}
+										</option>
+									))}
+								</select>
+							</div>
+						</div>
+
+						{/* Selected receivers list */}
+						{selectedReceivers.length > 0 && (
+							<div className="flex flex-col gap-2 w-full">
+								<div className="bg-[#91a4c3] px-4 py-2 rounded-t-md font-semibold text-white">
+									{t("createLetter.selected_receivers") || "चयनित प्राप्तकर्ताहरू"} ({selectedReceivers.length})
 								</div>
-							)}
-						/>
-						{errors.receiver?.office_address && (
-							<span className="text-[#B22222]">
-								{errors.receiver.office_address.message}
-							</span>
+								{selectedReceivers.map((receiver, index) => (
+									<div
+										key={receiver.id}
+										className="bg-[#B5C9DC] px-4 py-3 flex flex-col gap-2"
+									>
+										{editingReceiverId === receiver.id ? (
+											/* Edit mode */
+									<div className="flex flex-col gap-2 w-full">
+												<div className="w-full flex gap-4 flex-wrap">
+													<div className="flex flex-col flex-1">
+														<label htmlFor="edit-name">{t("createLetter.select_receiver")}</label>
+														<input
+															id="edit-name"
+															type="text"
+															value={manualReceiver.name}
+															onChange={(e) =>
+																setManualReceiver({
+																	...manualReceiver,
+																	name: e.target.value,
+																})
+															}
+															className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+														/>
+													</div>
+													<div className="flex flex-col flex-1">
+														<label htmlFor="edit-post">{t("createLetter.post")}</label>
+														<input
+															id="edit-post"
+															type="text"
+															value={manualReceiver.post}
+															onChange={(e) =>
+																setManualReceiver({
+																	...manualReceiver,
+																	post: e.target.value,
+																})
+															}
+															className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+														/>
+													</div>
+													<div className="flex flex-col flex-1">
+														<label htmlFor="edit-vehicle">{t("createLetter.vehiche_number")}</label>
+														<input
+															id="edit-vehicle"
+															type="text"
+															value={manualReceiver.vehicle_number}
+															onChange={(e) =>
+																setManualReceiver({
+																	...manualReceiver,
+																	vehicle_number: e.target.value,
+																})
+															}
+															className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+														/>
+													</div>
+												</div>
+												<div className="w-full flex gap-4 flex-wrap">
+													<div className="flex flex-col flex-1">
+														<label htmlFor="edit-office">{t("createLetter.office_name")}</label>
+														<input
+															id="edit-office"
+															type="text"
+																value={manualReceiver.office_name}
+															onChange={(e) =>
+																setManualReceiver({
+																	...manualReceiver,
+																	office_name: e.target.value,
+																})
+															}
+															className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+														/>
+													</div>
+													<div className="flex flex-col flex-1">
+														<label htmlFor="edit-address">{t("createLetter.receiver_office_address")}</label>
+														<input
+															id="edit-address"
+															type="text"
+															value={manualReceiver.office_address}
+															onChange={(e) =>
+																setManualReceiver({
+																	...manualReceiver,
+																	office_address: e.target.value,
+																})
+															}
+															className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+														/>
+													</div>
+													<div className="flex flex-col flex-1">
+														<label htmlFor="edit-phone">{t("createLetter.phone_number")}</label>
+														<input
+															id="edit-phone"
+															type="text"
+															value={manualReceiver.phone_number}
+															onChange={(e) =>
+																setManualReceiver({
+																	...manualReceiver,
+																	phone_number: e.target.value,
+																})
+															}
+															className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+														/>
+													</div>
+												</div>
+												<div className="w-full flex gap-4 flex-wrap">
+													<div className="flex flex-col flex-1">
+														<label htmlFor="edit-idcard">{t("createLetter.id_card_number")}</label>
+														<input
+															id="edit-idcard"
+															type="text"
+															value={manualReceiver.id_card_number}
+															onChange={(e) =>
+																setManualReceiver({
+																	...manualReceiver,
+																	id_card_number: e.target.value,
+																})
+															}
+															className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+														/>
+													</div>
+													<div className="flex flex-col flex-1">
+														<label htmlFor="edit-idtype">{t("createLetter.id_card_type")}</label>
+														<select
+															id="edit-idtype"
+															value={manualReceiver.id_card_type}
+															onChange={(e) =>
+																setManualReceiver({
+																	...manualReceiver,
+																	id_card_type: e.target.value,
+																})
+															}
+															className="bg-white border-2 h-8 outline-none px-3 rounded-md border-gray-600"
+														>
+															{id_types.map((idType) => (
+																<option key={idType.id} value={idType.value}>
+																	{idType.name}
+																</option>
+															))}
+														</select>
+													</div>
+													<div className="flex flex-1"></div>
+												</div>
+												<div className="flex gap-2 mt-2">
+													<button
+														type="button"
+														onClick={handleSaveEditedReceiver}
+														className="bg-[#10172A] text-white px-4 py-1.5 rounded-md hover:bg-[#233058] text-sm"
+													>
+														{t("createLetter.save")}
+													</button>
+													<button
+														type="button"
+														onClick={() => {
+															setEditingReceiverId(null);
+															setManualReceiver({
+																id: "",
+																name: "",
+																post: "",
+																id_card_number: "",
+																id_card_type: "unknown",
+																office_name: "",
+																office_address: "",
+																phone_number: "",
+																vehicle_number: "",
+																isManual: true,
+															});
+														}}
+														className="bg-gray-500 text-white px-4 py-1.5 rounded-md hover:bg-gray-600 text-sm"
+													>
+														{t("createLetter.cancel")}
+													</button>
+												</div>
+											</div>
+										) : (
+											/* Display mode */
+											<div className="flex flex-col gap-2">
+												<div className="flex justify-between items-start">
+													<div className="flex flex-col">
+														<span className="font-semibold text-[#10172A]">
+															{index + 1}. {receiver.name} ({receiver.post})
+														</span>
+														<span className="text-sm text-[#10172A]">
+															{receiver.office_name}, {receiver.office_address}
+														</span>
+														<span className="text-sm text-[#10172A]">
+															{receiver.phone_number} | {receiver.vehicle_number}
+														</span>
+													</div>
+													<div className="flex gap-2">
+														<button
+															type="button"
+															onClick={() => handleEditReceiver(receiver.id)}
+															className="bg-[#10172A] text-white px-3 py-1 rounded-md hover:bg-[#233058] text-sm"
+														>
+															{t("createLetter.edit")}
+														</button>
+														<button
+															type="button"
+															onClick={() => handleRemoveReceiver(receiver.id)}
+															className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 text-sm"
+														>
+															{t("createLetter.remove")}
+														</button>
+													</div>
+												</div>
+											</div>
+										)}
+									</div>
+								))}
+							</div>
+						)}
+
+						{/* Manual entry button */}
+						{!editingReceiverId && (
+							<button
+								type="button"
+								onClick={() => setShowManualEntry(true)}
+								className="bg-[#91a4c3] text-white px-4 py-2 rounded-md hover:bg-[#7a8dab] w-fit"
+							>
+								+ {t("createLetter.add_manual_receiver") || "म्यानुअल प्राप्तकर्ता थप्नुहोस्"}
+							</button>
+						)}
+
+						{/* Manual entry form */}
+						{showManualEntry && !editingReceiverId && (
+							<div className="flex flex-col gap-2 w-full mt-2">
+								<div className="bg-[#91a4c3] px-4 py-2 rounded-t-md font-semibold text-white">
+									{t("createLetter.add_manual_receiver") || "म्यानुअल प्राप्तकर्ता थप्नुहोस्"}
+								</div>
+								<div className="bg-[#B5C9DC] px-4 py-3 rounded-b-md flex flex-col gap-2">
+									<div className="w-full flex gap-4 flex-wrap">
+										<div className="flex flex-col flex-1">
+											<label htmlFor="manual-name">{t("createLetter.select_receiver")}</label>
+											<input
+												id="manual-name"
+												type="text"
+												value={manualReceiver.name}
+												onChange={(e) =>
+													setManualReceiver({
+														...manualReceiver,
+														name: e.target.value,
+													})
+												}
+												placeholder={t("createLetter.select_receiver")}
+												className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+											/>
+										</div>
+										<div className="flex flex-col flex-1">
+											<label htmlFor="manual-post">{t("createLetter.post")}</label>
+											<input
+												id="manual-post"
+												type="text"
+												value={manualReceiver.post}
+												onChange={(e) =>
+													setManualReceiver({
+														...manualReceiver,
+														post: e.target.value,
+													})
+												}
+												placeholder={t("createLetter.post")}
+												className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+											/>
+										</div>
+										<div className="flex flex-col flex-1">
+											<label htmlFor="manual-vehicle">{t("createLetter.vehiche_number")}</label>
+											<input
+												id="manual-vehicle"
+												type="text"
+												value={manualReceiver.vehicle_number}
+												onChange={(e) =>
+													setManualReceiver({
+														...manualReceiver,
+														vehicle_number: e.target.value,
+													})
+												}
+												placeholder={t("createLetter.vehiche_number")}
+												className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+											/>
+										</div>
+									</div>
+									<div className="w-full flex gap-4 flex-wrap">
+										<div className="flex flex-col flex-1">
+											<label htmlFor="manual-office">{t("createLetter.office_name")}</label>
+											<input
+												id="manual-office"
+												type="text"
+												value={manualReceiver.office_name}
+												onChange={(e) =>
+													setManualReceiver({
+														...manualReceiver,
+														office_name: e.target.value,
+													})
+												}
+												placeholder={t("createLetter.office_name")}
+												className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+											/>
+										</div>
+										<div className="flex flex-col flex-1">
+											<label htmlFor="manual-address">{t("createLetter.receiver_office_address")}</label>
+											<input
+												id="manual-address"
+												type="text"
+												value={manualReceiver.office_address}
+												onChange={(e) =>
+													setManualReceiver({
+														...manualReceiver,
+														office_address: e.target.value,
+													})
+												}
+												placeholder={t("createLetter.receiver_office_address")}
+												className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+											/>
+										</div>
+										<div className="flex flex-col flex-1">
+											<label htmlFor="manual-phone">{t("createLetter.phone_number")}</label>
+											<input
+												id="manual-phone"
+												type="text"
+												value={manualReceiver.phone_number}
+												onChange={(e) =>
+													setManualReceiver({
+														...manualReceiver,
+														phone_number: e.target.value,
+													})
+												}
+												placeholder={t("createLetter.phone_number")}
+												className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+											/>
+										</div>
+									</div>
+									<div className="w-full flex gap-4 flex-wrap">
+										<div className="flex flex-col flex-1">
+											<label htmlFor="manual-idcard">{t("createLetter.id_card_number")}</label>
+											<input
+												id="manual-idcard"
+												type="text"
+												value={manualReceiver.id_card_number}
+												onChange={(e) =>
+													setManualReceiver({
+														...manualReceiver,
+														id_card_number: e.target.value,
+													})
+												}
+												placeholder={t("createLetter.id_card_number")}
+												className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+											/>
+										</div>
+										<div className="flex flex-col flex-1">
+											<label htmlFor="manual-idtype">{t("createLetter.id_card_type")}</label>
+											<select
+												id="manual-idtype"
+												value={manualReceiver.id_card_type}
+												onChange={(e) =>
+													setManualReceiver({
+														...manualReceiver,
+														id_card_type: e.target.value,
+													})
+												}
+												className="bg-white border-2 h-8 outline-none px-3 rounded-md border-gray-600"
+											>
+												{id_types.map((idType) => (
+													<option key={idType.id} value={idType.value}>
+														{idType.name}
+													</option>
+												))}
+											</select>
+										</div>
+										<div className="flex flex-1"></div>
+									</div>
+									<div className="flex gap-2 mt-2">
+										<button
+											type="button"
+											onClick={() => {
+												handleAddManualReceiver();
+												setShowManualEntry(false);
+											}}
+											className="bg-[#10172A] text-white px-4 py-1.5 rounded-md hover:bg-[#233058] text-sm"
+										>
+											{t("createLetter.save")}
+										</button>
+										<button
+											type="button"
+											onClick={() => {
+												setShowManualEntry(false);
+												setManualReceiver({
+													id: "",
+													name: "",
+													post: "",
+													id_card_number: "",
+													id_card_type: "unknown",
+													office_name: "",
+													office_address: "",
+													phone_number: "",
+													vehicle_number: "",
+													isManual: true,
+												});
+											}}
+											className="bg-gray-500 text-white px-4 py-1.5 rounded-md hover:bg-gray-600 text-sm"
+										>
+											{t("createLetter.cancel")}
+										</button>
+									</div>
+								</div>
+							</div>
 						)}
 					</div>
-				</div>
-			</div>
+				);
+			})()}
 
 			{/* Submit */}
 			<div className="flex mt-4">
 				<button
-					type="submit"
-					onClick={handleSubmit(onSubmit)}
+					type="button"
+					onClick={handleSubmitWrapper}
 					disabled={isSubmitting}
 					className="outline-none w-full bg-[#10172A] text-white h-12 hover:bg-[#233058] active:bg-[#314379] rounded-md disabled:opacity-50"
 				>

@@ -144,7 +144,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 			],
 		},
 
-		{ id: "profile", label: user?.name!, icon: <FaUserCircle /> },
+		{ id: "profile", label: user?.name ?? "Profile", icon: <FaUserCircle /> },
 	];
 
 	const divRef = useRef<HTMLDivElement>(null);

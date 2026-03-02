@@ -48,6 +48,7 @@ export const updateReceiverSchema = (t: (key: string) => string) => {
 				"drivers_license",
 				"pan_card",
 				"unknown",
+				"employee_id",
 			],
 			t("editReceiver.errors.idType"),
 		),

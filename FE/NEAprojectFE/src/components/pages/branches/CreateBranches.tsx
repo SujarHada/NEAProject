@@ -26,7 +26,7 @@ const CreateBranches = () => {
 		mode: "onSubmit",
 	});
 
-	function parseError(errors: AxiosError, path: any[] = []) {
+	function parseError(errors: AxiosError, path: string[] = []) {
 		const messages: string[] = [];
 
 		if (!errors || typeof errors !== "object") return messages;

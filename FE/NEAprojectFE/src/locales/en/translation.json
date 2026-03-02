@@ -57,7 +57,17 @@
 		"vehiche_number": "Vehicle number",
 		"no_receiver_found": "No receivers found in current selected office",
 		"submit": "Create Letter",
-		"creating": "Creating..."
+		"creating": "Creating...",
+		"add_item": "Add Item",
+		"remove": "Remove",
+		"edit": "Edit",
+		"save": "Save",
+		"cancel": "Cancel",
+		"success_message": "Letter created successfully",
+		"error_message": "Failed to create letter. Please try again.",
+		"fill_item_error": "Please complete the above item first",
+		"selected_receivers": "Selected Receivers",
+		"add_manual_receiver": "Add Manual Receiver"
 	},
 	"allLettersPage": {
 		"title": "List your all letters"

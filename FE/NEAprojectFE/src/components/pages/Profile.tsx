@@ -51,6 +51,7 @@ const Profile = () => {
 
 	const onChangePassword = async (data: ChangePasswordForm) => {
 		const { confirmPassword, ...setData } = data;
+		void confirmPassword;
 		try {
 			const res = await api.post("/api/auth/change-password/", setData);
 			if (res.status === 200) {
@@ -77,6 +78,7 @@ const Profile = () => {
 			{/* 🌐 Language Switcher */}
 			<div className="absolute top-4 sm:top-6 right-4 sm:right-8 flex items-center bg-white/10 border border-white/20 rounded-full px-2 sm:px-3 py-1 z-50">
 				<button
+				type="button"
 					onClick={() => changeLanguage("en")}
 					className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition ${
 						i18n.language === "en"
@@ -87,6 +89,7 @@ const Profile = () => {
 					🇬🇧 EN
 				</button>
 				<button
+				type="button"
 					onClick={() => changeLanguage("np")}
 					className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition ${
 						i18n.language === "np"
@@ -110,6 +113,7 @@ const Profile = () => {
 				{/* Tabs */}
 				<div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8">
 					<button
+					type="button"
 						onClick={() => setActiveTab("password")}
 						className={`px-4 sm:px-6 py-2 rounded-lg sm:text-base font-semibold transition ${
 							activeTab === "password"
@@ -175,6 +179,7 @@ const Profile = () => {
 				</div>
 
 				<button
+				type="button"
 					onClick={logout}
 					className="absolute top-4 left-4 sm:top-9 sm:left-6 flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 
              bg-red-600/80 hover:bg-red-700 text-white font-medium text-sm sm:text-base 

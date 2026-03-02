@@ -15,8 +15,8 @@ const AllBranches = () => {
 	const [nextPage, setNextPage] = useState<string | null>(null);
 	const [prevPage, setPrevPage] = useState<string | null>(null);
 	const navigate = useNavigate();
-	const ref = useRef(null);
-	useOnClickOutside<any>(ref, () => setOpenDropdownId(null));
+	const ref = useRef<HTMLDivElement>(null);
+	useOnClickOutside(ref as unknown as React.RefObject<HTMLElement>, () => setOpenDropdownId(null));
 
 	const [dropdownPosition, setDropdownPosition] = useState<{
 		top: number;
@@ -46,10 +46,13 @@ const AllBranches = () => {
 			setNextPage(res.data.next);
 			setPrevPage(res.data.previous);
 			if (pageNum) setCurrentPage(pageNum);
-		} catch (err: any) {
-			if (err.response?.status === 404 && currentPage > 1) {
-				await fetchBranches(undefined, currentPage - 1);
-				return;
+		} catch (err: unknown) {
+			if (err && typeof err === 'object' && 'response' in err) {
+				const axiosErr = err as { response?: { status?: number } };
+				if (axiosErr.response?.status === 404 && currentPage > 1) {
+					await fetchBranches(undefined, currentPage - 1);
+					return;
+				}
 			}
 			console.error("Error fetching branches:", err);
 			return [];
@@ -58,6 +61,7 @@ const AllBranches = () => {
 
 	useEffect(() => {
 		fetchBranches();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleDownload = async () => {
@@ -85,6 +89,7 @@ const AllBranches = () => {
 			<div className="flex items-center justify-between">
 				<h1 className="text-2xl font-bold">{t("allBranches.title")}</h1>
 				<button
+				type="button"
 					onClick={handleDownload}
 					className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5"
 				>
@@ -131,6 +136,7 @@ const AllBranches = () => {
 								<td className="px-6 py-4">{branch.address}</td>
 								<td className="px-6 py-4 ">
 									<button
+									type="button"
 										onClick={(e) => toggleDropdown(branch.id, e)}
 										className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5"
 									>
@@ -148,6 +154,7 @@ const AllBranches = () => {
 											<ul className="py-2 text-sm text-gray-200">
 												<li>
 													<button
+													type="button"
 														onClick={() =>
 															navigate(`/branches/${branch.id}/edit`)
 														}
@@ -158,6 +165,7 @@ const AllBranches = () => {
 												</li>
 												<li>
 													<button
+													type="button"
 														onClick={() =>
 															navigate(
 																`/branches/${branch.organization_id}/employee/create-employee`,
@@ -170,6 +178,7 @@ const AllBranches = () => {
 												</li>
 												<li>
 													<button
+													type="button"
 														onClick={() =>
 															navigate(
 																`/branches/${branch.organization_id}/employee/all-employees`,
@@ -194,6 +203,7 @@ const AllBranches = () => {
 				<ul className="flex items-center justify-center h-8 text-sm">
 					<li>
 						<button
+						type="button"
 							onClick={() =>
 								prevPage && fetchBranches(prevPage, currentPage - 1)
 							}
@@ -207,6 +217,7 @@ const AllBranches = () => {
 					{Array.from({ length: totalPages }).map((_, i) => (
 						<li key={i}>
 							<button
+							type="button"
 								onClick={() => fetchBranches(undefined, i + 1)}
 								className={`flex items-center justify-center px-3 h-8 border bg-gray-800 border-gray-700 ${currentPage === i + 1 ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-700 hover:text-white"}`}
 							>
@@ -217,6 +228,7 @@ const AllBranches = () => {
 
 					<li>
 						<button
+						type="button"
 							onClick={() =>
 								nextPage && fetchBranches(nextPage, currentPage + 1)
 							}

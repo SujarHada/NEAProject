@@ -18,13 +18,13 @@ const Login = () => {
 					navigate("/", { replace: true });
 				}
 				setLoading(false);
-			} catch (err) {
-				setLoading(false);
-			}
+		} catch {
+			setLoading(false);
+		}
 		};
 
 		fetchUser();
-	}, []);
+	}, [navigate]);
 
 	const handleLogin = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -40,7 +40,7 @@ const Login = () => {
 			const { access, user } = res.data;
 			useAuthStore.getState().setAuth(access, user);
 			navigate("/", { replace: true });
-		} catch (err: any) {
+		} catch (err: unknown) {
 			setError("Invalid credentials");
 			console.error(err);
 		} finally {

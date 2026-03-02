@@ -18,7 +18,7 @@ export const createLetterSchema = z
 		office_id: z.string().min(1, "Receiver office is required"),
 		date: z.string().min(1, "Date is required"),
 		office_name: z.string().min(1, "Receiver office name is required"),
-		receiver_id: z.string().min(1, "Receiver is required"),
+		receiver_id: z.string().optional(),
 		receiver_address: z.string().min(1, "Receiver address is required"),
 		subject: z.string().min(1, "Subject is required"),
 		request_chalani_number: z
@@ -88,7 +88,7 @@ export const createLetterSchema = z
 			office_address: z.string().min(1, "Office address is required"),
 			phone_number: z
 				.string()
-				.regex(/^[\d\u0966-\u096F]+$/, "Phone number must be numeric")
+				.regex(/^[\d\u0966-\u096F,\s]+$/, "Phone number must be numeric (comma separated for multiple)")
 				.min(1, "Phone number is required"),
 			vehicle_number: z.string().min(1, "Vehicle number is required"),
 		}),
@@ -121,7 +121,7 @@ export const updateLetterSchema = z.object({
 	office_id: z.string().min(1, "Receiver office is required"),
 	date: z.string().min(1, "Date is required"),
 	office_name: z.string().min(1, "Receiver office name is required"),
-	receiver_id: z.string().min(1, "Receiver is required"),
+	receiver_id: z.string().optional(),
 	receiver_address: z.string().min(1, "Receiver address is required"),
 	subject: z.string().min(1, "Subject is required"),
 	request_chalani_number: z
@@ -186,7 +186,7 @@ export const updateLetterSchema = z.object({
 		office_address: z.string().min(1, "Office address is required"),
 		phone_number: z
 			.string()
-			.regex(/^[\d\u0966-\u096F]+$/, "Phone number must be numeric")
+			.regex(/^[\d\u0966-\u096F,\s]+$/, "Phone number must be numeric (comma separated for multiple)")
 			.min(1, "Phone number is required"),
 		vehicle_number: z.string().min(1, "Vehicle number is required"),
 	}),
