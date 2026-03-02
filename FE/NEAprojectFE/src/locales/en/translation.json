@@ -67,7 +67,8 @@
 		"error_message": "Failed to create letter. Please try again.",
 		"fill_item_error": "Please complete the above item first",
 		"selected_receivers": "Selected Receivers",
-		"add_manual_receiver": "Add Manual Receiver"
+		"add_manual_receiver": "Add Manual Receiver",
+		"manual_receiver_name": "Receviver name"
 	},
 	"allLettersPage": {
 		"title": "List your all letters"

@@ -511,17 +511,17 @@ const CreateLetter = () => {
 			<div className="flex flex-col gap-3 rounded-2xl p-5">
 				<div className="flex flex-col rounded-2xl p-2 bg-[#91a4c3]">
 					<div className="flex p-2 w-full ">
-						<div className="flex-1 pl-3">Product</div>
+						<div className="flex-1 pl-3">{ t('createLetter.product') }</div>
 						<div className="flex  flex-2 justify-between">
-							<div className="flex-1 pl-3 max-w-[30%]">Unit</div>
+							<div className="flex-1 pl-3 max-w-[30%]">{ t('createLetter.unit') }</div>
 							<div className="flex-1 pl-3 flex-row flex justify-between ">
 								<div className="flex-1 pl-3 flex max-w-[66%] ">
-									Serial number
+									{ t('createLetter.serial_number') }
 								</div>
-								<div className="flex-1 pl-3 flex max-w-[30%] ">Quantity</div>
+								<div className="flex-1 pl-3 flex max-w-[30%] ">{ t('createLetter.quantity') }</div>
 							</div>
 						</div>
-						<div className="flex-1 pl-3">Remarks</div>
+						<div className="flex-1 pl-3">{ t('createLetter.remarks') }</div>
 						<button type="button" className="self-end  px-3 w-24 "></button>
 					</div>
 					{fields.map((item, index) => (
@@ -613,7 +613,7 @@ const CreateLetter = () => {
 														if (trimmed === "" || trimmed === "-") {
 															await trigger(`items.${index}.serial_number`);
 															return;
-								}
+														}
 														const count = trimmed
 															.split(",")
 															.map((s) => s.trim())
@@ -668,7 +668,7 @@ const CreateLetter = () => {
 								className="bg-red-500 self-end text-white shadow px-3 rounded-xl border-1 border-black h-8"
 								onClick={() => remove(index)}
 							>
-								Remove
+								{ t('createLetter.remove') }
 							</button>
 						</div>
 					))}
@@ -704,7 +704,7 @@ const CreateLetter = () => {
 						});
 					}}
 				>
-					Add Item
+					{ t('createLetter.add_item') }
 				</button>
 			</div>
 
@@ -963,7 +963,7 @@ const CreateLetter = () => {
 							<button
 								type="button"
 								onClick={() => setShowManualEntry(true)}
-								className="bg-[#91a4c3] text-white px-4 py-2 rounded-md hover:bg-[#7a8dab] w-fit"
+								className="bg-[#91a4c3] text-black px-4 py-2 rounded-md hover:bg-[#7a8dab] w-fit"
 							>
 								+ {t("createLetter.add_manual_receiver") || "म्यानुअल प्राप्तकर्ता थप्नुहोस्"}
 							</button>
@@ -972,13 +972,13 @@ const CreateLetter = () => {
 						{/* Manual entry form */}
 						{showManualEntry && !editingReceiverId && (
 							<div className="flex flex-col gap-2 w-full mt-2">
-								<div className="bg-[#91a4c3] px-4 py-2 rounded-t-md font-semibold text-white">
+								<div className="bg-[#91a4c3] px-4 py-2 rounded-t-md font-semibold text-black">
 									{t("createLetter.add_manual_receiver") || "म्यानुअल प्राप्तकर्ता थप्नुहोस्"}
 								</div>
 								<div className="bg-[#B5C9DC] px-4 py-3 rounded-b-md flex flex-col gap-2">
 									<div className="w-full flex gap-4 flex-wrap">
 										<div className="flex flex-col flex-1">
-											<label htmlFor="manual-name">{t("createLetter.select_receiver")}</label>
+											<label htmlFor="manual-name">{t("createLetter.manual_receiver_name")}</label>
 											<input
 												id="manual-name"
 												type="text"
@@ -989,8 +989,7 @@ const CreateLetter = () => {
 														name: e.target.value,
 													})
 												}
-												placeholder={t("createLetter.select_receiver")}
-												className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+												className="bg-[#b4c8db] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
 											/>
 										</div>
 										<div className="flex flex-col flex-1">
@@ -1005,8 +1004,7 @@ const CreateLetter = () => {
 														post: e.target.value,
 													})
 												}
-												placeholder={t("createLetter.post")}
-												className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+												className="bg-[#b4c8db] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
 											/>
 										</div>
 										<div className="flex flex-col flex-1">
@@ -1021,8 +1019,7 @@ const CreateLetter = () => {
 														vehicle_number: e.target.value,
 													})
 												}
-												placeholder={t("createLetter.vehiche_number")}
-												className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+												className="bg-[#b4c8db] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
 											/>
 										</div>
 									</div>
@@ -1039,8 +1036,7 @@ const CreateLetter = () => {
 														office_name: e.target.value,
 													})
 												}
-												placeholder={t("createLetter.office_name")}
-												className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+												className="bg-[#b4c8db] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
 											/>
 										</div>
 										<div className="flex flex-col flex-1">
@@ -1055,8 +1051,7 @@ const CreateLetter = () => {
 														office_address: e.target.value,
 													})
 												}
-												placeholder={t("createLetter.receiver_office_address")}
-												className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+												className="bg-[#b4c8db] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
 											/>
 										</div>
 										<div className="flex flex-col flex-1">
@@ -1071,8 +1066,7 @@ const CreateLetter = () => {
 														phone_number: e.target.value,
 													})
 												}
-												placeholder={t("createLetter.phone_number")}
-												className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+												className="bg-[#b4c8db] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
 											/>
 										</div>
 									</div>
@@ -1089,8 +1083,7 @@ const CreateLetter = () => {
 														id_card_number: e.target.value,
 													})
 												}
-												placeholder={t("createLetter.id_card_number")}
-												className="bg-white border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+												className="bg-[#b4c8db] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
 											/>
 										</div>
 										<div className="flex flex-col flex-1">
@@ -1104,7 +1097,7 @@ const CreateLetter = () => {
 														id_card_type: e.target.value,
 													})
 												}
-												className="bg-white border-2 h-8 outline-none px-3 rounded-md border-gray-600"
+												className="bg-[#b4c8db] border-2 h-8 outline-none px-3 rounded-md border-gray-600"
 											>
 												{id_types.map((idType) => (
 													<option key={idType.id} value={idType.value}>

@@ -114,7 +114,7 @@ header {
 	display: flex;
 	justify-content: space-between;
 	margin-bottom: 12px;
-	font-size: 12pt;
+	font-size: 11pt;
 }
 
 .ref-left {
@@ -151,6 +151,10 @@ header {
 	margin: 12px 0 8px 0;
 	text-decoration: underline;
 	font-size: 12pt;
+}
+.separator{
+	border-bottom: 2px solid black;
+  	margin: 10px 0 5px 0
 }
 
 .table {

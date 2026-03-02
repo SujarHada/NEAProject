@@ -474,6 +474,7 @@ const ShowLetter = () => {
             }}
           >
             <HeaderSection />
+            <div className="separator" />
 
             {/* Render Ref/Subject/Content on ALL pages */}
             <RefSection />
