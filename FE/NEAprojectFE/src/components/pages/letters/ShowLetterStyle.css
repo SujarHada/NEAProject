@@ -49,6 +49,15 @@ body {
 	box-sizing: border-box; /* ADD THIS - includes padding in height calculation */
 	overflow: hidden; /* ADD THIS - prevents content from spilling out */
 }
+
+/* PDF Export Fixes */
+.pdf-export .table th,
+.pdf-export .table td {
+	padding-top: 0px !important;
+	padding-bottom: 12px !important;
+	line-height: 1.0 !important;
+	vertical-align: middle !important;
+}
 .page-number {
 	position: absolute;
 	bottom: 10mm; /* tweak if you want */
@@ -161,29 +170,28 @@ header {
 	width: 100%;
 	border-collapse: collapse;
 	border: 1px solid #000;
-	word-wrap: break-word;
-	white-space: pre-wrap;
+	table-layout: fixed;
 }
+
 .table tr {
-	height: 24px;
+	height: auto;
+	min-height: 24px;
 }
 
 .table th,
 .table td {
 	border: 1px solid #000;
-	padding: 2px;
-	text-align: center;
-	vertical-align: middle;
+	padding: 6px 2px;
+	text-align: center !important;
+	vertical-align: middle !important;
 	font-size: 10pt;
-}
-.table tbody td,
-.table thead th {
-	padding: 2px;
+	line-height: 1;
+	word-break: break-word;
+	overflow-wrap: break-word;
+	white-space: normal;
+	height: 24px;
 }
 
-.table td:nth-child(2) {
-	text-align: left;
-}
 
 .table th {
 	font-weight: bold;
@@ -191,31 +199,31 @@ header {
 }
 
 .serial {
-	width: 35px;
+	width: 6%;
 }
 
 .item-name {
-	width: 180px;
+	width: 28%;
 }
 
 .company {
-	width: 85px;
+	width: 14%;
 }
 
 .serial-no {
-	width: 100px;
-}
-
-.quantity {
-	width: 50px;
+	width: 16%;
 }
 
 .unit {
-	width: 50px;
+	width: 10%;
+}
+
+.quantity {
+	width: 10%;
 }
 
 .remarks {
-	width: 85px;
+	width: 16%;
 }
 
 .supplier-info {
