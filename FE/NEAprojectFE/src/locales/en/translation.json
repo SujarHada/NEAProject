@@ -68,7 +68,17 @@
 		"fill_item_error": "Please complete the above item first",
 		"selected_receivers": "Selected Receivers",
 		"add_manual_receiver": "Add Manual Receiver",
-		"manual_receiver_name": "Receviver name"
+		"manual_receiver_name": "Receiver name",
+		"receiver_details": "Receiver Details",
+		"name_placeholder": "Name 1, Name 2, Name 3",
+		"post_placeholder": "Post 1, Post 2, Post 3",
+		"office_placeholder": "Office 1, Office 2, Office 3",
+		"address_placeholder": "Address 1, Address 2, Address 3",
+		"vehicle_placeholder": "Vehicle 1, Vehicle 2, Vehicle 3",
+		"phone_placeholder": "Phone 1, Phone 2, Phone 3",
+		"idcard_placeholder": "ID 1, ID 2, ID 3",
+		"add_receiver": "Add Receiver",
+		"remove_last": "Remove Last"
 	},
 	"allLettersPage": {
 		"title": "List your all letters"
@@ -97,6 +107,8 @@
 		"remove": "Remove",
 		"update": "Update Letter",
 		"updating": "Saving...",
+		"success_message": "Letter updated successfully",
+		"error_message": "Failed to update letter. Please try again.",
 		"validation": {
 			"required": "This field is required",
 			"invalid": "Invalid value"
