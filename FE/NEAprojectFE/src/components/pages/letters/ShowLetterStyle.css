@@ -38,7 +38,7 @@ body {
 	width: 210mm;
 	min-height: 297mm;
 	max-height: 297mm; /* ADD THIS - prevents overflow */
-	padding: 10mm 8mm 10mm 25mm;
+	padding: 10mm 8mm 25mm 25mm;
 	margin: 0 auto;
 	background: white;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -65,7 +65,7 @@ body {
 }
 .page-number {
 	position: absolute;
-	bottom: 10mm; /* tweak if you want */
+	bottom: 10mm;
 	right: 10mm;
 	font-size: 10pt;
 	text-align: right;

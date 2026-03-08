@@ -70,7 +70,7 @@ const ShowLetter = () => {
 				subsequentPageTopRef.current?.offsetHeight || 0;
 			const tableTitleHeight = tableTitleRef.current?.offsetHeight || 0;
 			const tableHeaderHeight = tableHeaderRef.current?.offsetHeight || 0;
-			const footerHeight = footerRef.current?.offsetHeight || 0; // Page number footer
+			const footerHeight = (footerRef.current?.offsetHeight || 0) + 15; // Page number footer + buffer
 			const lastPageExtraHeight = lastPageContentRef.current?.offsetHeight || 0; // Supplier + Signatures
 
 			// Calculate Fixed Header Heights - NOW INCLUDES Supplier + Signatures on ALL pages
@@ -383,7 +383,7 @@ const ShowLetter = () => {
 				{/* HIDDEN MEASUREMENT CONTAINER */}
 				{letter && (
 					<div
-						className="page"
+						className="page pdf-export"
 						ref={hiddenContainerRef}
 						style={{
 							position: "absolute",
