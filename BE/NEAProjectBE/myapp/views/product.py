@@ -222,18 +222,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="product_import_template.csv"'
         writer = csv.writer(response)
-        writer.writerow(['# Required Fields: name, company'])
-        writer.writerow(['# Optional Fields: remarks, unit_of_measurement, status, sku'])
-        writer.writerow(['# Unit of Measurement options: nos, set, kg, ltr, pcs (or common names like: number, piece, kilogram, liter)'])
-        writer.writerow(['# Status options: active, bin (default: active)'])
-        writer.writerow(['# SKU: Leave empty to auto-generate'])
-        writer.writerow([])
         writer.writerow(['name', 'company', 'remarks', 'unit_of_measurement', 'status', 'sku'])
-        writer.writerow(['Laptop', 'Dell Inc', 'High performance laptop', 'nos', 'active', ''])
-        writer.writerow(['Wireless Mouse', 'Logitech', 'Wireless mouse with USB receiver', 'pcs', 'active', 'LOG-MOUSE-001'])
-        writer.writerow(['Mechanical Keyboard', 'Microsoft', 'Ergonomic mechanical keyboard', 'nos', 'active', 'MS-KB-2024'])
-        writer.writerow(['Monitor', 'Samsung', '27 inch 4K monitor', 'nos', 'active', ''])
-        writer.writerow(['Webcam', 'Logitech', 'HD webcam for video calls', 'pcs', 'active', 'LOG-WEBCAM-001'])
         return response
 
     @action(detail=False, methods=['post'])
