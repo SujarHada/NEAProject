@@ -138,6 +138,7 @@ const ShowLetter = () => {
 			orientation: "portrait",
 			unit: "pt",
 			format: "a4",
+			compress: true,
 		});
 		
 		for (let i = 0; i < pageRefs.current.length; i++) {

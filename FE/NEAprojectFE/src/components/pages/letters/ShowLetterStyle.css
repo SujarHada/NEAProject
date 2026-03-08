@@ -58,6 +58,11 @@ body {
 	line-height: 1.0 !important;
 	vertical-align: middle !important;
 }
+
+.pdf-export .supplier-info td {
+	padding-bottom: 8px !important;
+	vertical-align: middle !important;
+}
 .page-number {
 	position: absolute;
 	bottom: 10mm; /* tweak if you want */
