@@ -41,10 +41,11 @@ const EditLetter = () => {
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState,
     setValue,
     reset,
     trigger,
+    watch,
   } = useForm<EditLetterI>({
     resolver: zodResolver(EditLetterSchema),
     defaultValues: {
@@ -115,7 +116,7 @@ const EditLetter = () => {
           });
 
           const receiver = letter.receiver;
-          if (receiver && receiver.name) {
+          if (receiver?.name) {
             const names = receiver.name.split(", ").filter(Boolean);
             const posts = receiver.post ? receiver.post.split(", ").filter(Boolean) : [];
             const idCardNumbers = receiver.id_card_number ? receiver.id_card_number.split(", ").filter(Boolean) : [];
@@ -147,7 +148,7 @@ const EditLetter = () => {
     };
 
     fetchLetter();
-  }, [id, reset, Offices]);
+  }, [id, reset]);
 
   const handleOfficeChange = (officeId: string) => {
     const selectedOffice = Offices?.find((o) => o.id.toString() === officeId);
@@ -241,8 +242,8 @@ const EditLetter = () => {
               </div>
             )}
           />
-          {errors.date && (
-            <span className="text-red-500">{errors.date.message}</span>
+          {formState.errors.date && (
+            <span className="text-red-500">{formState.errors.date.message}</span>
           )}
         </div>
 
@@ -263,8 +264,8 @@ const EditLetter = () => {
               />
             )}
           />
-          {errors.letter_count && (
-            <span className="text-red-500">{errors.letter_count.message}</span>
+          {formState.errors.letter_count && (
+            <span className="text-red-500">{formState.errors.letter_count.message}</span>
           )}
         </div>
 
@@ -283,8 +284,8 @@ const EditLetter = () => {
               />
             )}
           />
-          {errors.chalani_no && (
-            <span className="text-red-500">{errors.chalani_no.message}</span>
+          {formState.errors.chalani_no && (
+            <span className="text-red-500">{formState.errors.chalani_no.message}</span>
           )}
         </div>
 
@@ -303,8 +304,8 @@ const EditLetter = () => {
               />
             )}
           />
-          {errors.voucher_no && (
-            <span className="text-red-500">{errors.voucher_no.message}</span>
+          {formState.errors.voucher_no && (
+            <span className="text-red-500">{formState.errors.voucher_no.message}</span>
           )}
         </div>
 
@@ -323,8 +324,8 @@ const EditLetter = () => {
               />
             )}
           />
-          {errors.gatepass_no && (
-            <span className="text-red-500">{errors.gatepass_no.message}</span>
+          {formState.errors.gatepass_no && (
+            <span className="text-red-500">{formState.errors.gatepass_no.message}</span>
           )}
         </div>
       </div>
@@ -362,8 +363,8 @@ const EditLetter = () => {
                 </div>
               )}
             />
-            {errors.office_name && (
-              <span className="text-red-500">{errors.office_name.message}</span>
+            {formState.errors.office_name && (
+              <span className="text-red-500">{formState.errors.office_name.message}</span>
             )}
           </div>
 
@@ -381,8 +382,8 @@ const EditLetter = () => {
                 />
               )}
             />
-            {errors.subject && (
-              <span className="text-red-500">{errors.subject.message}</span>
+            {formState.errors.subject && (
+              <span className="text-red-500">{formState.errors.subject.message}</span>
             )}
           </div>
         </div>
@@ -411,9 +412,9 @@ const EditLetter = () => {
                 </div>
               )}
             />
-            {errors.request_date && (
+            {formState.errors.request_date && (
               <span className="text-red-500">
-                {errors.request_date.message}
+                {formState.errors.request_date.message}
               </span>
             )}
           </div>
@@ -434,9 +435,9 @@ const EditLetter = () => {
                 />
               )}
             />
-            {errors.request_chalani_number && (
+            {formState.errors.request_chalani_number && (
               <span className="text-red-500">
-                {errors.request_chalani_number.message}
+                {formState.errors.request_chalani_number.message}
               </span>
             )}
           </div>
@@ -457,9 +458,9 @@ const EditLetter = () => {
                 />
               )}
             />
-            {errors.request_letter_count && (
+            {formState.errors.request_letter_count && (
               <span className="text-red-500">
-                {errors.request_letter_count.message}
+                {formState.errors.request_letter_count.message}
               </span>
             )}
           </div>
@@ -492,16 +493,18 @@ const EditLetter = () => {
                 <Controller
                   name={`items.${index}.product_id`}
                   control={control}
-                  render={({ field }) => (
+                  render={({ field }) => {
+                    // const items = watch(`items.${index}`);
+                    return (
                     <select
                       {...field}
                       value={field.value}
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         const selected = Products?.find(
                           (p) => p.id.toString() === e.target.value,
                         );
                         if (selected) {
-                          setValue(`items.${index}.name`, selected.name);
+                          setValue(`items.${index}.name`, selected.name, { shouldValidate: true });
                           setValue(
                             `items.${index}.product_id`,
                             selected.id.toString(),
@@ -510,10 +513,12 @@ const EditLetter = () => {
                           setValue(
                             `items.${index}.unit_of_measurement`,
                             selected.unit_of_measurement,
+                            { shouldValidate: true },
                           );
+                          await trigger([`items.${index}.name`, `items.${index}.unit_of_measurement`]);
                         }
                       }}
-                      className="bg-[#B5C9DC] w-full min-w-[203px] border-2 h-8 outline-none px-3 rounded-md border-gray-600"
+                      className={`bg-[#B5C9DC] w-full min-w-[203px] border-2 h-8 outline-none px-3 rounded-md ${formState.errors.items?.[index]?.name ? 'border-red-500' : 'border-gray-600'}`}
                     >
                       <option value="" hidden>
                         {t("createLetter.product")}
@@ -524,13 +529,9 @@ const EditLetter = () => {
                         </option>
                       ))}
                     </select>
-                  )}
+                    );
+                  }}
                 />
-                {errors.items?.[index]?.name && (
-                  <span className="text-[#B22222]">
-                    {errors.items[index].name.message}
-                  </span>
-                )}
               </div>
               <div className="flex flex-2 gap-2 justify-between">
                 <div className="flex max-w-[30%] flex-col flex-1 gap-2">
@@ -544,9 +545,13 @@ const EditLetter = () => {
                           setValue(
                             `items.${index}.unit_of_measurement`,
                             e.target.value,
+                            {
+                              shouldValidate: true,
+                            },
                           );
+                          trigger(`items.${index}.unit_of_measurement`);
                         }}
-                        className="bg-[#B5C9DC] w-full border-2 h-8 outline-none px-3 rounded-md border-gray-600"
+                        className={`bg-[#B5C9DC] w-full border-2 h-8 outline-none px-3 rounded-md ${formState.errors.items?.[index]?.unit_of_measurement ? 'border-red-500' : 'border-gray-600'}`}
                       >
                         <option value="" hidden>
                           {t("createLetter.unit")}
@@ -559,62 +564,58 @@ const EditLetter = () => {
                       </select>
                     )}
                   />
-                  {errors.items?.[index]?.name && (
-                    <span className="text-[#B22222]">
-                      {errors.items[index].name.message}
-                    </span>
-                  )}
-                </div>
+              </div>
 
                 <div className="flex flex-1 flex-wrap justify-between  flex-row gap-2">
                   <div className={"  flex-col flex-2 max-w-[66%] flex"}>
                     <Controller
                       name={`items.${index}.serial_number`}
                       control={control}
-                      render={({ field }) => (
+                      render={({ field, fieldState }) => (
                         <input
                           {...field}
-                          onChange={(e) => {
+                          onChange={async (e) => {
                             const value = e.target.value;
                             field.onChange(value);
                             const trimmed = value.trim();
                             if (trimmed === "" || trimmed === "-") {
+                              await trigger(`items.${index}.serial_number`);
                               return;
                             }
                             const count = trimmed
                               .split(",")
                               .map((s) => s.trim())
                               .filter(Boolean).length;
-                            setValue(`items.${index}.quantity`, String(count));
+                            setValue(`items.${index}.quantity`, String(count), {
+                              shouldValidate: true,
+                            });
+                            await trigger([
+                              `items.${index}.serial_number`,
+                              `items.${index}.quantity`,
+                            ]);
                           }}
                           type="text"
-                          className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+                          className={`bg-[#B5C9DC] border-1 h-auto min-h-[2rem] max-h-20 overflow-y-auto outline-none pl-3 rounded-md ${fieldState.error ? 'border-red-500 border-2' : 'border-gray-600'} resize-y py-1`}
                         />
                       )}
                     />
-                    {errors.items?.[index]?.serial_number && (
-                      <span className="text-[#B22222]">
-                        {errors.items[index].serial_number.message}
-                      </span>
-                    )}
                   </div>
                   <div className="flex max-w-[30%] flex-1 flex-col gap-2">
                     <Controller
                       name={`items.${index}.quantity`}
                       control={control}
-                      render={({ field }) => (
+                      render={({ field, fieldState }) => (
                         <input
                           {...field}
+                          onChange={async (e) => {
+                            field.onChange(e);
+                            await trigger(`items.${index}.quantity`);
+                          }}
                           type="text"
-                          className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+                          className={`bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md ${fieldState.error ? 'border-red-500 border-2' : 'border-gray-600'}`}
                         />
                       )}
                     />
-                    {errors.items?.[index]?.quantity && (
-                      <span className="text-[#B22222]">
-                        {errors.items[index].quantity.message}
-                      </span>
-                    )}
                   </div>
                 </div>
               </div>
@@ -630,11 +631,6 @@ const EditLetter = () => {
                     />
                   )}
                 />
-                {errors.items?.[index]?.remarks && (
-                  <span className="text-[#B22222]">
-                    {errors.items[index].remarks.message}
-                  </span>
-                )}
               </div>
               <button
                 type="button"
@@ -882,10 +878,10 @@ const EditLetter = () => {
         <button
           type="button"
           onClick={handleSubmitWrapper}
-          disabled={isSubmitting}
+          disabled={formState.isSubmitting}
           className="outline-none w-full bg-[#10172A] text-white h-12 hover:bg-[#233058] active:bg-[#314379] rounded-md disabled:opacity-50"
         >
-          {isSubmitting ? t("editLetter.updating") : t("editLetter.update")}
+          {formState.isSubmitting ? t("editLetter.updating") : t("editLetter.update")}
         </button>
       </div>
     </div>
