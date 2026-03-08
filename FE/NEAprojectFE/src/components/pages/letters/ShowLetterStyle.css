@@ -180,6 +180,8 @@ header {
 
 .table th,
 .table td {
+	border-bottom: 1px solid black;
+	border-left: 1px solid black;
 	border: 1px solid #000;
 	padding: 6px 2px;
 	text-align: center !important;
@@ -190,6 +192,10 @@ header {
 	overflow-wrap: break-word;
 	white-space: normal;
 	height: 24px;
+}
+
+.table td:last-child, th:last-child{
+	border-right: 1px solid black;
 }
 
 
