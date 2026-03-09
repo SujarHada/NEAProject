@@ -150,18 +150,18 @@ const ShowLetter = () => {
 
 			try {
 				const canvas = await html2canvas(element, {
-					scale: 2,
+					scale: 1.5,
 					useCORS: true,
 					logging: false,
 					backgroundColor: "#ffffff",
 				});
-				const imgData = canvas.toDataURL("image/png");
+				const imgData = canvas.toDataURL("image/jpeg", 0.75);
 
 				const pageWidth = pdf.internal.pageSize.getWidth();
 				const pageHeight = pdf.internal.pageSize.getHeight();
 
 				if (i !== 0) pdf.addPage();
-				pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight);
+				pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight);
 			} finally {
 				// Remove the class after capturing
 				element.classList.remove("pdf-export");
@@ -177,47 +177,54 @@ const ShowLetter = () => {
 		setIsLoading(true);
 
 		const printWindow = window.open("", "_blank");
-		if (printWindow) {
-			const printDocument = printWindow.document;
-			printDocument.write(`
-				<!DOCTYPE html>
-				<html>
-				<head>
-					<title>Letter ${id}</title>
-					<style>
-						@page { size: A4; margin: 0; }
-						body { margin: 0; padding: 0; }
-						img { width: 100%; height: auto; page-break-after: always; display: block; }
-						img:last-child { page-break-after: auto; }
-					</style>
-				</head>
-				<body>
-			`);
+		try {
+			const pdf = new jsPDF({
+				orientation: "portrait",
+				unit: "pt",
+				format: "a4",
+				compress: true,
+			});
 
 			for (let i = 0; i < pageRefs.current.length; i++) {
 				const element = pageRefs.current[i];
 				if (!element) continue;
 
-				const canvas = await html2canvas(element, {
-					scale: 2,
-					useCORS: true,
-					logging: false,
-					backgroundColor: "#ffffff",
-				});
-				const imgData = canvas.toDataURL("image/png");
-				printDocument.write(`<img src="${imgData}" />`);
+				element.classList.add("pdf-export");
+				try {
+					const canvas = await html2canvas(element, {
+						scale: 1.5,
+						useCORS: true,
+						logging: false,
+						backgroundColor: "#ffffff",
+					});
+					const imgData = canvas.toDataURL("image/jpeg", 0.75);
+
+					const pageWidth = pdf.internal.pageSize.getWidth();
+					const pageHeight = pdf.internal.pageSize.getHeight();
+
+					if (i !== 0) pdf.addPage();
+					pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight);
+				} finally {
+					element.classList.remove("pdf-export");
+				}
 			}
 
-			printDocument.write(`
-				</body>
-				</html>
-			`);
-			printDocument.close();
-			printWindow.onload = () => {
-				printWindow.print();
-			};
+			const blob = pdf.output("blob");
+			const url = URL.createObjectURL(blob);
+			if (printWindow) {
+				printWindow.location.href = url;
+			} else {
+				const a = document.createElement("a");
+				a.href = url;
+				a.target = "_blank";
+				a.rel = "noopener";
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a);
+			}
+		} finally {
+			setIsLoading(false);
 		}
-		setIsLoading(false);
 	};
 
 	// Helper components to avoid code duplication

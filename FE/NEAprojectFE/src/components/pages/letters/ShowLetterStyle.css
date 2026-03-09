@@ -63,6 +63,9 @@ body {
 	padding-bottom: 8px !important;
 	vertical-align: middle !important;
 }
+.pdf-export {
+	box-shadow: none !important;
+}
 .page-number {
 	position: absolute;
 	bottom: 10mm;
