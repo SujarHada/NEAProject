@@ -161,7 +161,17 @@ const ShowLetter = () => {
 				const pageHeight = pdf.internal.pageSize.getHeight();
 
 				if (i !== 0) pdf.addPage();
-				pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight);
+				const imgProps = (pdf as any).getImageProperties
+					? (pdf as any).getImageProperties(imgData)
+					: { width: canvas.width, height: canvas.height };
+				const imgWidth = imgProps.width;
+				const imgHeight = imgProps.height;
+				const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+				const renderWidth = imgWidth * ratio;
+				const renderHeight = imgHeight * ratio;
+				const x = (pageWidth - renderWidth) / 2;
+				const y = (pageHeight - renderHeight) / 2;
+				pdf.addImage(imgData, "JPEG", x, y, renderWidth, renderHeight);
 			} finally {
 				// Remove the class after capturing
 				element.classList.remove("pdf-export");
@@ -174,58 +184,83 @@ const ShowLetter = () => {
 
 	// Print Handler
 	const handlePrint = async () => {
-		setIsLoading(true);
+    setIsLoading(true);
 
-		const printWindow = window.open("", "_blank");
-		try {
-			const pdf = new jsPDF({
-				orientation: "portrait",
-				unit: "pt",
-				format: "a4",
-				compress: true,
-			});
+    try {
+        const pdf = new jsPDF({
+            orientation: "portrait",
+            unit: "pt",
+            format: "a4",
+            compress: true,
+        });
 
-			for (let i = 0; i < pageRefs.current.length; i++) {
-				const element = pageRefs.current[i];
-				if (!element) continue;
+        for (let i = 0; i < pageRefs.current.length; i++) {
+            const element = pageRefs.current[i];
+            if (!element) continue;
 
-				element.classList.add("pdf-export");
-				try {
-					const canvas = await html2canvas(element, {
-						scale: 1.5,
-						useCORS: true,
-						logging: false,
-						backgroundColor: "#ffffff",
-					});
-					const imgData = canvas.toDataURL("image/jpeg", 0.75);
+            element.classList.add("pdf-export");
+            try {
+                const canvas = await html2canvas(element, {
+                    scale: 1.5,              // Match download scale to avoid distortion
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: "#ffffff",
+                    windowWidth: element.scrollWidth,   // Fix: capture at natural width
+                    windowHeight: element.scrollHeight,
+                });
+                const imgData = canvas.toDataURL("image/jpeg", 0.92);
 
-					const pageWidth = pdf.internal.pageSize.getWidth();
-					const pageHeight = pdf.internal.pageSize.getHeight();
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
 
-					if (i !== 0) pdf.addPage();
-					pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight);
-				} finally {
-					element.classList.remove("pdf-export");
-				}
-			}
+                if (i !== 0) pdf.addPage();
+                const imgProps = (pdf as any).getImageProperties?.(imgData) 
+                    ?? { width: canvas.width, height: canvas.height };
 
-			const blob = pdf.output("blob");
-			const url = URL.createObjectURL(blob);
-			if (printWindow) {
-				printWindow.location.href = url;
-			} else {
-				const a = document.createElement("a");
-				a.href = url;
-				a.target = "_blank";
-				a.rel = "noopener";
-				document.body.appendChild(a);
-				a.click();
-				document.body.removeChild(a);
-			}
-		} finally {
-			setIsLoading(false);
-		}
-	};
+                const ratio = Math.min(
+                    pageWidth / imgProps.width, 
+                    pageHeight / imgProps.height
+                );
+                pdf.addImage(
+                    imgData, "JPEG",
+                    (pageWidth - imgProps.width * ratio) / 2,
+                    (pageHeight - imgProps.height * ratio) / 2,
+                    imgProps.width * ratio,
+                    imgProps.height * ratio
+                );
+            } finally {
+                element.classList.remove("pdf-export");
+            }
+        }
+
+        // Open PDF directly instead of embedding in iframe
+        const blob = pdf.output("blob");
+        const url = URL.createObjectURL(blob);
+        const printWindow = window.open(url, "_blank");
+
+        if (printWindow) {
+            printWindow.addEventListener("load", () => {
+                setTimeout(() => {
+                    printWindow.focus();
+                    printWindow.print();
+                    setTimeout(() => URL.revokeObjectURL(url), 15000);
+                }, 500);
+            });
+        } else {
+            // Fallback if popup blocked
+            const a = document.createElement("a");
+            a.href = url;
+            a.target = "_blank";
+            a.rel = "noopener";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 15000);
+        }
+    } finally {
+        setIsLoading(false);
+    }
+};
 
 	// Helper components to avoid code duplication
 	const HeaderSection = () => (
