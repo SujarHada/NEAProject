@@ -4,12 +4,31 @@
 # Navigate to project root (same level as BE and FE)
 cd "$(dirname "$0")"
 
+# Try to get 192.168.* IP address
+if command -v ipconfig.exe &> /dev/null; then
+    CURRENT_IP=$(ipconfig.exe | grep -i "IPv4" | grep -o '192\.168\.[0-9]*\.[0-9]*' | head -n 1)
+else
+    CURRENT_IP=$(ifconfig 2>/dev/null | grep -Eo '192\.168\.[0-9]*\.[0-9]*' | head -n 1)
+    if [ -z "$CURRENT_IP" ]; then
+        CURRENT_IP=$(ip -4 addr show 2>/dev/null | grep -Eo '192\.168\.[0-9]*\.[0-9]*' | head -n 1)
+    fi
+fi
+
+ENV_FILE="FE/NEAprojectFE/.env"
+
+if [ -n "$CURRENT_IP" ]; then
+    echo "Updating .env file with current IP..."
+    echo "VITE_API_URL=http://$CURRENT_IP:8000" > "$ENV_FILE"
+else
+    echo "Could not find a 192.168.* IP address."
+    echo "Updating .env file with localhost..."
+    echo "VITE_API_URL=http://localhost:8000" > "$ENV_FILE"
+fi
+
 # Check if node_modules exists in FE/NEAprojectFE
 if [ ! -d "FE/NEAprojectFE/node_modules" ]; then
     echo "node_modules not found. Running npm install..."
     cd FE/NEAprojectFE
-    touch .env
-    echo "VITE_API_URL=http://localhost:8000" > .env
     npm install --legacy-peer-deps
     cd ../..
 fi
