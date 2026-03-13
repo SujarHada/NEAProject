@@ -39,11 +39,10 @@ if %errorlevel% neq 0 (
     echo uv is already installed.
 )
 REM Check if venv exists in BE
-if not exist "BE\venv" (
+if not exist "BE\.venv" (
     echo venv not found. Creating virtual environment...
     cd BE
     uv init
-    call .\venv\Scripts\activate.bat
     cd NEAProjectBE
     echo Installing Python dependencies...
     uv add -r requirements.txt
@@ -53,7 +52,6 @@ if not exist "BE\venv" (
 ) else (
     echo venv found. Checking migrations...
     cd BE
-    call .\venv\Scripts\activate.bat
     cd NEAProjectBE
     uv run manage.py migrate
     cd ..\..
