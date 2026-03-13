@@ -12,6 +12,7 @@ import ImportLetter from "app/assets/import-letter/importLetter";
 
 const AllLetters = () => {
 	const { t } = useTranslation();
+	const [activeTab, setActiveTab] = useState<"list" | "import">("list");
 	const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
 	const [letterCount, setLetterCount] = useState(0);
 	const [letters, setLetters] = useState<Letter[]>([]);
@@ -202,7 +203,28 @@ const AllLetters = () => {
 					</button>
 				</div>
 			</div>
-			<ImportLetter/>
+
+			{/* Tab Navigation */}
+			<div className="flex border-b border-gray-300">
+				<button
+					type="button"
+					className={`py-2 px-4 font-medium ${activeTab === "list" ? "border-b-2 border-blue-500 text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
+					onClick={() => setActiveTab("list")}
+				>
+					Letters List
+				</button>
+				<button
+					type="button"
+					className={`py-2 px-4 font-medium ${activeTab === "import" ? "border-b-2 border-blue-500 text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
+					onClick={() => setActiveTab("import")}
+				>
+					Import & Template
+				</button>
+			</div>
+
+			{/* Letters List Tab */}
+			{activeTab === "list" && (
+				<div className="flex flex-col gap-5">
 
 			<div
 				className="w-full  overflow-x-auto overflow-y-visible"
@@ -353,6 +375,11 @@ const AllLetters = () => {
 					</li>
 				</ul>
 			)}
+			</div>
+			)}
+
+			{/* Import & Template Tab */}
+			{activeTab === "import" && <ImportLetter />}
 		</div>
 	);
 };
