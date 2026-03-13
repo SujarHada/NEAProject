@@ -1,15 +1,32 @@
 @echo off
 
+REM Fetch the current IP address starting with 192.168
+set "CURRENT_IP="
+for /f "tokens=2 delims=:" %%i in ('ipconfig ^| findstr /i "IPv4" ^| findstr "192.168"') do (
+    for /f "tokens=* delims= " %%j in ("%%i") do (
+        set "CURRENT_IP=%%j"
+    )
+)
+
+set "ENV_FILE=FE\NEAprojectFE\.env"
+
+if not "%CURRENT_IP%"=="" (
+    setlocal EnableDelayedExpansion
+    set "NEW_URL=http://!CURRENT_IP!:8000"
+    
+    echo Updating .env file with current IP...
+    echo VITE_API_URL=!NEW_URL!> "!ENV_FILE!"
+    endlocal
+) else (
+    echo Could not find a 192.168.* IP address.
+    echo Updating .env file with localhost...
+    echo VITE_API_URL=http://localhost:8000> "%ENV_FILE%"
+)
+
 REM Check if node_modules exists in FE/NEAprojectFE
 if not exist "FE\NEAprojectFE\node_modules" (
     echo node_modules not found. Running npm install...
     cd FE\NEAprojectFE
-    if not exist .env (
-      echo Creating .env file...
-      (
-          echo VITE_API_URL=http://localhost:8000
-      ) > .env
-    )
     call npm install --legacy-peer-deps
     cd ..\..
 )
