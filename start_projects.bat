@@ -42,7 +42,7 @@ REM Check if venv exists in BE
 if not exist "BE\venv" (
     echo venv not found. Creating virtual environment...
     cd BE
-    uv venv
+    uv init
     call .\venv\Scripts\activate.bat
     cd NEAProjectBE
     echo Installing Python dependencies...
@@ -60,7 +60,7 @@ if not exist "BE\venv" (
 )
 
 REM Start Django backend in a new minimized window
-start "Django Backend" /min cmd /k "cd BE && call .\venv\Scripts\activate.bat && cd NEAProjectBE && uv run manage.py create_admin && uv run manage.py runserver 0.0.0.0:8000"
+start "Django Backend" /min cmd /k "cd BE && cd NEAProjectBE && uv run manage.py create_admin && uv run manage.py runserver 0.0.0.0:8000"
 
 REM Start React frontend in a new minimized window
 start "React Frontend" /min cmd /k "cd .\FE\NEAprojectFE && npm run dev"
