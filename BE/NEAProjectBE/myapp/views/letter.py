@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
 from datetime import datetime
@@ -518,9 +519,9 @@ class LetterViewSet(viewsets.ModelViewSet):
         # Note: Mobile (18) and सिरियल नं. (11) are kept in original format, not converted to number
         numeric_columns = {2, 3, 5, 14}
 
-        row_idx = 2
+        row_idx: int = 2
         # FIX: Use a single counter for all items across all letters
-        serial_counter = 1
+        serial_counter: int = 1
         
         for letter in records:
             items = list(letter.items.all())
@@ -703,10 +704,10 @@ class LetterViewSet(viewsets.ModelViewSet):
         # Note: Mobile (18) and सिरियल नं. (11) are kept in original format, not converted to number
         numeric_columns = {2, 3, 5, 14}
         
-        row_idx = 2
+        row_idx: int = 2
 
         # FIX: Use a single continuous counter for all items across all letters
-        serial_counter = 1
+        serial_counter: int = 1
 
         for letter in records:
             items = list(letter.items.all())
@@ -804,7 +805,7 @@ class LetterViewSet(viewsets.ModelViewSet):
         description='Get an XLSX template with headers and dummy data for letters',
         summary='Get Letter Import Template'
     )
-    @action(detail=False, methods=['get'], url_path='letter-template')
+    @action(detail=False, methods=['get'], url_path='letter-template', permission_classes=[IsAdminUser])
     def letter_template(self, request):
         """Get letter template with headers and dummy data for import"""
         wb = Workbook()
@@ -887,7 +888,7 @@ class LetterViewSet(viewsets.ModelViewSet):
         description='Import letters and items from an XLSX file. Skips duplicate rows.',
         summary='Import Letters from XLSX'
     )
-    @action(detail=False, methods=['post'], url_path='import-xlsx')
+    @action(detail=False, methods=['post'], url_path='import-xlsx', permission_classes=[IsAdminUser])
     @transaction.atomic
     def import_xlsx(self, request):
         """Import letters and items from uploaded XLSX file"""
