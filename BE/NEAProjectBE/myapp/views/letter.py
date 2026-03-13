@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
 from datetime import datetime
@@ -12,7 +13,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font
 from openpyxl.worksheet.datavalidation import DataValidation
 
-from ..models import Letter, LetterStatus
+from ..models import Letter, LetterStatus, LetterItem
 from ..serializers import LetterSerializer
 from ..permissions import IsViewerOrAdminWithCreateForLetters
 
@@ -518,9 +519,9 @@ class LetterViewSet(viewsets.ModelViewSet):
         # Note: Mobile (18) and सिरियल नं. (11) are kept in original format, not converted to number
         numeric_columns = {2, 3, 5, 14}
 
-        row_idx = 2
+        row_idx: int = 2
         # FIX: Use a single counter for all items across all letters
-        serial_counter = 1
+        serial_counter: int = 1
         
         for letter in records:
             items = list(letter.items.all())
@@ -703,10 +704,10 @@ class LetterViewSet(viewsets.ModelViewSet):
         # Note: Mobile (18) and सिरियल नं. (11) are kept in original format, not converted to number
         numeric_columns = {2, 3, 5, 14}
         
-        row_idx = 2
+        row_idx: int = 2
 
         # FIX: Use a single continuous counter for all items across all letters
-        serial_counter = 1
+        serial_counter: int = 1
 
         for letter in records:
             items = list(letter.items.all())
@@ -796,3 +797,227 @@ class LetterViewSet(viewsets.ModelViewSet):
         resp = HttpResponse(output.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         resp['Content-Disposition'] = f'attachment; filename="letters_export_{ts}_range.xlsx"'
         return resp
+
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(response=OpenApiTypes.BINARY, description='XLSX file template'),
+        },
+        description='Get an XLSX template with headers and dummy data for letters',
+        summary='Get Letter Import Template'
+    )
+    @action(detail=False, methods=['get'], url_path='letter-template', permission_classes=[IsAdminUser])
+    def letter_template(self, request):
+        """Get letter template with headers and dummy data for import"""
+        wb = Workbook()
+        ws = wb.active
+        ws.title = 'Letter Template'
+
+        header_font = Font(name='Noto Sans Devanagari', size=11, bold=True)
+        cell_font = Font(name='Noto Sans Devanagari', size=11)
+
+        headers = [
+            'सि.नं.', 'च.नं.', 'भौचर क्र. सं.', 'मिति', 'गेटपास नं.', 'रेट पठाउन बाकी',
+            'कार्यालय', 'उप कार्यालय',
+            'सामानको नाम', 'कम्पनी', 'सिरियल नं.', 'इकाई', 'बुझेको परिमाण पुरानो', 'बुझेको परिमाण नया',
+            'बुझ्नेको पुरा नाम', 'थर', 'पद', 'Mobile', 'गाडी नम्बर', 'तयार गर्ने', 'कैफियत'
+        ]
+        ws.append(headers)
+        for i, _ in enumerate(headers, start=1):
+            c = ws.cell(row=1, column=i)
+            c.font = header_font
+
+        # Column indices for numeric columns (1-indexed)
+        # च.नं.=2, भौचर क्र. सं.=3, गेटपास नं.=5, बुझेको परिमाण नया=14
+        numeric_columns = {2, 3, 5, 14}
+
+        # Dummy data row
+        dummy_row = [
+            1,              # सि.नं.
+            '123',          # च.नं.
+            '456',          # भौचर क्र. सं.
+            '2082.07.15',   # मिति (normalized format)
+            '789',          # गेटपास नं.
+            '-',            # रेट पठाउन बाकी
+            'Central Office',# कार्यालय
+            'Distribution Center', # उप कार्यालय
+            'Transformer',  # सामानको नाम
+            'ABC Company',  # कम्पनी
+            'SN-001',       # सिरियल नं.
+            'Nos',          # इकाई
+            '-',            # बुझेको परिमाण पुरानो
+            '10',           # बुझेको परिमाण नया
+            'Ram Bahadur',  # बुझ्नेको पुरा नाम
+            'Bahadur',      # थर
+            'Store Keeper', # पद
+            '९८४१२३४५६७',  # Mobile (Nepali digits as per export_xlsx)
+            'बा १ च १२३४',   # गाडी नम्बर (Nepali digits/char)
+            'Central Store',# तयार गर्ने
+            'Initial stock' # कैफियत
+        ]
+        
+        ws.append(dummy_row)
+        for col in range(1, len(headers) + 1):
+            cell = ws.cell(row=2, column=col)
+            cell.font = cell_font
+            if col not in numeric_columns:
+                cell.number_format = '@'
+
+        from io import BytesIO
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+
+        resp = HttpResponse(output.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        resp['Content-Disposition'] = 'attachment; filename="letter_template.xlsx"'
+        return resp
+
+    @extend_schema(
+        request={
+            'multipart/form-data': {
+                'type': 'object',
+                'properties': {
+                    'file': {'type': 'string', 'format': 'binary'}
+                },
+                'required': ['file']
+            }
+        },
+        responses={
+            201: OpenApiResponse(description='Import summary'),
+            400: OpenApiResponse(description='Validation error')
+        },
+        description='Import letters and items from an XLSX file. Skips duplicate rows.',
+        summary='Import Letters from XLSX'
+    )
+    @action(detail=False, methods=['post'], url_path='import-xlsx', permission_classes=[IsAdminUser])
+    @transaction.atomic
+    def import_xlsx(self, request):
+        """Import letters and items from uploaded XLSX file"""
+        file_obj = request.FILES.get('file')
+        if not file_obj:
+            return Response({"status": "error", "message": "No file uploaded"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            from openpyxl import load_workbook
+            wb = load_workbook(file_obj, data_only=True)
+            ws = wb.active
+        except Exception as e:
+            return Response({"status": "error", "message": f"Invalid Excel file: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+
+        def en_digits(s):
+            if not s: return ""
+            m = {'०':'0','१':'1','२':'2','३':'3','४':'4','५':'5','६':'6','७':'7','८':'8','९':'9'}
+            return ''.join(m.get(ch, ch) for ch in str(s))
+
+        def normalize_date_for_db(d):
+            dn = en_digits(d)
+            if dn and dn.count('.') == 2:
+                return dn.replace('.', '-')
+            return dn
+
+        header_row = next(ws.iter_rows(min_row=1, max_row=1, values_only=True))
+        # Expected headers mapping (1-indexed for convenience in extraction)
+        # 0: सि.नं., 1: च.नं., 2: भौचर क्र. सं., 3: मिति, 4: गेटपास नं., 5: रेट पठाउन बाकी
+        # 6: कार्यालय, 7: उप कार्यालय, 8: सामानको नाम, 9: कम्पनी, 10: सिरियल नं., 11: इकाई
+        # 12: बुझेको परिमाण पुरानो, 13: बुझेको परिमाण नया, 14: बुझ्नेको पुरा नाम, 15: थर, 16: पद
+        # 17: Mobile, 18: गाडी नम्बर, 19: तयार गर्ने, 20: कैफियत
+
+        rows = list(ws.iter_rows(min_row=2, values_only=True))
+        total_rows = len(rows)
+        skipped_count = 0
+        inserted_letters = 0
+        inserted_items = 0
+
+        for row in rows:
+            if not any(row): # Skip empty rows
+                total_rows -= 1
+                continue
+            
+            # Extract Letter fields
+            chalani_no = en_digits(row[1])
+            voucher_no = en_digits(row[2])
+            date = normalize_date_for_db(row[3])
+            gatepass_no = en_digits(row[4])
+            office_name = str(row[6] or "").strip()
+            sub_office_name = str(row[7] or "").strip()
+            
+            # Extract Item fields
+            item_name = str(row[8] or "").strip()
+            it_company = str(row[9] or "").strip()
+            it_serial = str(row[10] or "").strip()
+            it_unit = str(row[11] or "").strip()
+            it_quantity = en_digits(row[13])
+            
+            # Extract Receiver fields
+            receiver_name = str(row[14] or "").strip()
+            receiver_post = str(row[16] or "").strip()
+            receiver_phone = en_digits(row[17])
+            receiver_vehicle = en_digits(row[18])
+
+            # Check if this exact Kombination already exists
+            # We look for a letter with these specific details
+            letter_lookup = {
+                "chalani_no": chalani_no,
+                "voucher_no": voucher_no,
+                "date": date,
+                "gatepass_no": gatepass_no,
+                "office_name": office_name,
+                "sub_office_name": sub_office_name,
+                "receiver_name": receiver_name,
+                "receiver_post": receiver_post,
+                "receiver_phone_number": receiver_phone,
+                "receiver_vehicle_number": receiver_vehicle
+            }
+            
+            letter = Letter.objects.filter(**letter_lookup).first()
+            
+            if letter:
+                # Letter exists, check if item exists for this letter
+                item_exists = LetterItem.objects.filter(
+                    letter=letter,
+                    name=item_name,
+                    company=it_company,
+                    serial_number=it_serial,
+                    unit_of_measurement=it_unit,
+                    quantity=it_quantity
+                ).exists()
+                
+                if item_exists:
+                    skipped_count += 1
+                    continue
+                else:
+                    # Letter exists but item is new/different
+                    LetterItem.objects.create(
+                        letter=letter,
+                        name=item_name,
+                        company=it_company,
+                        serial_number=it_serial,
+                        unit_of_measurement=it_unit,
+                        quantity=it_quantity
+                    )
+                    inserted_items += 1
+            else:
+                # Letter is new (or at least different enough)
+                new_letter = Letter.objects.create(**letter_lookup, status=LetterStatus.DRAFT)
+                inserted_letters += 1
+                
+                if item_name or it_serial: # Only create item if there's data
+                    LetterItem.objects.create(
+                        letter=new_letter,
+                        name=item_name,
+                        company=it_company,
+                        serial_number=it_serial,
+                        unit_of_measurement=it_unit,
+                        quantity=it_quantity
+                    )
+                    inserted_items += 1
+
+        return Response({
+            "status": "success",
+            "message": "Import completed",
+            "data": {
+                "total_rows_processed": total_rows,
+                "inserted_letters": inserted_letters,
+                "inserted_items": inserted_items,
+                "skipped_rows": skipped_count
+            }
+        }, status=status.HTTP_201_CREATED)
