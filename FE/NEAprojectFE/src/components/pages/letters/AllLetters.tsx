@@ -8,6 +8,7 @@ import api from "app/utils/api";
 import NepaliDatePicker, {
 	type NepaliDate,
 } from "@zener/nepali-datepicker-react";
+import ImportLetter from "app/assets/import-letter/importLetter";
 
 const AllLetters = () => {
 	const { t } = useTranslation();
@@ -201,6 +202,7 @@ const AllLetters = () => {
 					</button>
 				</div>
 			</div>
+			<ImportLetter/>
 
 			<div
 				className="w-full  overflow-x-auto overflow-y-visible"
