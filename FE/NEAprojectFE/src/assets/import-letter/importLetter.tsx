@@ -88,9 +88,6 @@ const ImportLetter = () => {
               <Download className="w-5 h-5" />
               Step 1: Download Template
             </h2>
-            <p className="text-blue-700 text-sm mb-4">
-              Download our standardized Excel template to ensure your data format is correct.
-            </p>
           </div>
           <button
             onClick={downloadTemplate}
@@ -107,10 +104,6 @@ const ImportLetter = () => {
             <Upload className="w-5 h-5" />
             Step 2: Upload & Import
           </h2>
-          <p className="text-emerald-700 text-sm mb-4">
-            Select your populated Excel file and upload it to process the import.
-          </p>
-          
           <div className="mb-4">
             <input
               type="file"
@@ -173,20 +166,6 @@ const ImportLetter = () => {
           </div>
         </div>
       )}
-
-      {/* Instructions */}
-      <div className="mt-8 flex gap-3 text-sm text-gray-600 bg-amber-50 p-4 rounded-lg border border-amber-100">
-        <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
-        <div>
-          <p className="font-semibold text-amber-800 mb-1">Important Instructions:</p>
-          <ul className="list-disc list-inside space-y-1">
-            <li>Ensure the column headers in your file match the template exactly.</li>
-            <li>Use <strong>YYYY.MM.DD</strong> format for dates.</li>
-            <li>The system identifies duplicates based on Chalani No, Voucher No, Date, and Item details.</li>
-            <li>Only unique or modified records will be added to the database.</li>
-          </ul>
-        </div>
-      </div>
     </div>
   );
 };

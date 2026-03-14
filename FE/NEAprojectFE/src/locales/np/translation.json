@@ -114,29 +114,46 @@
       "invalid": "अवैध मान"
     }
   },
-  "createProductPage": {
-    "title": "उत्पादन सिर्जना गर्नुहोस्",
-    "productName": "उत्पादको नाम *",
-    "companyName": "कम्पनीको नाम *",
-    "quantity": "परिमाण *",
-    "unit": "एकाइ",
-    "submitButton": "उत्पादन सिर्जना गर्नुहोस्",
-    "creatingButton": "सिर्जना भइरहेको छ...",
-    "errors": {
-      "productNameRequired": "उत्पादको नाम आवश्यक छ",
-      "companyNameRequired": "कम्पनीको नाम आवश्यक छ",
-      "unitRequired": "एकाइ आवश्यक छ",
-      "quantityRequired": "परिमाण आवश्यक छ",
-      "quantityNumber": "परिमाण संख्यात्मक हुनुपर्छ"
-    },
-    "units": {
-      "kg": "किग्रा",
-      "nos": "नम्वर",
-      "set": "सेट",
-      "ltr": "लि.",
-      "pcs": "पिस"
-    }
-  },
+	"createProductPage": {
+		"title": "उत्पादन सिर्जना गर्नुहोस्",
+		"productName": "उत्पादको नाम *",
+		"companyName": "कम्पनीको नाम *",
+		"quantity": "परिमाण *",
+		"remarks": "टिप्पणी",
+		"unit": "एकाइ",
+		"selectUnit": "एकाइ छान्नुहोस्",
+		"submitButton": "उत्पादन सिर्जना गर्नुहोस्",
+		"creatingButton": "सिर्जना भइरहेको छ...",
+		"errors": {
+			"productNameRequired": "उत्पादको नाम आवश्यक छ",
+			"companyNameRequired": "कम्पनीको नाम आवश्यक छ",
+			"unitRequired": "एकाइ आवश्यक छ",
+			"quantityRequired": "परिमाण आवश्यक छ",
+			"quantityNumber": "परिमाण संख्यात्मक हुनुपर्छ",
+			"createProductFailed": "उत्पादन सिर्जना गर्न सकिएन",
+			"downloadFailed": "डाउनलोड असफल भयो"
+		},
+		"tabs": {
+			"createSingle": "एकल सिर्जना",
+			"bulkImport": "बल्क आयात र टेम्पलेट"
+		},
+		"bulk": {
+			"downloadTemplate": "टेम्पलेट डाउनलोड गर्नुहोस्",
+			"downloadDescription": "उत्पादन सूची अपलोड गर्न CSV ढाँचा डाउनलोड गर्नुहोस्।"
+		},
+		"buttons": {
+			"createProduct": "उत्पादन सिर्जना गर्नुहोस्",
+			"creating": "सिर्जना भइरहेको छ...",
+			"downloadTemplate": "टेम्पलेट डाउनलोड गर्नुहोस्"
+		},
+		"units": {
+			"kg": "किग्रा",
+			"nos": "नम्वर",
+			"set": "सेट",
+			"ltr": "लि.",
+			"pcs": "पिस"
+		}
+	},
   "editProductPage": {
     "title": "उत्पादन सम्पादन गर्नुहोस्",
     "productName": "उत्पादको नाम *",
@@ -505,11 +522,23 @@
       "vehicleNo": "सवारी नम्बर आवश्यक छ"
     }
   },
-  "allletters": {
-    "title": "सबै पत्रहरू",
-    "download": "डाउनलोड",
-    "noletters": "कुनै पत्र फेला परेन।",
-    "table": {
+	"allletters": {
+		"title": "सबै पत्रहरू",
+		"download": "डाउनलोड",
+		"noletters": "कुनै पत्र फेला परेन।",
+		"placeholders": {
+			"selectStartDate": "सुरु मिति छान्नुहोस्",
+			"selectEndDate": "अन्तिम मिति छान्नुहोस्"
+		},
+		"tabs": {
+			"lettersList": "पत्र सूची",
+			"importTemplate": "आयात र टेम्पलेट"
+		},
+		"errors": {
+			"dataNotFound": "डेटा फेला परेन",
+			"downloadFailed": "डाउनलोड गर्दा केही गलत भयो।"
+		},
+		"table": {
       "receiver_office_name": "प्रापक कार्यालय",
       "voucher_no": "भौचर नम्बर",
       "chalani_no": "चलानी नम्बर",
@@ -532,9 +561,24 @@
       "fetchError": "पत्रहरू ल्याउन सकिएन।",
       "downloadError": "CSV फाइल डाउनलोड गर्न असफल।"
     },
-    "pagination": {
-      "previous": "अघिल्लो",
-      "next": "अर्को"
-    }
-  }
+		"pagination": {
+			"previous": "अघिल्लो",
+			"next": "अर्को"
+		}
+	},
+	"csvImport": {
+		"title": "उत्पादन आयात गर्नुहोस् (CSV)",
+		"errors": {
+			"onlyCsvAllowed": "मात्र CSV फाइलहरू अनुमत छन्।",
+			"importFailed": "आयात असफल भयो",
+			"somethingWentWrong": "केही गलत भयो"
+		},
+		"success": {
+			"importSuccess": "CSV सफलतापूर्वक आयात भयो"
+		},
+		"buttons": {
+			"uploadCsv": "CSV अपलोड गर्नुहोस्",
+			"uploading": "अपलोड हुँदैछ..."
+		}
+	}
 }

@@ -1,7 +1,9 @@
 import api from "app/utils/api";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function ProductCsvImport() {
+	const { t } = useTranslation();
 	const [file, setFile] = useState<File | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [message, setMessage] = useState<string | null>(null);
@@ -19,7 +21,7 @@ export default function ProductCsvImport() {
 		const selected = e.target.files[0];
 
 		if (!selected.name.endsWith(".csv")) {
-			setError("Only CSV files are allowed.");
+			setError(t("csvImport.errors.onlyCsvAllowed"));
 			setFile(null);
 			return;
 		}
@@ -45,11 +47,11 @@ export default function ProductCsvImport() {
 			console.log(res)
 
 			if (res.status !== 201) {
-				throw new Error(res.data.message || "Import failed");
+				throw new Error(res.data.message || t("csvImport.errors.importFailed"));
 			}
-			setMessage(res.data.message || "CSV imported successfully");
+			setMessage(res.data.message || t("csvImport.success.importSuccess"));
 		} catch (err: any) {
-			setError(err.message || "Something went wrong");
+			setError(err.message || t("csvImport.errors.somethingWentWrong"));
 		} finally {
 			setLoading(false);
 		}
@@ -57,7 +59,7 @@ export default function ProductCsvImport() {
 
 	return (
 		<div className="flex-1 p-4 bg-white rounded-lg shadow">
-			<h1 className="text-xl font-semibold mb-2">Import Products (CSV)</h1>
+			<h1 className="text-xl font-semibold mb-2">{t("csvImport.title")}</h1>
 
 			<input
 				type="file"
@@ -77,7 +79,7 @@ export default function ProductCsvImport() {
 				className="mt-6 w-full bg-blue-600 text-white py-2 rounded
                    disabled:opacity-50 disabled:cursor-not-allowed"
 			>
-				{loading ? "Uploading..." : "Upload CSV"}
+				{loading ? t("csvImport.buttons.uploading") : t("csvImport.buttons.uploadCsv")}
 			</button>
 
 			{message && <p className="mt-4 text-green-600 text-sm">{message}</p>}

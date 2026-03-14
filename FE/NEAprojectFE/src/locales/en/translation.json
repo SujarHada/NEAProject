@@ -121,6 +121,7 @@
 		"quantity": "Quantity *",
 		"remarks": "Remarks",
 		"unit": "Unit",
+		"selectUnit": "Select Unit",
 		"submitButton": "Create Product",
 		"creatingButton": "Creating...",
 		"errors": {
@@ -128,7 +129,22 @@
 			"companyNameRequired": "Company Name is required",
 			"unitRequired": "Unit is required",
 			"quantityRequired": "Quantity is required",
-			"quantityNumber": "Quantity must be a number"
+			"quantityNumber": "Quantity must be a number",
+			"createProductFailed": "Could not create the product",
+			"downloadFailed": "Download failed"
+		},
+		"tabs": {
+			"createSingle": "Create Single",
+			"bulkImport": "Bulk Import & Template"
+		},
+		"bulk": {
+			"downloadTemplate": "Download Template",
+			"downloadDescription": "Download CSV format for uploading product list."
+		},
+		"buttons": {
+			"createProduct": "Create Product",
+			"creating": "Creating...",
+			"downloadTemplate": "Download Template"
 		},
 		"units": {
 			"kg": "KG",
@@ -505,6 +521,18 @@
 		"title": "All Letters",
 		"download": "Download",
 		"noletters": "No letters found.",
+		"placeholders": {
+			"selectStartDate": "Select starting date",
+			"selectEndDate": "Select ending date"
+		},
+		"tabs": {
+			"lettersList": "Letters List",
+			"importTemplate": "Import & Template"
+		},
+		"errors": {
+			"dataNotFound": "Data not found",
+			"downloadFailed": "Something went wrong while downloading."
+		},
 		"table": {
 			"receiver_office_name": "Receiver Office",
 			"voucher_no": "Voucher No",
@@ -531,6 +559,21 @@
 		"pagination": {
 			"previous": "Previous",
 			"next": "Next"
+		}
+	},
+	"csvImport": {
+		"title": "Import Products (CSV)",
+		"errors": {
+			"onlyCsvAllowed": "Only CSV files are allowed.",
+			"importFailed": "Import failed",
+			"somethingWentWrong": "Something went wrong"
+		},
+		"success": {
+			"importSuccess": "CSV imported successfully"
+		},
+		"buttons": {
+			"uploadCsv": "Upload CSV",
+			"uploading": "Uploading..."
 		}
 	}
 }

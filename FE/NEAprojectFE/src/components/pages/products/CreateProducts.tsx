@@ -58,7 +58,7 @@ const CreateProducts = () => {
 				if (err.response) {
 					// alert(err.response.data.message)
 					toast.error(
-						err.response.data.message || "Could not create the product",
+						err.response.data.message || t("createProductPage.errors.createProductFailed"),
 					);
 				} else if (err.request) {
 					console.error("Network Error: Server not reachable");
@@ -192,7 +192,7 @@ const CreateProducts = () => {
 			link.remove();
 		} catch (err) {
 			console.error("Download failed", err);
-			toast.error("Download failed");
+			toast.error(t("createProductPage.errors.downloadFailed"));
 		}
 	};
 
@@ -207,14 +207,14 @@ const CreateProducts = () => {
 					className={`py-2 px-4 font-medium ${activeTab === "create" ? "border-b-2 border-blue-500 text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
 					onClick={() => setActiveTab("create")}
 				>
-					Create Single
+					{t("createProductPage.tabs.createSingle")}
 				</button>
 				<button
 					type={"button"}
 					className={`py-2 px-4 font-medium ${activeTab === "bulk" ? "border-b-2 border-blue-500 text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
 					onClick={() => setActiveTab("bulk")}
 				>
-					Bulk Import & template
+					{t("createProductPage.tabs.bulkImport")}
 				</button>
 			</div>
 
@@ -275,7 +275,7 @@ const CreateProducts = () => {
 										>
 											<option value="" disabled hidden>
 												{" "}
-												Unit{" "}
+												{t("createProductPage.selectUnit")}{" "}
 											</option>
 											{productUnits.map((unit) => (
 												<option key={unit.id} value={unit.value}>
@@ -326,7 +326,7 @@ const CreateProducts = () => {
 							onClick={handleSubmit(onSubmit)}
 							className="outline-none w-full bg-[#10172A] text-white h-12 hover:bg-[#233058] active:bg-[#314379] rounded-md disabled:opacity-50"
 						>
-							{isSubmitting ? "Creating..." : "Create Product"}
+							{isSubmitting ? t("createProductPage.buttons.creating") : t("createProductPage.buttons.createProduct")}
 						</button>
 					</div>
 				</div>
@@ -341,16 +341,16 @@ const CreateProducts = () => {
 						<ProductCsvImport />
 						{/* Download Card */}
 						<div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-							<h2 className="text-lg font-semibold mb-4">Download Template</h2>
+							<h2 className="text-lg font-semibold mb-4">{t("createProductPage.bulk.downloadTemplate")}</h2>
 							<p className="text-gray-600 mb-6 text-sm">
-								Download CSV format for uploading product list.
+								{t("createProductPage.bulk.downloadDescription")}
 							</p>
 							<button
 								type={"button"}
 								onClick={handleDownload}
 								className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
 							>
-								Download template
+								{t("createProductPage.buttons.downloadTemplate")}
 							</button>
 						</div>
 					</div>

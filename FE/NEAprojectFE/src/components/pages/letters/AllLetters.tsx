@@ -166,8 +166,8 @@ const AllLetters = () => {
 			console.error("Download error:", err);
 
 			const msg = err.message.includes("404")
-				? "Data not found"
-				: "Something went wrong while downloading.";
+				? t("allletters.errors.dataNotFound")
+				: t("allletters.errors.downloadFailed");
 
 			alert(`${msg}`);
 		}
@@ -185,21 +185,21 @@ const AllLetters = () => {
 						value={startDate}
 						onChange={setStartDate}
 						className="flex-1 border-2 pl-3 rounded-md w-full"
-						placeholder="Select starting date"
+						placeholder={t("allletters.placeholders.selectStartDate")}
 					/>
 
 					<NepaliDatePicker
 						value={endDate}
 						onChange={setEndDate}
 						className="flex-1 border-2 pl-3 rounded-md w-full"
-						placeholder="Select ending date"
+						placeholder={t("allletters.placeholders.selectEndDate")}
 					/>
 
 					<button
 						onClick={handleDownload}
 						className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5 w-full sm:w-auto"
 					>
-						Download
+						{t("allletters.download")}
 					</button>
 				</div>
 			</div>
@@ -211,14 +211,14 @@ const AllLetters = () => {
 					className={`py-2 px-4 font-medium ${activeTab === "list" ? "border-b-2 border-blue-500 text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
 					onClick={() => setActiveTab("list")}
 				>
-					Letters List
+					{t("allletters.tabs.lettersList")}
 				</button>
 				<button
 					type="button"
 					className={`py-2 px-4 font-medium ${activeTab === "import" ? "border-b-2 border-blue-500 text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
 					onClick={() => setActiveTab("import")}
 				>
-					Import & Template
+					{t("allletters.tabs.importTemplate")}
 				</button>
 			</div>
 
