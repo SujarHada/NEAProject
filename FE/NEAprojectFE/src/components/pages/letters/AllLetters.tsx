@@ -12,6 +12,7 @@ import ImportLetter from "app/assets/import-letter/importLetter";
 
 const AllLetters = () => {
 	const { t } = useTranslation();
+	const [activeTab, setActiveTab] = useState<"list" | "import">("list");
 	const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
 	const [letterCount, setLetterCount] = useState(0);
 	const [letters, setLetters] = useState<Letter[]>([]);
@@ -165,8 +166,8 @@ const AllLetters = () => {
 			console.error("Download error:", err);
 
 			const msg = err.message.includes("404")
-				? "Data not found"
-				: "Something went wrong while downloading.";
+				? t("allletters.errors.dataNotFound")
+				: t("allletters.errors.downloadFailed");
 
 			alert(`${msg}`);
 		}
@@ -184,25 +185,46 @@ const AllLetters = () => {
 						value={startDate}
 						onChange={setStartDate}
 						className="flex-1 border-2 pl-3 rounded-md w-full"
-						placeholder="Select starting date"
+						placeholder={t("allletters.placeholders.selectStartDate")}
 					/>
 
 					<NepaliDatePicker
 						value={endDate}
 						onChange={setEndDate}
 						className="flex-1 border-2 pl-3 rounded-md w-full"
-						placeholder="Select ending date"
+						placeholder={t("allletters.placeholders.selectEndDate")}
 					/>
 
 					<button
 						onClick={handleDownload}
 						className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5 w-full sm:w-auto"
 					>
-						Download
+						{t("allletters.download")}
 					</button>
 				</div>
 			</div>
-			<ImportLetter/>
+
+			{/* Tab Navigation */}
+			<div className="flex border-b border-gray-300">
+				<button
+					type="button"
+					className={`py-2 px-4 font-medium ${activeTab === "list" ? "border-b-2 border-blue-500 text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
+					onClick={() => setActiveTab("list")}
+				>
+					{t("allletters.tabs.lettersList")}
+				</button>
+				<button
+					type="button"
+					className={`py-2 px-4 font-medium ${activeTab === "import" ? "border-b-2 border-blue-500 text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
+					onClick={() => setActiveTab("import")}
+				>
+					{t("allletters.tabs.importTemplate")}
+				</button>
+			</div>
+
+			{/* Letters List Tab */}
+			{activeTab === "list" && (
+				<div className="flex flex-col gap-5">
 
 			<div
 				className="w-full  overflow-x-auto overflow-y-visible"
@@ -353,6 +375,11 @@ const AllLetters = () => {
 					</li>
 				</ul>
 			)}
+			</div>
+			)}
+
+			{/* Import & Template Tab */}
+			{activeTab === "import" && <ImportLetter />}
 		</div>
 	);
 };
