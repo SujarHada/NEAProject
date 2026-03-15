@@ -171,7 +171,7 @@ header {
 	text-align: justify;
 	margin-bottom: 15px;
 	font-size: 11pt;
-	line-height: 1.6;
+	/* line-height: 1.6; */
 }
 
 .table-title {
@@ -190,7 +190,6 @@ header {
 .table {
 	width: 100%;
 	border-collapse: collapse;
-	border: 1px solid #000;
 	table-layout: fixed;
 }
 
@@ -203,7 +202,6 @@ header {
 .table td {
 	border-bottom: 1px solid black;
 	border-left: 1px solid black;
-	border: 1px solid #000;
 	padding: 6px 2px;
 	text-align: center !important;
 	vertical-align: middle !important;
@@ -224,6 +222,7 @@ th:last-child {
 .table th {
 	font-weight: bold;
 	background-color: #f5f5f5;
+	border-top: 1px solid black;
 }
 
 .serial {
@@ -239,23 +238,23 @@ th:last-child {
 }
 
 .serial-no {
-	width: 16%;
+	width: 20%;
 }
 
 .unit {
-	width: 10%;
+	width: 8%;
 }
 
 .quantity {
-	width: 10%;
+	width: 8%;
 }
 
 .remarks {
-	width: 16%;
+	width: 10%;
 }
 
 .supplier-info {
-	margin-top: 20px;
+	margin-top: 15px;
 	font-size: 11pt;
 }
 
