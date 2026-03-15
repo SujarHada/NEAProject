@@ -5,6 +5,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useOnClickOutside } from "usehooks-ts";
 import { useTranslation } from "react-i18next";
 import api from "app/utils/api";
+import { ProtectedItem } from "app/components/ProtectedItem";
 
 const OfficeList = () => {
 	const { t } = useTranslation();
@@ -95,6 +96,7 @@ const OfficeList = () => {
 			<div className="flex justify-between items-center">
 				<h1 className="text-2xl font-bold">{t("officeList.title")}</h1>
 				<button
+					type="button"
 					onClick={handleDownload}
 					className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5"
 				>
@@ -113,7 +115,9 @@ const OfficeList = () => {
 							<th className="px-6 py-3">{t("officeList.table.address")}</th>
 							<th className="px-6 py-3">{t("officeList.table.email")}</th>
 							<th className="px-6 py-3">{t("officeList.table.contact")}</th>
-							<th className="px-6 py-3">{t("officeList.table.action")}</th>
+							<ProtectedItem>
+								<th className="px-6 py-3">{t("officeList.table.action")}</th>
+							</ProtectedItem>
 						</tr>
 					</thead>
 					<tbody>
@@ -139,45 +143,50 @@ const OfficeList = () => {
 									<td className="px-6 py-4">{office.address}</td>
 									<td className="px-6 py-4">{office.email}</td>
 									<td className="px-6 py-4">{office.phone_number}</td>
-									<td className="px-6 py-4 relative">
-										<button
-											onClick={(e) => toggleDropdown(office.id, e)}
-											className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5"
-										>
-											⋮
-										</button>
-										{openDropdownId === office.id && (
-											<div
-												ref={ref}
-												style={{
-													top: dropdownPosition?.top ?? 0,
-													left: dropdownPosition?.left ?? 0,
-												}}
-												className="fixed z-[99999] w-44 divide-y divide-gray-100 rounded-lg shadow-lg bg-gray-700"
+									<ProtectedItem>
+										<td className="px-6 py-4 relative">
+											<button
+												type="button"
+												onClick={(e) => toggleDropdown(office.id, e)}
+												className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5"
 											>
-												<ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
-													<li>
-														<button
-															onClick={() =>
-																navigate(`/offices/edit/${office.id}`)
-															}
-															className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
-														>
-															{t("officeList.actions.edit")}
-														</button>
-													</li>
-													<li>
-														<button
-															onClick={() => handleDelete(office.id)}
-															className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
-														>
-															{t("officeList.actions.delete")}
-														</button>
-													</li>
-												</ul>
-											</div>
-										)}
-									</td>
+												⋮
+											</button>
+											{openDropdownId === office.id && (
+												<div
+													ref={ref}
+													style={{
+														top: dropdownPosition?.top ?? 0,
+														left: dropdownPosition?.left ?? 0,
+													}}
+													className="fixed z-[99999] w-44 divide-y divide-gray-100 rounded-lg shadow-lg bg-gray-700"
+												>
+													<ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+														<li>
+															<button
+																type="button"
+																onClick={() =>
+																	navigate(`/offices/edit/${office.id}`)
+																}
+																className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+															>
+																{t("officeList.actions.edit")}
+															</button>
+														</li>
+														<li>
+															<button
+																type="button"
+																onClick={() => handleDelete(office.id)}
+																className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+															>
+																{t("officeList.actions.delete")}
+															</button>
+														</li>
+													</ul>
+												</div>
+											)}
+										</td>
+									</ProtectedItem>
 								</tr>
 							))
 						)}
@@ -188,6 +197,7 @@ const OfficeList = () => {
 				<ul className="flex items-center justify-center h-8 text-sm">
 					<li>
 						<button
+							type="button~"
 							onClick={() =>
 								prevPage && fetchOffices(prevPage, currentPage - 1)
 							}
@@ -200,6 +210,7 @@ const OfficeList = () => {
 					{Array.from({ length: totalPages }).map((_, i) => (
 						<li key={i}>
 							<button
+								type="button"
 								onClick={() => fetchOffices(undefined, i + 1)}
 								className={`flex items-center justify-center px-3 h-8 border bg-gray-800 border-gray-700 ${currentPage === i + 1 ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-700 hover:text-white"}`}
 							>
@@ -209,6 +220,7 @@ const OfficeList = () => {
 					))}
 					<li>
 						<button
+							type="button"
 							onClick={() =>
 								nextPage && fetchOffices(nextPage, currentPage + 1)
 							}

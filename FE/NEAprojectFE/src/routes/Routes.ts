@@ -62,10 +62,10 @@ const router = createBrowserRouter([
 					{ path: "all-letters", element: createElement(AllLetters) },
 					{ path: "view-letter/:id", element: createElement(ShowLetter) },
 					{ path: "letter-bin", element: createElement(LettersBin) },
+					{ path: "create-letter", element: createElement(CreateLetter) },
 					{
 						element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
 						children: [
-							{ path: "create-letter", element: createElement(CreateLetter) },
 							{ path: ":id/edit", element: createElement(EditLetter) },
 						],
 					},
@@ -78,13 +78,10 @@ const router = createBrowserRouter([
 				children: [
 					{ path: "active-products", element: createElement(ActiveProducts) },
 					{ path: "bin-product", element: createElement(ProductsBin) },
+					{ path: "create-product", element: createElement(CreateProducts) },
 					{
 						element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
 						children: [
-							{
-								path: "create-product",
-								element: createElement(CreateProducts),
-							},
 							{ path: "edit/:id", element: createElement(EditProduct) },
 						],
 					},
@@ -96,10 +93,10 @@ const router = createBrowserRouter([
 				element: createElement(Offices),
 				children: [
 					{ path: "office-list", element: createElement(OfficeList) },
+					{ path: "create-office", element: createElement(CreateOffice) },
 					{
 						element: createElement(ProtectedRoute, { allowedRoles: ["admin"] }),
 						children: [
-							{ path: "create-office", element: createElement(CreateOffice) },
 							{ path: "edit/:id", element: createElement(EditOffice) },
 						],
 					},
