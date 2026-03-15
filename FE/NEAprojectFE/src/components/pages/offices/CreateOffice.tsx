@@ -52,7 +52,7 @@ const CreateOffice = () => {
 							/>
 						)}
 					/>
-					{errors.name && <p className="text-red-500">{errors.name.message}</p>}
+					{errors.name && <p className="text-[#B22222]">{errors.name.message}</p>}
 				</div>
 
 				<div className="w-full flex flex-1 flex-col gap-2">
@@ -70,7 +70,7 @@ const CreateOffice = () => {
 						)}
 					/>
 					{errors.address && (
-						<p className="text-red-500">{errors.address.message}</p>
+						<p className="text-[#B22222]">{errors.address.message}</p>
 					)}
 				</div>
 			</div>
@@ -91,7 +91,7 @@ const CreateOffice = () => {
 						)}
 					/>
 					{errors.email && (
-						<p className="text-red-500">{errors.email.message}</p>
+						<p className="text-[#B22222]">{errors.email.message}</p>
 					)}
 				</div>
 
@@ -112,7 +112,7 @@ const CreateOffice = () => {
 						)}
 					/>
 					{errors.phone_number && (
-						<p className="text-red-500">{errors.phone_number.message}</p>
+						<p className="text-[#B22222]">{errors.phone_number.message}</p>
 					)}
 				</div>
 			</div>

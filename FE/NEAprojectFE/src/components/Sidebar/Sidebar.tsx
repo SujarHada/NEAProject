@@ -153,7 +153,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 	  if (!el) return
 	
 	  const enter = () => setCollapsed(false)
-	  const leave = () => setCollapsed(true)
+	  const leave = () => setTimeout(()=>setCollapsed(true), 200)
 	
 	  el.onmouseenter = enter
 	  el.onmouseleave = leave
@@ -162,7 +162,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 	return (
 		<div
 			ref={divRef}
-			className={`flex max-h-screen flex-col ${collapsed ? "w-10" : "w-55"} bg-gray-800 text-white min-h-screen transition-all ease-in-out max-md:absolute z-[99999]`}
+			className={`flex max-h-screen flex-col ${collapsed ? "w-10" : "w-55"} bg-gray-800 text-white min-h-screen transition-all duration-300 ease-in-out max-md:absolute z-[99999]`}
 		>
 			<div
 				className={`flex items-center ${collapsed ? "justify-center" : "justify-between"} p-4`}

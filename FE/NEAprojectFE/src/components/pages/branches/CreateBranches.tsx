@@ -86,7 +86,7 @@ const CreateBranches = () => {
 					)}
 				/>
 				{errors.name && (
-					<p className="text-red-500 text-sm">{errors.name.message}</p>
+					<p className="text-[#B22222] text-md">{errors.name.message}</p>
 				)}
 			</div>
 
@@ -106,7 +106,7 @@ const CreateBranches = () => {
 						)}
 					/>
 					{errors.email && (
-						<p className="text-red-500 text-sm">{errors.email.message}</p>
+						<p className="text-[#B22222] text-md">{errors.email.message}</p>
 					)}
 				</div>
 
@@ -125,7 +125,7 @@ const CreateBranches = () => {
 						)}
 					/>
 					{errors.address && (
-						<p className="text-red-500 text-sm">{errors.address.message}</p>
+						<p className="text-[#B22222] text-md">{errors.address.message}</p>
 					)}
 				</div>
 			</div>
@@ -144,7 +144,7 @@ const CreateBranches = () => {
 					)}
 				/>
 				{errors.phone_number && (
-					<p className="text-red-500">{errors.phone_number.message}</p>
+					<p className="text-[#B22222] text-md">{errors.phone_number.message}</p>
 				)}
 			</div>
 

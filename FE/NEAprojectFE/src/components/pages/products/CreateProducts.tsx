@@ -237,7 +237,7 @@ const CreateProducts = () => {
 								)}
 							/>
 							{errors.name && (
-								<p className="text-red-500">{errors.name.message}</p>
+								<p className="text-[#B22222]">{errors.name.message}</p>
 							)}
 						</div>
 						<div className="flex flex-1 flex-col w-full gap-2">
@@ -258,7 +258,7 @@ const CreateProducts = () => {
 								)}
 							/>
 							{errors.company && (
-								<p className="text-red-500">{errors.company.message}</p>
+								<p className="text-[#B22222]">{errors.company.message}</p>
 							)}
 						</div>
 						<div className="flex flex-[0.5] flex-col w-full gap-2">
@@ -287,7 +287,7 @@ const CreateProducts = () => {
 								)}
 							/>
 							{errors.unit_of_measurement && (
-								<p className="text-red-500">
+								<p className="text-[#B22222]">
 									{errors.unit_of_measurement.message}
 								</p>
 							)}
@@ -314,7 +314,7 @@ const CreateProducts = () => {
 								)}
 							/>
 							{errors.remarks && (
-								<p className="text-red-500">{errors.remarks.message}</p>
+								<p className="text-[#B22222]">{errors.remarks.message}</p>
 							)}
 						</div>
 					</div>
