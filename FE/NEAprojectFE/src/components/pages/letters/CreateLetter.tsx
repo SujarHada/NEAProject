@@ -2,7 +2,7 @@ import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useDataStore from "app/store/useDataStore";
 import { useEffect, useState } from "react";
-import type { Receiver } from "app/interfaces/interfaces";
+// import type { Receiver } from "app/interfaces/interfaces";
 import NepaliDatePicker, { NepaliDate } from "@zener/nepali-datepicker-react";
 import "@zener/nepali-datepicker-react/index.css";
 import api from "app/utils/api";
@@ -82,7 +82,7 @@ const CreateLetter = () => {
 	});
 	const { Offices, Receivers, Products, LetterCreationData, ...StoreMethods } =
 		useDataStore();
-	const [filteredReceivers, setFilteredReceivers] = useState<Receiver[]>([]);
+	// const [filteredReceivers, setFilteredReceivers] = useState<Receiver[]>([]);
 	const [selectedReceivers, setSelectedReceivers] = useState<ReceiverEntry[]>(
 		[],
 	);
@@ -130,10 +130,10 @@ const CreateLetter = () => {
 			setValue("office_id", selectedOffice.id.toString());
 			setValue("office_name", selectedOffice.name);
 			setValue("receiver_address", selectedOffice.address);
-			const filtered = Receivers?.filter(
-				(r) => r.office_name === selectedOffice.name,
-			);
-			setFilteredReceivers(filtered || []);
+			// const filtered = Receivers?.filter(
+			// 	(r) => r.office_name === selectedOffice.name,
+			// );
+			// setFilteredReceivers(filtered || []);
 		}
 		trigger("office_id");
 	};
@@ -761,10 +761,7 @@ const CreateLetter = () => {
 
 			{/* Receiver */}
 			{(() => {
-				const availableReceivers = filteredReceivers.filter(
-					(r) => !selectedReceivers.find((sr) => sr.id === r.id.toString()),
-				);
-
+				const availableReceivers = Receivers
 				return (
 					<div className="flex w-full flex-col gap-2">
 						{/* Dropdown to select receiver */}

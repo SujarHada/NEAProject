@@ -5,6 +5,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useOnClickOutside } from "usehooks-ts";
 import { useTranslation } from "react-i18next";
 import api from "app/utils/api";
+import { ProtectedItem } from "app/components/ProtectedItem";
 
 const ReceiverList = () => {
 	const { t } = useTranslation();
@@ -94,6 +95,7 @@ const ReceiverList = () => {
 			<div className="flex items-center justify-between">
 				<h1 className="text-2xl font-bold">{t("allreceivers.title")}</h1>
 				<button
+					type="button"
 					onClick={handleDownload}
 					className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium active:bg-blue-900 rounded-lg text-sm px-3 py-1.5"
 				>
@@ -115,7 +117,9 @@ const ReceiverList = () => {
 							<th className="px-6 py-3">
 								{t("allreceivers.table.phoneNumber")}
 							</th>
-							<th className="px-6 py-3">{t("allreceivers.table.action")}</th>
+							<ProtectedItem>
+								<th className="px-6 py-3">{t("allreceivers.table.action")}</th>
+							</ProtectedItem>
 						</tr>
 					</thead>
 					<tbody>
@@ -138,45 +142,50 @@ const ReceiverList = () => {
 								<td className="px-6 py-4">{receiver.post}</td>
 								<td className="px-6 py-4">{receiver.id_card_number}</td>
 								<td className="px-6 py-4">{receiver.phone_number}</td>
-								<td className="px-6 py-4 relative">
-									<button
-										onClick={(e) => toggleDropdown(receiver.id, e)}
-										className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5"
-									>
-										⋮
-									</button>
-									{openDropdownId === receiver.id && (
-										<div
-											ref={ref}
-											style={{
-												top: dropdownPosition?.top ?? 0,
-												left: dropdownPosition?.left ?? 0,
-											}}
-											className="fixed z-[99999] w-44 divide-y divide-gray-100 rounded-lg shadow-lg bg-gray-700"
+								<ProtectedItem>
+									<td className="px-6 py-4 relative">
+										<button
+											type="button"
+											onClick={(e) => toggleDropdown(receiver.id, e)}
+											className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5"
 										>
-											<ul className="py-2 text-sm text-gray-200">
-												<li>
-													<button
-														onClick={() =>
-															navigate(`/receiver/edit/${receiver.id}`)
-														}
-														className="block w-full text-left px-4 py-2 hover:bg-gray-600"
-													>
-														{t("allreceivers.actions.edit")}
-													</button>
-												</li>
-												<li>
-													<button
-														onClick={() => handleDelete(receiver.id)}
-														className="block w-full text-left px-4 py-2 hover:bg-gray-600"
-													>
-														{t("allreceivers.actions.delete")}
-													</button>
-												</li>
-											</ul>
-										</div>
-									)}
-								</td>
+											⋮
+										</button>
+										{openDropdownId === receiver.id && (
+											<div
+												ref={ref}
+												style={{
+													top: dropdownPosition?.top ?? 0,
+													left: dropdownPosition?.left ?? 0,
+												}}
+												className="fixed z-[99999] w-44 divide-y divide-gray-100 rounded-lg shadow-lg bg-gray-700"
+											>
+												<ul className="py-2 text-sm text-gray-200">
+													<li>
+														<button
+															type="button"
+															onClick={() =>
+																navigate(`/receiver/edit/${receiver.id}`)
+															}
+															className="block w-full text-left px-4 py-2 hover:bg-gray-600"
+														>
+															{t("allreceivers.actions.edit")}
+														</button>
+													</li>
+													<li>
+														<button
+															type="button"
+															onClick={() => handleDelete(receiver.id)}
+															className="block w-full text-left px-4 py-2 hover:bg-gray-600"
+														>
+															{t("allreceivers.actions.delete")}
+														</button>
+													</li>
+												</ul>
+											</div>
+										)}
+									</td>
+								</ProtectedItem>
 							</tr>
 						))}
 					</tbody>
@@ -186,6 +195,7 @@ const ReceiverList = () => {
 				<ul className="flex items-center justify-center h-8 text-sm">
 					<li>
 						<button
+							type="button"
 							onClick={() =>
 								prevPage && fetchreceivers(prevPage, currentPage - 1)
 							}
@@ -199,6 +209,7 @@ const ReceiverList = () => {
 					{Array.from({ length: totalPages }).map((_, i) => (
 						<li key={i}>
 							<button
+								type="button"
 								onClick={() => fetchreceivers(undefined, i + 1)}
 								className={`flex items-center justify-center px-3 h-8 border bg-gray-800 border-gray-700 ${currentPage === i + 1 ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-700 hover:text-white"}`}
 							>
@@ -209,6 +220,7 @@ const ReceiverList = () => {
 
 					<li>
 						<button
+							type="button"
 							onClick={() =>
 								nextPage && fetchreceivers(nextPage, currentPage + 1)
 							}

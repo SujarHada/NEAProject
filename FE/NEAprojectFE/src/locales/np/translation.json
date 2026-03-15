@@ -363,7 +363,8 @@
       "middleName": "मध्य नाम",
       "lastName": "थर",
       "email": "इमेल",
-      "position": "तह"
+      "position": "तह",
+      "password": "पासवर्ड"
     },
     "placeholders": {
       "position": "भूमिका छान्नुहोस् *",

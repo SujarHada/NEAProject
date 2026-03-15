@@ -5,6 +5,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useOnClickOutside } from "usehooks-ts";
 import { useTranslation } from "react-i18next";
 import api from "app/utils/api";
+import { ProtectedItem } from "app/components/ProtectedItem";
 
 const ActiveProducts = () => {
 	const { t } = useTranslation();
@@ -135,10 +136,12 @@ const ActiveProducts = () => {
 								{" "}
 								{t("activeProductsPage.table.unit")}{" "}
 							</th>
+							<ProtectedItem>
 							<th className="px-6 py-3">
 								{" "}
 								{t("activeProductsPage.table.action")}{" "}
 							</th>
+							</ProtectedItem>
 						</tr>
 					</thead>
 					<tbody>
@@ -164,49 +167,50 @@ const ActiveProducts = () => {
 									<td className="px-6 py-4">{product.name}</td>
 									<td className="px-6 py-4">{product.company}</td>
 									<td className="px-6 py-4">{product.unit_of_measurement}</td>
-									<td className="px-6 py-4 relative">
-										<button
-											type="button"
-											onClick={(e) => toggleDropdown(product.serial_number, e)}
-											className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5"
-										>
-											⋮
-										</button>
-
-										{openDropdownId === product.serial_number && (
-											<div
-												ref={ref}
-												className="fixed z-[99999] w-44 divide-y divide-gray-100 rounded-lg shadow-lg bg-gray-700"
-												style={{
-													top: dropdownPosition?.top ?? 0,
-													left: dropdownPosition?.left ?? 0,
-												}}
+									<ProtectedItem>
+										<td className="px-6 py-4 relative">
+											<button
+												type="button"
+												onClick={(e) => toggleDropdown(product.serial_number, e)}
+												className="text-white outline-none bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-1.5"
 											>
-												<ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
-													<li>
-														<button
-															type="button"
-															onClick={() =>
-																navigate(`/products/edit/${product.id}`)
-															}
-															className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
-														>
-															{t("activeProductsPage.dropdown.edit")}
-														</button>
-													</li>
-													<li>
-														<button
-															type="button"
-															onClick={() => softDelete(product.id)}
-															className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
-														>
-															{t("activeProductsPage.dropdown.moveToBin")}
-														</button>
-													</li>
-												</ul>
-											</div>
-										)}
-									</td>
+												⋮
+											</button>
+											{openDropdownId === product.serial_number && (
+												<div
+													ref={ref}
+													className="fixed z-[99999] w-44 divide-y divide-gray-100 rounded-lg shadow-lg bg-gray-700"
+													style={{
+														top: dropdownPosition?.top ?? 0,
+														left: dropdownPosition?.left ?? 0,
+													}}
+												>
+													<ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+														<li>
+															<button
+																type="button"
+																onClick={() =>
+																	navigate(`/products/edit/${product.id}`)
+																}
+																className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+															>
+																{t("activeProductsPage.dropdown.edit")}
+															</button>
+														</li>
+														<li>
+															<button
+																type="button"
+																onClick={() => softDelete(product.id)}
+																className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+															>
+																{t("activeProductsPage.dropdown.moveToBin")}
+															</button>
+														</li>
+													</ul>
+												</div>
+											)}
+										</td>
+									</ProtectedItem>
 								</tr>
 							))
 						)}

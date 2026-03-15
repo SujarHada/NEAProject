@@ -106,7 +106,7 @@ const CreateEmployee = () => {
 					)}
 				/>
 				{errors.organization_id && (
-					<p className="text-red-500">{errors.organization_id.message}</p>
+					<p className="text-[#B22222]">{errors.organization_id.message}</p>
 				)}
 			</div>
 
@@ -128,7 +128,7 @@ const CreateEmployee = () => {
 						)}
 					/>
 					{errors.first_name && (
-						<p className="text-red-500">{errors.first_name.message}</p>
+						<p className="text-[#B22222]">{errors.first_name.message}</p>
 					)}
 				</div>
 
@@ -149,7 +149,7 @@ const CreateEmployee = () => {
 						)}
 					/>
 					{errors.middle_name && (
-						<p className="text-red-500">{errors.middle_name.message}</p>
+						<p className="text-[#B22222]">{errors.middle_name.message}</p>
 					)}
 				</div>
 
@@ -170,7 +170,7 @@ const CreateEmployee = () => {
 						)}
 					/>
 					{errors.last_name && (
-						<p className="text-red-500">{errors.last_name.message}</p>
+						<p className="text-[#B22222]">{errors.last_name.message}</p>
 					)}
 				</div>
 			</div>
@@ -190,7 +190,7 @@ const CreateEmployee = () => {
 						)}
 					/>
 					{errors.email && (
-						<p className="text-red-500">{errors.email.message}</p>
+						<p className="text-[#B22222]">{errors.email.message}</p>
 					)}
 				</div>
 				<div className="flex flex-col w-full flex-1 ">
@@ -208,7 +208,7 @@ const CreateEmployee = () => {
 						)}
 					/>
 					{errors.password && (
-						<p className="text-red-500">{errors.password.message}</p>
+						<p className="text-[#B22222]">{errors.password.message}</p>
 					)}
 				</div>
 			</div>
@@ -232,7 +232,7 @@ const CreateEmployee = () => {
 						</select>
 					)}
 				/>
-				{errors.role && <p className="text-red-500">{errors.role.message}</p>}
+				{errors.role && <p className="text-[#B22222]">{errors.role.message}</p>}
 			</div>
 
 			<div className="flex">

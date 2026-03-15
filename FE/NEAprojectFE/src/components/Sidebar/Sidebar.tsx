@@ -57,9 +57,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 			label: "Letters",
 			icon: <FaRegEnvelope />,
 			children: [
-				...(user?.role === "admin"
-					? [{ id: "create-letter", label: "Create Letter", icon: <FaPlus /> }]
-					: []),
+				{ id: "create-letter", label: "Create Letter", icon: <FaPlus /> },
 				{ id: "all-letters", label: "All Letters", icon: <FaList /> },
 				{ id: "letter-bin", label: "Letter Bin", icon: <FaTrash /> },
 			],
@@ -70,15 +68,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 			label: "Product",
 			icon: <FaBoxOpen />,
 			children: [
-				...(user?.role === "admin"
-					? [
-							{
-								id: "create-product",
-								label: "Create Product",
-								icon: <FaPlus />,
-							},
-						]
-					: []),
+				{ id: "create-product", label: "Create Product", icon: <FaPlus /> },
 				{ id: "active-products", label: "Active Products", icon: <FaList /> },
 				{ id: "bin-product", label: "Bin Product", icon: <FaTrash /> },
 			],
@@ -89,9 +79,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 			label: "Offices",
 			icon: <FaBuilding />,
 			children: [
-				...(user?.role === "admin"
-					? [{ id: "create-office", label: "Create Office", icon: <FaPlus /> }]
-					: []),
+				{ id: "create-office", label: "Create Office", icon: <FaPlus /> },
 				{ id: "office-list", label: "Office List", icon: <FaList /> },
 			],
 		},
@@ -101,19 +89,10 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 			label: "Receiver",
 			icon: <FaUsers />,
 			children: [
-				...(user?.role === "admin"
-					? [
-							{
-								id: "create-receiver",
-								label: "Create Receiver",
-								icon: <FaPlus />,
-							},
-						]
-					: []),
+				{ id: "create-receiver", label: "Create Receiver", icon: <FaPlus /> },
 				{ id: "receiver-list", label: "Receiver List", icon: <FaList /> },
 			],
 		},
-
 		{
 			id: "branches",
 			label: "Branches",
@@ -149,20 +128,20 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 
 	const divRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
-	  const el = divRef.current
-	  if (!el) return
-	
-	  const enter = () => setCollapsed(false)
-	  const leave = () => setCollapsed(true)
-	
-	  el.onmouseenter = enter
-	  el.onmouseleave = leave
-	}, [])
+		const el = divRef.current;
+		if (!el) return;
+
+		const enter = () => setCollapsed(false);
+		const leave = () => setTimeout(() => setCollapsed(true), 200);
+
+		el.onmouseenter = enter;
+		el.onmouseleave = leave;
+	}, []);
 
 	return (
 		<div
 			ref={divRef}
-			className={`flex max-h-screen flex-col ${collapsed ? "w-10" : "w-55"} bg-gray-800 text-white min-h-screen transition-all ease-in-out max-md:absolute z-[99999]`}
+			className={`flex max-h-screen flex-col ${collapsed ? "w-10" : "w-55"} bg-gray-800 text-white min-h-screen transition-all duration-300 ease-in-out max-md:absolute z-[99999]`}
 		>
 			<div
 				className={`flex items-center ${collapsed ? "justify-center" : "justify-between"} p-4`}
@@ -173,7 +152,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 					</h2>
 				)}
 				<button
-				type="button"
+					type="button"
 					onClick={toggleCollapse}
 					className="text-white hover:text-gray-300"
 				>
@@ -188,7 +167,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 				{menuItems.map((item) => (
 					<li key={item.id}>
 						<button
-						type="button"
+							type="button"
 							className="flex-1 flex w-full items-center gap-3 p-3 justify-center cursor-pointer hover:bg-gray-700"
 							onClick={() =>
 								item.children
@@ -200,9 +179,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 						>
 							<div className="flex flex-1 gap-4">
 								<span className="text-xl">{item.icon}</span>
-								{!collapsed && (
-									<span className="truncate">{item.label}</span>
-								)}
+								{!collapsed && <span className="truncate">{item.label}</span>}
 							</div>
 							{!collapsed && item.children && (
 								<span className="text-sm">
@@ -217,7 +194,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 							item.children.map((child) => (
 								<ul key={child.id} className="ml-8">
 									<button
-									type="button"
+										type="button"
 										onClick={() => handleSelect(child.id)}
 										className="flex w-full items-center gap-3 p-2 cursor-pointer hover:bg-gray-700 text-sm"
 									>

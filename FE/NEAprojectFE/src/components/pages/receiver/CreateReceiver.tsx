@@ -70,7 +70,7 @@ const CreateReceiver = () => {
 							/>
 						)}
 					/>
-					{errors.name && <p className="text-red-500">{errors.name.message}</p>}
+					{errors.name && <p className="text-[#B22222]">{errors.name.message}</p>}
 				</div>
 				<div className="flex flex-1 flex-col w-full gap-2">
 					<label htmlFor="post"> {t("createReceiver.labels.post")} </label>
@@ -86,7 +86,7 @@ const CreateReceiver = () => {
 							/>
 						)}
 					/>
-					{errors.post && <p className="text-red-500">{errors.post.message}</p>}
+					{errors.post && <p className="text-[#B22222]">{errors.post.message}</p>}
 				</div>
 			</div>
 			<div className="flex gap-4 w-full flex-wrap">
@@ -108,7 +108,7 @@ const CreateReceiver = () => {
 						)}
 					/>
 					{errors.id_card_number && (
-						<p className="text-red-500">{errors.id_card_number.message}</p>
+						<p className="text-[#B22222]">{errors.id_card_number.message}</p>
 					)}
 				</div>
 				<div className="w-full flex flex-1 flex-col gap-2">
@@ -137,7 +137,7 @@ const CreateReceiver = () => {
 						)}
 					/>
 					{errors.id_card_type && (
-						<p className="text-red-500">{errors.id_card_type.message}</p>
+						<p className="text-[#B22222]">{errors.id_card_type.message}</p>
 					)}
 				</div>
 			</div>
@@ -159,30 +159,6 @@ const CreateReceiver = () => {
 					))}
 				</select>
 			</div>
-			{/* 
-                <div className="lg:w-1/2 flex flex-1 flex-col gap-2 ">
-                    <label htmlFor="office_name"> {t("createReceiver.labels.deptName")} </label>
-                    <Controller
-                        name="office_name"
-                        control={control}
-                        render={({ field }) => (
-                            <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="office_name" />
-                        )}
-                    />
-                    {errors.office_name && <p className="text-red-500">{errors.office_name.message}</p>}
-                </div>
-                <div className="lg:w-1/2 flex flex-1 flex-col gap-2 ">
-                    <label htmlFor="office_address"> {t("createReceiver.labels.deptAddress")} </label>
-                    <Controller
-                        name="office_address"
-                        control={control}
-                        render={({ field }) => (
-                            <input type="text" {...field} className="bg-[#B5C9DC] border-2 h-10 outline-none pl-3 rounded-md border-gray-600" id="office_address" />
-                        )}
-                    />
-                    {errors.office_address && <p className="text-red-500">{errors.office_address.message}</p>}
-                </div> */}
-			{/* </div> */}
 			<div className="flex gap-4 w-full flex-wrap">
 				<div className="lg:w-1/2 flex flex-1 flex-col gap-2 ">
 					<label htmlFor="phone_number">
@@ -202,7 +178,7 @@ const CreateReceiver = () => {
 						)}
 					/>
 					{errors.phone_number && (
-						<p className="text-red-500">{errors.phone_number.message}</p>
+						<p className="text-[#B22222]">{errors.phone_number.message}</p>
 					)}
 				</div>
 				<div className="lg:w-1/2 flex flex-1 flex-col gap-2 ">
@@ -223,7 +199,7 @@ const CreateReceiver = () => {
 						)}
 					/>
 					{errors.vehicle_number && (
-						<p className="text-red-500">{errors.vehicle_number.message}</p>
+						<p className="text-[#B22222]">{errors.vehicle_number.message}</p>
 					)}
 				</div>
 			</div>
