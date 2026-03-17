@@ -67,7 +67,7 @@ REM Wait for servers to start
 timeout /t 3 /nobreak >nul
 
 REM Open frontend in default browser
-start "" http://localhost:5173/
+start "" "http://!current_ip!:5173/"
 
 REM Minimize this window
 powershell -window minimized -command ""
