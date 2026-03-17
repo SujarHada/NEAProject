@@ -351,7 +351,7 @@ const ShowLetter = () => {
 			<table>
 				<tbody>
 					<tr>
-						<td>पुरा नाम, थर: {letter?.receiver.name}</td>
+						<td>पुरा नाम, थर: <span style={{fontFamily:"sans-serif"}}>{letter?.receiver.name}</span></td>
 						<td>पद: {letter?.receiver.post}</td>
 					</tr>
 					<tr>
@@ -544,7 +544,7 @@ const ShowLetter = () => {
 											return (
 												<tr key={item.id || chunkItemIndex}>
 													<td className="serial" style={{ textAlign: "center", verticalAlign: "middle" }}>{engToNep(`${globalIndex + 1}`)}</td>
-													<td className="item-name" style={{ textAlign: "center", verticalAlign: "middle" }}>{item.name}</td>
+													<td className="item-name" style={{ textAlign: "left", verticalAlign: "middle", fontFamily:'sans-serif' }}>{item.name}</td>
 													<td className="company" style={{ textAlign: "center", verticalAlign: "middle" }}>{item.company}</td>
 													<td
 														className="serial-no"
