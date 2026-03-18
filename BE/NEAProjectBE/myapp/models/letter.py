@@ -71,7 +71,13 @@ class LetterItem(TimeStampedModel):
 
     class Meta:
         ordering = ['serial_number']
-        unique_together = ['letter', 'serial_number']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['letter', 'serial_number'],
+                name='unique_letter_serial_number',
+                condition=~models.Q(serial_number='-')
+            )
+        ]
         app_label = 'myapp'
 
     def __str__(self):
