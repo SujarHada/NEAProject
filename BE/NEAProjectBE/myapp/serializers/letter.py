@@ -58,6 +58,31 @@ class LetterSerializer(serializers.ModelSerializer):
             'created_at', 'updated_at', 'office_name', 'sub_office_name'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def validate_items(self, value):
+        """Check for duplicate serial numbers in the items list, allowing '-' to be repeated."""
+        if not value:
+            return value
+            
+        serial_numbers = [
+            item.get('serial_number') 
+            for item in value 
+            if item.get('serial_number') and item.get('serial_number') != '-'
+        ]
+        
+        seen = set()
+        duplicates = set()
+        for sn in serial_numbers:
+            if sn in seen:
+                duplicates.add(sn)
+            seen.add(sn)
+            
+        if duplicates:
+            raise serializers.ValidationError(
+                f"Duplicate serial numbers found in items: {', '.join(duplicates)}. Only '-' can be repeated."
+            )
+            
+        return value
     
     def _convert_nepali_to_english(self, value):
         """Convert Nepali numerals to English numerals"""
