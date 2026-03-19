@@ -64,23 +64,22 @@ class LetterSerializer(serializers.ModelSerializer):
         if not value:
             return value
             
-        serial_numbers = [
-            item.get('serial_number') 
-            for item in value 
-            if item.get('serial_number') and item.get('serial_number') != '-'
-        ]
-        
         seen = set()
         duplicates = set()
-        for sn in serial_numbers:
-            if sn in seen:
-                duplicates.add(sn)
-            seen.add(sn)
+        for item in value:
+            sn = item.get('serial_number')
+            name = item.get('name')
+            if sn and sn != '-':
+                identifier = (sn, name)
+                if identifier in seen:
+                    duplicates.add(sn)
+                seen.add(identifier)
             
         if duplicates:
-            raise serializers.ValidationError(
-                f"Duplicate serial numbers found in items: {', '.join(duplicates)}. Only '-' can be repeated."
-            )
+            raise serializers.ValidationError([
+                f"Duplicate serial numbers found in items: {', '.join(duplicates)}. Only '-' can be repeated.",
+                f"वस्तुहरूमा दोहोरिएका सिरियल नम्बरहरू भेटिए: {', '.join(duplicates)}। केवल '-' मात्र दोहोरिन सक्छ।"
+            ])
             
         return value
     
