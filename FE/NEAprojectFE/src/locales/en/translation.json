@@ -44,6 +44,7 @@
 		"items": "Items",
 		"serial_number": "Serial number",
 		"product": "Product",
+		"company": "Company",
 		"unit": "Unit",
 		"quantity": "Quantity",
 		"remarks": "Remarks",

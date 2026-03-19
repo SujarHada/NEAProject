@@ -549,11 +549,16 @@ const CreateLetter = () => {
 			{/* Items */}
 			<div className="flex flex-col gap-3 rounded-2xl p-5">
 				<div className="flex flex-col rounded-2xl p-2 bg-[#91a4c3]">
-					<div className="flex p-2 w-full ">
-						<div className="flex-1 pl-3">{t("createLetter.product")}</div>
-						<div className="flex  flex-2 justify-between">
-							<div className="flex-1 pl-3 max-w-[30%]">
-								{t("createLetter.unit")}
+					<div className="flex p-2 w-full">
+						<div className="flex-1 pl-3 ">{t("createLetter.product")}</div>
+						<div className="flex flex-5 justify-between">
+							<div className="flex-1 flex flex-row justify-between">
+								<div className="flex-1 pl-3">
+									{t("createLetter.unit")}
+								</div>
+								<div className="flex-2 pl-3">
+									{t("createLetter.company")}
+								</div>
 							</div>
 							<div className="flex-1 pl-3 flex-row flex justify-between ">
 								<div className="flex-1 pl-3 flex max-w-[66%] ">
@@ -564,7 +569,9 @@ const CreateLetter = () => {
 								</div>
 							</div>
 						</div>
-						<div className="flex-1 pl-3">{t("createLetter.remarks")}</div>
+						<div className="flex-1 pl-3 max-w-[10%] ">
+							{t("createLetter.remarks")}
+						</div>
 						<button type="button" className="self-end  px-3 w-24 "></button>
 					</div>
 					{fields.map((item, index) => (
@@ -607,7 +614,7 @@ const CreateLetter = () => {
 														`items.${index}.unit_of_measurement`,
 													]);
 												}}
-												className={`bg-[#B5C9DC] w-full min-w-[203px] border-2 h-8 outline-none px-3 rounded-md ${formState.errors.items?.[index]?.name ? "border-red-500" : "border-gray-600"}`}
+												className={`bg-[#B5C9DC] w-full min-w-[10%] border-2 h-8 outline-none px-3 rounded-md ${formState.errors.items?.[index]?.name ? "border-red-500" : "border-gray-600"}`}
 											>
 												<option value="" hidden>
 													{t("createLetter.product")}
@@ -622,32 +629,52 @@ const CreateLetter = () => {
 									}}
 								/>
 							</div>
-							<div className="flex flex-2 gap-2 justify-between">
-								<div className="flex max-w-[30%] flex-col flex-1 gap-2">
-									<Controller
-										name={`items.${index}.unit_of_measurement`}
-										control={control}
-										render={({ field }) => {
-											return (
-												<select
-													value={field.value}
-													onChange={(e) => {
-														field.onChange(e.target.value);
-													}}
-													className={`bg-[#B5C9DC] w-full border-2 h-8 outline-none px-3 rounded-md ${formState.errors.items?.[index]?.unit_of_measurement ? "border-red-500" : "border-gray-600"}`}
-												>
-													<option value="" hidden>
-														{t("createLetter.unit")}
-													</option>
-													{productUnits?.map((p) => (
-														<option key={p.id} value={p.value}>
-															{p.name}
+							<div className="flex flex-5 gap-2 justify-between items-center">
+								<div className="flex flex-1 gap-2 flex-row justify-between">
+									<div className="flex-1">
+										<Controller
+											name={`items.${index}.unit_of_measurement`}
+											control={control}
+											render={({ field }) => {
+												return (
+													<select
+														value={field.value}
+														onChange={(e) => {
+															field.onChange(e.target.value);
+														}}
+														className={`bg-[#B5C9DC] w-full border-2 h-8 outline-none px-3 rounded-md ${formState.errors.items?.[index]?.unit_of_measurement ? "border-red-500" : "border-gray-600"}`}
+													>
+														<option value="" hidden>
+															{t("createLetter.unit")}
 														</option>
-													))}
-												</select>
-											);
-										}}
-									/>
+														{productUnits?.map((p) => (
+															<option key={p.id} value={p.value}>
+																{p.name}
+															</option>
+														))}
+													</select>
+												);
+											}}
+										/>
+									</div>
+
+									<div className="flex-2 ">
+										<Controller
+											name={`items.${index}.company`}
+											control={control}
+											render={({ field }) => (
+												<input
+													{...field}
+													onChange={async (e) => {
+														field.onChange(e.target.value);
+														await trigger(`items.${index}.company`);
+													}}
+													type="text"
+													className={` bg-[#B5C9DC] w-full border-2 h-8 outline-none pl-3 rounded-md ${formState.errors.items?.[index]?.company ? "border-red-500" : "border-gray-600"}`}
+												/>
+											)}
+										/>
+									</div>
 								</div>
 
 								<div className="flex flex-1 flex-wrap justify-between  flex-row gap-2">
@@ -702,7 +729,7 @@ const CreateLetter = () => {
 									</div>
 								</div>
 							</div>
-							<div className="flex flex-1 flex-col gap-2">
+							<div className="flex flex-1 flex-col max-w-[10%] gap-2">
 								<Controller
 									name={`items.${index}.remarks`}
 									control={control}
@@ -710,7 +737,7 @@ const CreateLetter = () => {
 										<input
 											{...field}
 											type="text"
-											className="bg-[#B5C9DC] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+											className="bg-[#B5C9DC]  border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
 										/>
 									)}
 								/>
@@ -738,6 +765,7 @@ const CreateLetter = () => {
 							`items.${lastIndex}.unit_of_measurement`,
 							`items.${lastIndex}.serial_number`,
 							`items.${lastIndex}.quantity`,
+							`items.${lastIndex}.company`,
 						]);
 
 						if (!isValid) {
