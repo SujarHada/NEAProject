@@ -16,6 +16,7 @@ import { engToNep, nepToEng } from "app/utils/englishtonepaliNumber";
 import { productUnits } from "app/enum/productUnits";
 import { id_types } from "app/enum/id_types";
 import toast from "react-hot-toast";
+import { isAxiosError } from "axios";
 
 interface ReceiverEntry {
 	id: string;
@@ -276,12 +277,12 @@ const CreateLetter = () => {
 			}
 		} catch (error: unknown) {
 			console.error("Error creating letter:", error);
-			if (error && typeof error === "object" && "response" in error) {
-				const axiosError = error as {
-					response?: { data?: { message?: string } };
-				};
+			if (isAxiosError(error)) {
+				const errorMessage = error.response?.data?.items[0].split(":")[0];
 				const message =
-					axiosError.response?.data?.message || t("createLetter.error_message");
+					errorMessage ||
+					error.response?.data?.message ||
+					t("createLetter.error_message");
 				toast.error(message);
 			} else {
 				toast.error(t("createLetter.error_message"));
@@ -761,7 +762,7 @@ const CreateLetter = () => {
 
 			{/* Receiver */}
 			{(() => {
-				const availableReceivers = Receivers
+				const availableReceivers = Receivers;
 				return (
 					<div className="flex w-full flex-col gap-2">
 						{/* Dropdown to select receiver */}
