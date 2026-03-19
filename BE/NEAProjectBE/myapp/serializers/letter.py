@@ -78,7 +78,7 @@ class LetterSerializer(serializers.ModelSerializer):
         if duplicates:
             raise serializers.ValidationError([
                 f"Duplicate serial numbers found in items: {', '.join(duplicates)}. Only '-' can be repeated.",
-                f"वस्तुहरूमा दोहोरिएका सिरियल नम्बरहरू भेटिए: {', '.join(duplicates)}। केवल '-' मात्र दोहोरिन सक्छ।"
+                f"सामानहरूमा दोहोरिएका सिरियल नम्बरहरू भेटिए: {', '.join(duplicates)}। केवल '-' मात्र दोहोरिन सक्छ।"
             ])
             
         return value
