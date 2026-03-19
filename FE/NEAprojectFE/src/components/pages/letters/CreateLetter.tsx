@@ -278,7 +278,7 @@ const CreateLetter = () => {
 		} catch (error: unknown) {
 			console.error("Error creating letter:", error);
 			if (isAxiosError(error)) {
-				const errorMessage = error.response?.data?.items[0].split(":")[0];
+				const errorMessage = error.response?.data?.items[1].split(":")[0];
 				const message =
 					errorMessage ||
 					error.response?.data?.message ||
