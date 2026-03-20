@@ -88,11 +88,11 @@ body {
 header {
 	display: flex;
 	justify-content: space-between;
-	align-items: flex-start;
+	align-items: center;
 }
 
 .logo-section {
-	flex: 0 0 105px;
+	flex: 0.01 0 105px;
 }
 
 .logo-section img {
