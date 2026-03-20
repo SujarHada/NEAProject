@@ -971,17 +971,25 @@ class LetterViewSet(viewsets.ModelViewSet):
             letter = Letter.objects.filter(**letter_lookup).first()
             
             if letter:
-                # Letter exists, check if item exists for this letter
-                item_exists = LetterItem.objects.filter(
-                    letter=letter,
-                    name=item_name,
-                    company=it_company,
-                    serial_number=it_serial,
-                    unit_of_measurement=it_unit,
-                    quantity=it_quantity
-                ).exists()
+                # Letter exists, check if an item with the same name and serial number (if not '-') already exists
+                if it_serial and it_serial != '-':
+                    duplicate_exists = LetterItem.objects.filter(
+                        letter=letter,
+                        name=item_name,
+                        serial_number=it_serial
+                    ).exists()
+                else:
+                    # For '-' or empty serials, check for an exact match
+                    duplicate_exists = LetterItem.objects.filter(
+                        letter=letter,
+                        name=item_name,
+                        company=it_company,
+                        serial_number=it_serial,
+                        unit_of_measurement=it_unit,
+                        quantity=it_quantity
+                    ).exists()
                 
-                if item_exists:
+                if duplicate_exists:
                     skipped_count += 1
                     continue
                 else:

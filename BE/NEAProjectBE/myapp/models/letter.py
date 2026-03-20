@@ -73,8 +73,8 @@ class LetterItem(TimeStampedModel):
         ordering = ['serial_number']
         constraints = [
             models.UniqueConstraint(
-                fields=['letter', 'serial_number'],
-                name='unique_letter_serial_number',
+                fields=['letter', 'serial_number', 'name'],
+                name='unique_letter_serial_number_name',
                 condition=~models.Q(serial_number='-')
             )
         ]
