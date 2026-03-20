@@ -34,6 +34,7 @@ REM Check if uv is installed
 where uv >nul 2>nul
 if %errorlevel% neq 0 (
     echo uv not found. Installing uv...
+    powershell -Command Set-ExecutionPolicy RemoteSigned -scope CurrentUser
     powershell -Command "irm https://astral.sh/uv/install.ps1 | iex"
 ) else (
     echo uv is already installed.
