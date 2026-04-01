@@ -25,6 +25,44 @@ else
     echo "VITE_API_URL=http://localhost:8000" > "$ENV_FILE"
 fi
 
+# Check if Node.js is installed
+if ! command -v node &> /dev/null; then
+    echo "Node.js not found. Installing Node.js LTS..."
+
+    if command -v apt-get &> /dev/null; then
+        # Debian/Ubuntu — use NodeSource LTS
+        echo "Detected apt-based system. Installing via NodeSource..."
+        curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+        sudo apt-get install -y nodejs
+    elif command -v dnf &> /dev/null; then
+        echo "Detected dnf-based system. Installing Node.js..."
+        sudo dnf install -y nodejs npm
+    elif command -v yum &> /dev/null; then
+        echo "Detected yum-based system. Installing via NodeSource..."
+        curl -fsSL https://rpm.nodesource.com/setup_lts.x | sudo bash -
+        sudo yum install -y nodejs
+    elif command -v pacman &> /dev/null; then
+        echo "Detected pacman-based system. Installing Node.js..."
+        sudo pacman -Sy --noconfirm nodejs npm
+    elif command -v zypper &> /dev/null; then
+        echo "Detected zypper-based system. Installing Node.js..."
+        sudo zypper install -y nodejs npm
+    else
+        echo "ERROR: Could not detect a supported package manager."
+        echo "Please install Node.js manually from https://nodejs.org/"
+        exit 1
+    fi
+
+    # Verify installation
+    if ! command -v node &> /dev/null; then
+        echo "ERROR: Node.js installation failed. Please install it manually from https://nodejs.org/"
+        exit 1
+    fi
+    echo "Node.js $(node --version) installed successfully."
+else
+    echo "Node.js $(node --version) is already installed."
+fi
+
 # Check if node_modules exists in FE/NEAprojectFE
 if [ ! -d "FE/NEAprojectFE/node_modules" ]; then
     echo "node_modules not found. Running npm install..."
