@@ -550,7 +550,7 @@ const ShowLetter = () => {
 														className="serial-no"
 														style={{
 															fontFamily: "serif",
-															textAlign: "center",
+															textAlign: "justify",
 															verticalAlign: "middle"
 														}}
 													>
