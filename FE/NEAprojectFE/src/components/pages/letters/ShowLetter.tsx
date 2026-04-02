@@ -551,7 +551,9 @@ const ShowLetter = () => {
 														style={{
 															fontFamily: "serif",
 															textAlign: "justify",
-															verticalAlign: "middle"
+															verticalAlign: "middle",
+															textWrap: "wrap",
+															lineBreak: 'anywhere',
 														}}
 													>
 														{nepToEng(item.serial_number)}
