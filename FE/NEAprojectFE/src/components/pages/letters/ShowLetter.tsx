@@ -550,7 +550,7 @@ const ShowLetter = () => {
 														className="serial-no"
 														style={{
 															fontFamily: "serif",
-															textAlign: "justify",
+															textAlign: item.serial_number.length > 15 ? "justify" : "center",
 															verticalAlign: "middle",
 															textWrap: "wrap",
 															lineBreak: 'anywhere',
