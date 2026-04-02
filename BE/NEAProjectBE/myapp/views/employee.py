@@ -8,12 +8,12 @@ import csv
 
 from ..models import Employee, EmployeeStatus, Branch, EmployeeRole
 from ..serializers import EmployeeSerializer
-from ..permissions import StrictViewerOrAdmin
+from ..permissions import StrictViewerOrCreatorOrAdmin
 
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all().order_by("-created_at")
     serializer_class = EmployeeSerializer
-    permission_classes = [StrictViewerOrAdmin]
+    permission_classes = [StrictViewerOrCreatorOrAdmin]
     filterset_fields = ["status"]
 
     def get_queryset(self):

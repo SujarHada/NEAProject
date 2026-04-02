@@ -1,12 +1,12 @@
 import { Navigate, Outlet } from "react-router";
-import useAuthStore from "app/store/useAuthStore";
+import useAuthStore, { type AuthState } from "app/store/useAuthStore";
 
 interface ProtectedRouteProps {
 	allowedRoles: string[];
 }
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
-	const userRole = useAuthStore((state) => state.user?.role) || "";
+	const userRole = useAuthStore((state: AuthState) => state.user?.role) || "";
 
 	return allowedRoles.includes(userRole) ? (
 		<Outlet />

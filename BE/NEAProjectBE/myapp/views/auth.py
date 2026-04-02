@@ -40,7 +40,7 @@ def get_tokens_for_user(user):
                 'name': {'type': 'string', 'example': 'John Doe'},
                 'password': {'type': 'string', 'example': 'password123'},
                 'password_confirm': {'type': 'string', 'example': 'password123'},
-                'role': {'type': 'string', 'enum': ['admin', 'viewer'], 'example': 'viewer'}
+                'role': {'type': 'string', 'enum': ['admin', 'creator', 'viewer'], 'example': 'creator'}
             },
             'required': ['email', 'name', 'password', 'password_confirm', 'role']
         }
@@ -59,7 +59,7 @@ def get_tokens_for_user(user):
                             'id': 'uuid-string',
                             'email': 'user@example.com',
                             'name': 'John Doe',
-                            'role': 'viewer',
+                            'role': 'creator',
                             'is_active': True,
                             'created_at': '2024-01-01T00:00:00Z'
                         },
@@ -140,7 +140,7 @@ def signup_view(request):
                         'user': {
                             'id': 'uuid-string',
                             'email': 'user@example.com',
-                            'role': 'viewer',
+                            'role': 'creator',
                             'is_active': True,
                             'created_at': '2024-01-01T00:00:00Z'
                         }
@@ -188,24 +188,37 @@ def login_view(request):
         password = serializer.validated_data['password']
         
         user = authenticate(request=request, username=email, password=password)
-        if not user:
-            emp = Employee.objects.filter(email=email).first()
-            if emp and emp.check_password(password):
-                mapped_role = 'admin' if emp.role == 'admin' else 'viewer'
+        
+        # Check if an employee exist with this email
+        emp = Employee.objects.filter(email=email).first()
+        if emp and emp.check_password(password):
+            # Synchronize or Create User based on Employee Record
+            mapped_role = emp.role
+            if not user:
                 user = User.objects.filter(email=email).first()
                 if not user:
-                    user = User.objects.create_user(email=email, name=(emp.first_name + ' ' + emp.last_name).strip(), password=password, role=mapped_role)
+                    user = User.objects.create_user(
+                        email=email, 
+                        name=(emp.first_name + ' ' + emp.last_name).strip(), 
+                        password=password, 
+                        role=mapped_role
+                    )
+            
+            # If user exists (either from authenticate or just found/created), sync role
+            if user:
+                user.set_password(password)
+                if user.role != mapped_role:
+                    user.role = mapped_role
+                    user.save(update_fields=['role', 'updated_at'])
                 else:
-                    user.set_password(password)
-                    if user.role != mapped_role:
-                        user.role = mapped_role
-                    user.save(update_fields=['password', 'role', 'updated_at'])
-            else:
-                logging.getLogger(__name__).warning(f"Failed login attempt for email: {email}")
-                return Response(
-                    {'error': 'Invalid credentials'},
-                    status=status.HTTP_401_UNAUTHORIZED
-                )
+                    user.save(update_fields=['password', 'updated_at'])
+
+        if not user:
+            logging.getLogger(__name__).warning(f"Failed login attempt for email: {email}")
+            return Response(
+                {'error': 'Invalid credentials'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
         
         # Check if user is active
         if not user.is_active:
@@ -446,7 +459,7 @@ def reset_password_request(request):
                         'id': 'uuid-string',
                         'email': 'user@example.com',
                         'name': 'John Doe',
-                        'role': 'viewer'
+                        'role': 'creator'
                     }
                 )
             ]

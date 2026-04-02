@@ -7,12 +7,12 @@ import csv
 
 from ..models import Receiver
 from ..serializers import ReceiverSerializer
-from ..permissions import StrictViewerOrAdmin
+from ..permissions import StrictViewerOrCreatorOrAdmin
 
 class ReceiverViewSet(viewsets.ModelViewSet):
     queryset = Receiver.objects.all().order_by("-created_at")
     serializer_class = ReceiverSerializer
-    permission_classes = [StrictViewerOrAdmin]
+    permission_classes = [StrictViewerOrCreatorOrAdmin]
 
     @action(detail=False, methods=['get'])
     def export_csv(self, request):

@@ -42,7 +42,7 @@ const CreateEmployee = () => {
 			email: "",
 			password: "",
 			organization_id: 0,
-			role: "viewer",
+			role: "creator",
 		},
 		resolver: zodResolver(createEmployeesFormschema),
 		mode: "onSubmit",
@@ -229,6 +229,7 @@ const CreateEmployee = () => {
 							</option>
 							<option value="admin">Admin</option>
 							<option value="viewer">Viewer</option>
+							<option value="creator">Creator</option>
 						</select>
 					)}
 				/>

@@ -7,12 +7,12 @@ import csv
 
 from ..models import Branch, BranchStatus
 from ..serializers import BranchSerializer
-from ..permissions import StrictViewerOrAdmin
+from ..permissions import StrictViewerOrCreatorOrAdmin
 
 class BranchViewSet(viewsets.ModelViewSet):
     queryset = Branch.objects.all().order_by("-created_at")
     serializer_class = BranchSerializer
-    permission_classes = [StrictViewerOrAdmin]
+    permission_classes = [StrictViewerOrCreatorOrAdmin]
     filterset_fields = ["status"]
 
     def get_queryset(self):

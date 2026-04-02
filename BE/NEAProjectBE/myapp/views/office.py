@@ -7,12 +7,12 @@ import csv
 
 from ..models import Office, OfficeStatus
 from ..serializers import OfficeSerializer
-from ..permissions import StrictViewerOrAdmin
+from ..permissions import StrictViewerOrCreatorOrAdmin
 
 class OfficeViewSet(viewsets.ModelViewSet):
     queryset = Office.objects.all().order_by("-created_at")
     serializer_class = OfficeSerializer
-    permission_classes = [StrictViewerOrAdmin]
+    permission_classes = [StrictViewerOrCreatorOrAdmin]
     filterset_fields = ["status"]
 
     def get_queryset(self):

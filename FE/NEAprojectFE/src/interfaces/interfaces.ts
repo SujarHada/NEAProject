@@ -33,7 +33,7 @@ export interface Employee {
 	middle_name?: string;
 	last_name: string;
 	email: string;
-	role: "admin" | "viewer";
+	role: "admin" | "viewer" | "creator";
 	organization_id: number;
 	branch_name: string;
 	serial_number: number;
@@ -87,7 +87,7 @@ export interface user {
 	id: string;
 	name: string;
 	email: string;
-	role: string;
+	role: "admin" | "viewer" | "creator";
 }
 export interface userloginResponse {
 	access: string;

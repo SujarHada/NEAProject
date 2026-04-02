@@ -8,12 +8,12 @@ import csv
 
 from ..models import Product, ProductStatus, UnitOfMeasurement
 from ..serializers import ProductSerializer
-from ..permissions import StrictViewerOrAdmin
+from ..permissions import StrictViewerOrCreatorOrAdmin
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all().order_by("-created_at")
     serializer_class = ProductSerializer
-    permission_classes = [StrictViewerOrAdmin]
+    permission_classes = [StrictViewerOrCreatorOrAdmin]
     filterset_fields = ["status"]
 
     def get_queryset(self):

@@ -15,12 +15,12 @@ from openpyxl.worksheet.datavalidation import DataValidation
 
 from ..models import Letter, LetterStatus, LetterItem
 from ..serializers import LetterSerializer
-from ..permissions import IsViewerOrAdminWithCreateForLetters
+from ..permissions import IsViewerOrCreatorOrAdminWithCreateForLetters
 
 class LetterViewSet(viewsets.ModelViewSet):
     queryset = Letter.objects.all().order_by("-created_at")
     serializer_class = LetterSerializer
-    permission_classes = [IsViewerOrAdminWithCreateForLetters]
+    permission_classes = [IsViewerOrCreatorOrAdminWithCreateForLetters]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["status"]
 

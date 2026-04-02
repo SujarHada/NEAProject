@@ -10,7 +10,7 @@ export const createEmployeesFormSchema = (t: (key: string) => string) => {
 			.min(1, t("createEmployee.errors.emailRequired")),
 		password: z.string().min(8, t("createEmployee.errors.passwordLength")),
 		organization_id: z.number().positive(t("createEmployee.errors.branchId")),
-		role: z.enum(["admin", "viewer"], t("createEmployee.errors.position")),
+		role: z.enum(["admin", "creator", "viewer"], t("createEmployee.errors.position")),
 	});
 };
 
@@ -31,7 +31,7 @@ export const updateEmployeesFormSchema = (t: (key: string) => string) => {
 				.string()
 				.min(8, t("editEmployee.errors.passwordLength")),
 			organization_id: z.number().positive(t("editEmployee.errors.branchId")),
-			role: z.enum(["admin", "viewer"], t("createEmployee.errors.position")),
+			role: z.enum(["admin", "creator", "viewer"], t("createEmployee.errors.position")),
 		})
 		.refine((data) => data.password === data.password_confirmation, {
 			message: "Passwords do not match",

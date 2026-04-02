@@ -17,7 +17,7 @@ import {
 	FaAngleRight,
 	FaAngleLeft,
 } from "react-icons/fa";
-import useAuthStore from "../../store/useAuthStore";
+import useAuthStore, { type AuthState } from "../../store/useAuthStore";
 
 type SidebarProps = {
 	onSelect: (pageId: string) => void;
@@ -34,7 +34,7 @@ type MenuItem = {
 const Sidebar = ({ onSelect }: SidebarProps) => {
 	const [collapsed, setCollapsed] = useState(true);
 	const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
-	const user = useAuthStore((state) => state.user);
+	const user = useAuthStore((state: AuthState) => state.user);
 	const handleSelect = (pageId: string) => {
 		onSelect(pageId);
 		toggleCollapse();
@@ -57,7 +57,9 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 			label: "Letters",
 			icon: <FaRegEnvelope />,
 			children: [
-				{ id: "create-letter", label: "Create Letter", icon: <FaPlus /> },
+				...(user?.role === "creator" || user?.role === "admin"
+					? [{ id: "create-letter", label: "Create Letter", icon: <FaPlus /> }]
+					: []),
 				{ id: "all-letters", label: "All Letters", icon: <FaList /> },
 				{ id: "letter-bin", label: "Letter Bin", icon: <FaTrash /> },
 			],
@@ -68,7 +70,9 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 			label: "Product",
 			icon: <FaBoxOpen />,
 			children: [
-				{ id: "create-product", label: "Create Product", icon: <FaPlus /> },
+				...(user?.role === "creator" || user?.role === "admin"
+					? [{ id: "create-product", label: "Create Product", icon: <FaPlus /> }]
+					: []),
 				{ id: "active-products", label: "Active Products", icon: <FaList /> },
 				{ id: "bin-product", label: "Bin Product", icon: <FaTrash /> },
 			],
@@ -79,7 +83,9 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 			label: "Offices",
 			icon: <FaBuilding />,
 			children: [
-				{ id: "create-office", label: "Create Office", icon: <FaPlus /> },
+				...(user?.role === "creator" || user?.role === "admin"
+					? [{ id: "create-office", label: "Create Office", icon: <FaPlus /> }]
+					: []),
 				{ id: "office-list", label: "Office List", icon: <FaList /> },
 			],
 		},
@@ -89,7 +95,9 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 			label: "Receiver",
 			icon: <FaUsers />,
 			children: [
-				{ id: "create-receiver", label: "Create Receiver", icon: <FaPlus /> },
+				...(user?.role === "creator" || user?.role === "admin"
+					? [{ id: "create-receiver", label: "Create Receiver", icon: <FaPlus /> }]
+					: []),
 				{ id: "receiver-list", label: "Receiver List", icon: <FaList /> },
 			],
 		},
@@ -98,7 +106,7 @@ const Sidebar = ({ onSelect }: SidebarProps) => {
 			label: "Branches",
 			icon: <FaNetworkWired />,
 			children: [
-				...(user?.role === "admin"
+				...(user?.role === "creator" || user?.role === "admin"
 					? [{ id: "create-branch", label: "Create Branch", icon: <FaPlus /> }]
 					: []),
 				{ id: "all-branches", label: "All Branches", icon: <FaList /> },
