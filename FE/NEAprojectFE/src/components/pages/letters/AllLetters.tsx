@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import useAuthStore, { type AuthState } from "app/store/useAuthStore";
 import { useNavigate } from "react-router";
 import type { Letter } from "app/interfaces/interfaces";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
@@ -13,6 +14,7 @@ import { ProtectedItem } from "app/components/ProtectedItem";
 
 const AllLetters = () => {
 	const { t } = useTranslation();
+	const user = useAuthStore((state: AuthState) => state.user);
 	const [activeTab, setActiveTab] = useState<"list" | "import">("list");
 	const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
 	const [letterCount, setLetterCount] = useState(0);
@@ -215,13 +217,15 @@ const AllLetters = () => {
 				>
 					{t("allletters.tabs.lettersList")}
 				</button>
-				<button
-					type="button"
-					className={`py-2 px-4 font-medium ${activeTab === "import" ? "border-b-2 border-blue-500 text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
-					onClick={() => setActiveTab("import")}
-				>
-					{t("allletters.tabs.importTemplate")}
-				</button>
+				{user?.role !== "viewer" && (
+					<button
+						type="button"
+						className={`py-2 px-4 font-medium ${activeTab === "import" ? "border-b-2 border-blue-500 text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
+						onClick={() => setActiveTab("import")}
+					>
+						{t("allletters.tabs.importTemplate")}
+					</button>
+				)}
 			</div>
 
 			{/* Letters List Tab */}
@@ -403,7 +407,7 @@ const AllLetters = () => {
 			)}
 
 			{/* Import & Template Tab */}
-			{activeTab === "import" && <ImportLetter />}
+			{activeTab === "import" && user?.role !== "viewer" && <ImportLetter />}
 		</div>
 	);
 };

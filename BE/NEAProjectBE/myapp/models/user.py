@@ -6,6 +6,7 @@ from .base import TimeStampedModel
 
 class UserRole(models.TextChoices):
     ADMIN = "admin", "Admin"
+    CREATOR = "creator", "Creator"
     VIEWER = "viewer", "Viewer"
 
 class UserManager(BaseUserManager):
@@ -35,7 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
     role = models.CharField(
         max_length=10,
         choices=UserRole.choices,
-        default=UserRole.VIEWER
+        default=UserRole.CREATOR
     )
     
     is_staff = models.BooleanField(default=False)
@@ -52,6 +53,10 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
     @property
     def is_admin(self):
         return self.role == UserRole.ADMIN
+
+    @property
+    def is_creator(self):
+        return self.role == UserRole.CREATOR
 
     @property
     def is_viewer(self):

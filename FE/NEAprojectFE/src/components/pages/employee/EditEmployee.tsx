@@ -67,7 +67,7 @@ const EditEmployee = () => {
 			last_name: "",
 			email: "",
 			organization_id: 0,
-			role: "viewer",
+			role: "creator",
 		},
 		resolver: zodResolver(formSchema),
 		mode: "onSubmit",
@@ -292,6 +292,9 @@ const EditEmployee = () => {
 								</option>
 								<option value="viewer">
 									{t("editEmployee.positions.viewer")}
+								</option>
+								<option value="creator">
+									Creator
 								</option>
 							</select>
 							<FaChevronDown className="absolute right-3 text-gray-500" />

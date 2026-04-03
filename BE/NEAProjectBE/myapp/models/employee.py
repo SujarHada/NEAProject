@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import make_password, check_password
 
 class EmployeeRole(models.TextChoices):
     ADMIN = "admin", "Admin"
+    CREATOR = "creator", "Creator"
     VIEWER = "viewer", "Viewer"
 
 class EmployeeStatus(models.TextChoices):
@@ -22,7 +23,7 @@ class Employee(TimeStampedModel):
     role = models.CharField(
         max_length=20,
         choices=EmployeeRole.choices,
-        default=EmployeeRole.VIEWER,
+        default=EmployeeRole.CREATOR,
     )
     status = models.CharField(
         max_length=10,
@@ -47,7 +48,7 @@ class Employee(TimeStampedModel):
         """Ensure role is one of the defined choices"""
         valid_values = [c[0] for c in EmployeeRole.choices]
         if self.role and self.role not in valid_values:
-            raise ValidationError({'role': 'Role must be either admin or viewer'})
+            raise ValidationError({'role': 'Role must be admin, creator or viewer'})
 
     class Meta:
         app_label = 'myapp'

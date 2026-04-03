@@ -2,16 +2,19 @@ import { create } from "zustand";
 import type { meResponse, user } from "../interfaces/interfaces";
 import api from "../utils/api";
 
-interface AuthState {
+export interface AuthState {
 	accessToken: string | null;
 	user: user | null;
 	setAuth: (token: string, user: user) => void;
 	setUser: (user: user) => void;
 	clearAuth: () => void;
 	getUser: () => Promise<meResponse>;
+	isAdmin: () => boolean;
+	isCreator: () => boolean;
+	isViewer: () => boolean;
 }
 
-const useAuthStore = create<AuthState>((set) => ({
+const useAuthStore = create<AuthState>((set, get) => ({
 	accessToken: localStorage.getItem("accessToken"),
 	user: null,
 	setAuth: (token: string, user: user) => {
@@ -26,6 +29,9 @@ const useAuthStore = create<AuthState>((set) => ({
 		set({ user: res.data });
 		return res.data;
 	},
+	isAdmin: () => get().user?.role === "admin",
+	isCreator: () => get().user?.role === "creator",
+	isViewer: () => get().user?.role === "viewer",
 	clearAuth: () => {
 		localStorage.removeItem("accessToken");
 		set({ accessToken: null, user: null });

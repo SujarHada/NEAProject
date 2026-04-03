@@ -7,10 +7,10 @@ import csv
 
 from ..models import Dashboard
 from ..serializers import DashboardSerializer
-from ..permissions import IsViewerOrAdmin
+from ..permissions import IsViewerOrCreatorOrAdmin
 
 class DashboardViewSet(viewsets.ViewSet):
-    permission_classes = [IsViewerOrAdmin]
+    permission_classes = [IsViewerOrCreatorOrAdmin]
 
     def list(self, request):
         dashboard = Dashboard.get_current_stats()

@@ -29,6 +29,14 @@ class Command(BaseCommand):
                     )
                     self.stdout.write(self.style.SUCCESS('Created admin user (email: admin@example.com, name: System Administrator, password: admin123)'))
 
+                    creator_user = User.objects.create_user(
+                        email='creator@example.com',
+                        name='Sample Creator',
+                        password='creator123',
+                        role=UserRole.CREATOR
+                    )
+                    self.stdout.write(self.style.SUCCESS('Created creator user (email: creator@example.com, name: Sample Creator, password: creator123)'))
+
                     viewer_user = User.objects.create_user(
                         email='viewer@example.com',
                         name='Sample Viewer',
@@ -330,6 +338,7 @@ class Command(BaseCommand):
 
             self.stdout.write(self.style.SUCCESS('\nSample User Accounts:'))
             self.stdout.write(self.style.SUCCESS('  - Admin: admin@example.com (System Administrator) - Role: Admin'))
+            self.stdout.write(self.style.SUCCESS('  - Creator: creator@example.com (Sample Creator) - Role: Creator'))
             self.stdout.write(self.style.SUCCESS('  - Viewer: viewer@example.com (Sample Viewer) - Role: Viewer'))
 
             self.stdout.write(self.style.SUCCESS('\nDatabase seeding completed successfully!'))
@@ -341,7 +350,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f'  - Letter Items: {LetterItem.objects.count()}'))
             self.stdout.write(self.style.SUCCESS(f'  - Products: {Product.objects.count()}'))
             self.stdout.write(self.style.SUCCESS(f'  - Units Used: {len(set(p.unit_of_measurement for p in products))} different units'))
-            self.stdout.write(self.style.SUCCESS('  - Users: 2 (admin@example.com, viewer@example.com)'))
+            self.stdout.write(self.style.SUCCESS('  - Users: 3 (admin@example.com, creator@example.com, viewer@example.com)'))
 
         except Exception as e:
             logger.error("Seeding failed", exc_info=e)
