@@ -140,7 +140,7 @@ const ShowLetter = () => {
 			format: "a4",
 			compress: true,
 		});
-		
+
 		for (let i = 0; i < pageRefs.current.length; i++) {
 			const element = pageRefs.current[i];
 			if (!element) continue;
@@ -184,83 +184,83 @@ const ShowLetter = () => {
 
 	// Print Handler
 	const handlePrint = async () => {
-    setIsLoading(true);
+		setIsLoading(true);
 
-    try {
-        const pdf = new jsPDF({
-            orientation: "portrait",
-            unit: "pt",
-            format: "a4",
-            compress: true,
-        });
+		try {
+			const pdf = new jsPDF({
+				orientation: "portrait",
+				unit: "pt",
+				format: "a4",
+				compress: true,
+			});
 
-        for (let i = 0; i < pageRefs.current.length; i++) {
-            const element = pageRefs.current[i];
-            if (!element) continue;
+			for (let i = 0; i < pageRefs.current.length; i++) {
+				const element = pageRefs.current[i];
+				if (!element) continue;
 
-            element.classList.add("pdf-export");
-            try {
-                const canvas = await html2canvas(element, {
-                    scale: 1.5,              // Match download scale to avoid distortion
-                    useCORS: true,
-                    logging: false,
-                    backgroundColor: "#ffffff",
-                    windowWidth: element.scrollWidth,   // Fix: capture at natural width
-                    windowHeight: element.scrollHeight,
-                });
-                const imgData = canvas.toDataURL("image/jpeg", 0.92);
+				element.classList.add("pdf-export");
+				try {
+					const canvas = await html2canvas(element, {
+						scale: 1.5,              // Match download scale to avoid distortion
+						useCORS: true,
+						logging: false,
+						backgroundColor: "#ffffff",
+						windowWidth: element.scrollWidth,   // Fix: capture at natural width
+						windowHeight: element.scrollHeight,
+					});
+					const imgData = canvas.toDataURL("image/jpeg", 0.92);
 
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
+					const pageWidth = pdf.internal.pageSize.getWidth();
+					const pageHeight = pdf.internal.pageSize.getHeight();
 
-                if (i !== 0) pdf.addPage();
-                const imgProps = (pdf as any).getImageProperties?.(imgData) 
-                    ?? { width: canvas.width, height: canvas.height };
+					if (i !== 0) pdf.addPage();
+					const imgProps = (pdf as any).getImageProperties?.(imgData)
+						?? { width: canvas.width, height: canvas.height };
 
-                const ratio = Math.min(
-                    pageWidth / imgProps.width, 
-                    pageHeight / imgProps.height
-                );
-                pdf.addImage(
-                    imgData, "JPEG",
-                    (pageWidth - imgProps.width * ratio) / 2,
-                    (pageHeight - imgProps.height * ratio) / 2,
-                    imgProps.width * ratio,
-                    imgProps.height * ratio
-                );
-            } finally {
-                element.classList.remove("pdf-export");
-            }
-        }
+					const ratio = Math.min(
+						pageWidth / imgProps.width,
+						pageHeight / imgProps.height
+					);
+					pdf.addImage(
+						imgData, "JPEG",
+						(pageWidth - imgProps.width * ratio) / 2,
+						(pageHeight - imgProps.height * ratio) / 2,
+						imgProps.width * ratio,
+						imgProps.height * ratio
+					);
+				} finally {
+					element.classList.remove("pdf-export");
+				}
+			}
 
-        // Open PDF directly instead of embedding in iframe
-        const blob = pdf.output("blob");
-        const url = URL.createObjectURL(blob);
-        const printWindow = window.open(url, "_blank");
+			// Open PDF directly instead of embedding in iframe
+			const blob = pdf.output("blob");
+			const url = URL.createObjectURL(blob);
+			const printWindow = window.open(url, "_blank");
 
-        if (printWindow) {
-            printWindow.addEventListener("load", () => {
-                setTimeout(() => {
-                    printWindow.focus();
-                    printWindow.print();
-                    setTimeout(() => URL.revokeObjectURL(url), 15000);
-                }, 500);
-            });
-        } else {
-            // Fallback if popup blocked
-            const a = document.createElement("a");
-            a.href = url;
-            a.target = "_blank";
-            a.rel = "noopener";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            setTimeout(() => URL.revokeObjectURL(url), 15000);
-        }
-    } finally {
-        setIsLoading(false);
-    }
-};
+			if (printWindow) {
+				printWindow.addEventListener("load", () => {
+					setTimeout(() => {
+						printWindow.focus();
+						printWindow.print();
+						setTimeout(() => URL.revokeObjectURL(url), 15000);
+					}, 500);
+				});
+			} else {
+				// Fallback if popup blocked
+				const a = document.createElement("a");
+				a.href = url;
+				a.target = "_blank";
+				a.rel = "noopener";
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a);
+				setTimeout(() => URL.revokeObjectURL(url), 15000);
+			}
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	// Helper components to avoid code duplication
 	const HeaderSection = () => (
@@ -351,7 +351,7 @@ const ShowLetter = () => {
 			<table>
 				<tbody>
 					<tr>
-						<td>पुरा नाम, थर: <span style={{fontFamily:"sans-serif"}}>{letter?.receiver.name}</span></td>
+						<td>पुरा नाम, थर: {letter?.receiver.name}</td>
 						<td>पद: {letter?.receiver.post}</td>
 					</tr>
 					<tr>
@@ -544,7 +544,7 @@ const ShowLetter = () => {
 											return (
 												<tr key={item.id || chunkItemIndex}>
 													<td className="serial" style={{ textAlign: "center", verticalAlign: "middle" }}>{engToNep(`${globalIndex + 1}`)}</td>
-													<td className="item-name" style={{ textAlign: "left", verticalAlign: "middle", fontFamily:'sans-serif' }}>{item.name}</td>
+													<td className="item-name" style={{ textAlign: "left", verticalAlign: "middle", fontFamily: 'sans-serif' }}>{item.name}</td>
 													<td className="company" style={{ textAlign: "center", verticalAlign: "middle" }}>{item.company}</td>
 													<td
 														className="serial-no"
