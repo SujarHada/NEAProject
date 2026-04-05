@@ -487,7 +487,7 @@ const ShowLetter = () => {
 												{item.serial_number}
 											</td>
 											<td className="unit" style={{ textAlign: "center", verticalAlign: "middle" }}>{item.unit_of_measurement}</td>
-											<td className="quantity" style={{ textAlign: "center", verticalAlign: "middle" }}>{item.quantity}</td>
+											<td className="quantity" style={{ textAlign: String(item.quantity).length < 6 ? "center" : "justify", verticalAlign: "middle" }}>{item.quantity}</td>
 											<td className="remarks" style={{ textAlign: "center", verticalAlign: "middle" }}>{item.remarks}</td>
 										</tr>
 									))}
@@ -559,7 +559,7 @@ const ShowLetter = () => {
 														{nepToEng(item.serial_number)}
 													</td>
 													<td className="unit" style={{ textAlign: "center", verticalAlign: "middle" }}>{item.unit_of_measurement}</td>
-													<td className="quantity" style={{ textAlign: "center", verticalAlign: "middle" }}>{item.quantity}</td>
+													<td className="quantity" style={{ textAlign: String(item.quantity).length < 6 ? "center" : "justify", verticalAlign: "middle" }}>{item.quantity}</td>
 													<td className="remarks" style={{ textAlign: "center", verticalAlign: "middle" }}>{item.remarks}</td>
 												</tr>
 											);
