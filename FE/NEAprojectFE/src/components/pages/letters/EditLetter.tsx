@@ -45,7 +45,6 @@ const EditLetter = () => {
     setValue,
     reset,
     trigger,
-    watch,
   } = useForm<EditLetterI>({
     resolver: zodResolver(EditLetterSchema),
     defaultValues: {
@@ -76,10 +75,24 @@ const EditLetter = () => {
     },
   });
 
-  const { Offices, Products, ...StoreMethods } =
+  const { Offices, Products, Receivers, ...StoreMethods } =
     useDataStore();
 
   const [selectedReceivers, setSelectedReceivers] = useState<ReceiverEntry[]>([]);
+  const [editingReceiverId, setEditingReceiverId] = useState<string | null>(null);
+  const [showManualEntry, setShowManualEntry] = useState(false);
+  const [manualReceiver, setManualReceiver] = useState<ReceiverEntry>({
+    id: "",
+    name: "",
+    post: "",
+    id_card_number: "",
+    id_card_type: "unknown",
+    office_name: "",
+    office_address: "",
+    phone_number: "",
+    vehicle_number: "",
+    isManual: true,
+  });
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -89,10 +102,12 @@ const EditLetter = () => {
   useEffect(() => {
     if (!Offices.length) StoreMethods.getOffices();
     if (!Products.length) StoreMethods.getProducts();
+    StoreMethods.getReceivers();
   }, [
     Offices.length,
     StoreMethods.getProducts,
     StoreMethods.getOffices,
+    StoreMethods.getReceivers,
     Products.length,
   ]);
 
@@ -160,7 +175,133 @@ const EditLetter = () => {
     trigger("office_id");
   };
 
+  const handleReceiverChange = (receiverId: string) => {
+    const selected = Receivers?.find((r) => r.id.toString() === receiverId);
+    if (selected) {
+      const newReceiver: ReceiverEntry = {
+        id: selected.id.toString(),
+        name: selected.name,
+        post: selected.post,
+        id_card_number: selected.id_card_number,
+        id_card_type: selected.id_card_type,
+        office_name: selected.office_name,
+        office_address: selected.office_address,
+        phone_number: selected.phone_number,
+        vehicle_number: selected.vehicle_number,
+        isManual: false,
+      };
+      if (!selectedReceivers.find((r) => r.id === newReceiver.id)) {
+        setSelectedReceivers([...selectedReceivers, newReceiver]);
+      }
+      setValue("receiver_id", selected.id.toString());
+      setValue("receiver.name", selected.name);
+      setValue("receiver.post", selected.post);
+      setValue("receiver.id_card_number", selected.id_card_number);
+      setValue("receiver.id_card_type", selected.id_card_type);
+      setValue("receiver.phone_number", selected.phone_number);
+      setValue("receiver.vehicle_number", selected.vehicle_number);
+      setValue("receiver.office_name", selected.office_name);
+      setValue("receiver.office_address", selected.office_address);
+    }
+    trigger("receiver");
+  };
+
+  const handleRemoveReceiver = (id: string) => {
+    setSelectedReceivers(selectedReceivers.filter((r) => r.id !== id));
+  };
+
+  const handleEditReceiver = (id: string) => {
+    setEditingReceiverId(id);
+    const receiver = selectedReceivers.find((r) => r.id === id);
+    if (receiver) {
+      setManualReceiver({ ...receiver, isManual: true });
+    }
+  };
+
+  const handleSaveEditedReceiver = () => {
+    if (editingReceiverId) {
+      setSelectedReceivers(
+        selectedReceivers.map((r) =>
+          r.id === editingReceiverId ? { ...manualReceiver, id: editingReceiverId } : r
+        )
+      );
+      setEditingReceiverId(null);
+      setManualReceiver({
+        id: "",
+        name: "",
+        post: "",
+        id_card_number: "",
+        id_card_type: "unknown",
+        office_name: "",
+        office_address: "",
+        phone_number: "",
+        vehicle_number: "",
+        isManual: true,
+      });
+    }
+  };
+
+  const handleAddManualReceiver = () => {
+    if (manualReceiver.name && manualReceiver.post && manualReceiver.phone_number) {
+      const newReceiver: ReceiverEntry = {
+        ...manualReceiver,
+        id: `manual-${Date.now()}`,
+      };
+      setSelectedReceivers([...selectedReceivers, newReceiver]);
+      setManualReceiver({
+        id: "",
+        name: "",
+        post: "",
+        id_card_number: "",
+        id_card_type: "unknown",
+        office_name: "",
+        office_address: "",
+        phone_number: "",
+        vehicle_number: "",
+        isManual: true,
+      });
+    } else {
+      toast.error("कृपया सबै आवश्यक फिल्डहरू भर्नुहोस्");
+    }
+  };
+
   const handleSubmitWrapper = () => {
+    // Validate selectedReceivers have all required fields before submitting
+    const validReceivers = selectedReceivers.filter((r) => r.name.trim());
+
+    if (validReceivers.length === 0) {
+      toast.error("कृपया कम्तीमा एक प्राप्तकर्ता चयन गर्नुहोस्");
+      return;
+    }
+
+    // Check each receiver for missing required fields
+    const missingFields: string[] = [];
+    for (let i = 0; i < validReceivers.length; i++) {
+      const r = validReceivers[i];
+      const label = `प्राप्तकर्ता ${i + 1} (${r.name || "?"})`;
+      if (!r.post.trim()) missingFields.push(`${label}: पद आवश्यक छ`);
+      if (!r.id_card_number.trim()) missingFields.push(`${label}: परिचयपत्र नं आवश्यक छ`);
+      if (!r.office_name.trim()) missingFields.push(`${label}: कार्यालयको नाम आवश्यक छ`);
+      if (!r.office_address.trim()) missingFields.push(`${label}: कार्यालयको ठेगाना आवश्यक छ`);
+      if (!r.phone_number.trim()) missingFields.push(`${label}: फोन नं आवश्यक छ`);
+      if (!r.vehicle_number.trim()) missingFields.push(`${label}: सवारी नं आवश्यक छ`);
+    }
+
+    if (missingFields.length > 0) {
+      toast.error(missingFields[0]);
+      return;
+    }
+
+    // Sync selectedReceivers into the form's receiver field before validation
+    setValue("receiver.name", validReceivers.map((r) => r.name).join(", "));
+    setValue("receiver.post", validReceivers.map((r) => r.post).join(", "));
+    setValue("receiver.id_card_number", validReceivers.map((r) => r.id_card_number).join(", "));
+    setValue("receiver.id_card_type", (validReceivers[0]?.id_card_type || "unknown") as EditLetterI["receiver"]["id_card_type"]);
+    setValue("receiver.office_name", validReceivers.map((r) => r.office_name).join(", "));
+    setValue("receiver.office_address", validReceivers.map((r) => r.office_address).join(", "));
+    setValue("receiver.phone_number", validReceivers.map((r) => r.phone_number).join(", "));
+    setValue("receiver.vehicle_number", validReceivers.map((r) => r.vehicle_number).join(", "));
+
     handleSubmit(onSubmit)();
   };
 
@@ -678,200 +819,479 @@ const EditLetter = () => {
         </button>
       </div>
 
-      {/* Receiver - Edit Mode with comma-separated fields */}
-      <div className="flex w-full flex-col gap-2">
-        <div className="bg-[#91a4c3] px-4 py-2 rounded-t-md font-semibold text-black">
-          {t("createLetter.receiver_details") || "प्राप्तकर्ता विवरण"}
-        </div>
-        <div className="bg-[#90a3c2] px-4 py-3 rounded-b-md flex flex-col gap-3">
-          <div className="w-full flex gap-4 flex-wrap">
-            <div className="flex flex-col flex-1">
-              <label htmlFor="receiver-name">{t("createLetter.manual_receiver_name")} *</label>
-              <input
-                id="receiver-name"
-                type="text"
-                value={selectedReceivers.map((r) => r.name).join(", ")}
-                onChange={(e) => {
-                  const names = e.target.value.split(",").map((n) => n.trim()).filter(Boolean);
-                  const newReceivers = names.map((name, index) => {
-                    const existing = selectedReceivers[index];
-                    return existing ? { ...existing, name } : {
-                      id: `new-${index}`,
-                      name,
-                      post: "",
-                      id_card_number: "",
-                      id_card_type: "unknown",
-                      office_name: "",
-                      office_address: "",
-                      phone_number: "",
-                      vehicle_number: "",
-                      isManual: true,
-                    };
-                  });
-                  setSelectedReceivers(newReceivers);
-                }}
-                placeholder={t("createLetter.name_placeholder") || "Name 1, Name 2, Name 3"}
-                className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
-              />
-            </div>
-            <div className="flex flex-col flex-1">
-              <label htmlFor="receiver-post">{t("createLetter.post")}</label>
-              <input
-                id="receiver-post"
-                type="text"
-                value={selectedReceivers.map((r) => r.post).join(", ")}
-                onChange={(e) => {
-                  const posts = e.target.value.split(",").map((p) => p.trim());
-                  setSelectedReceivers(
-                    selectedReceivers.map((r, i) => ({ ...r, post: posts[i] || "" }))
-                  );
-                }}
-                placeholder={t("createLetter.post_placeholder") || "Post 1, Post 2, Post 3"}
-                className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
-              />
-            </div>
-          </div>
-          <div className="w-full flex gap-4 flex-wrap">
-            <div className="flex flex-col flex-1">
-              <label htmlFor="receiver-office">{t("createLetter.office_name")}</label>
-              <input
-                id="receiver-office"
-                type="text"
-                value={selectedReceivers.map((r) => r.office_name).join(", ")}
-                onChange={(e) => {
-                  const offices = e.target.value.split(",").map((o) => o.trim());
-                  setSelectedReceivers(
-                    selectedReceivers.map((r, i) => ({ ...r, office_name: offices[i] || "" }))
-                  );
-                }}
-                placeholder={t("createLetter.office_placeholder") || "Office 1, Office 2, Office 3"}
-                className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
-              />
-            </div>
-            <div className="flex flex-col flex-1">
-              <label htmlFor="receiver-address">{t("createLetter.receiver_office_address")}</label>
-              <input
-                id="receiver-address"
-                type="text"
-                value={selectedReceivers.map((r) => r.office_address).join(", ")}
-                onChange={(e) => {
-                  const addresses = e.target.value.split(",").map((a) => a.trim());
-                  setSelectedReceivers(
-                    selectedReceivers.map((r, i) => ({ ...r, office_address: addresses[i] || "" }))
-                  );
-                }}
-                placeholder={t("createLetter.address_placeholder") || "Address 1, Address 2, Address 3"}
-                className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
-              />
-            </div>
-          </div>
-          <div className="w-full flex gap-4 flex-wrap">
-            <div className="flex flex-col flex-1">
-              <label htmlFor="receiver-vehicle">{t("createLetter.vehiche_number")}</label>
-              <input
-                id="receiver-vehicle"
-                type="text"
-                value={selectedReceivers.map((r) => r.vehicle_number).join(", ")}
-                onChange={(e) => {
-                  const vehicles = e.target.value.split(",").map((v) => v.trim());
-                  setSelectedReceivers(
-                    selectedReceivers.map((r, i) => ({ ...r, vehicle_number: vehicles[i] || "" }))
-                  );
-                }}
-                placeholder={t("createLetter.vehicle_placeholder") || "Vehicle 1, Vehicle 2, Vehicle 3"}
-                className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
-              />
-            </div>
-            <div className="flex flex-col flex-1">
-              <label htmlFor="receiver-phone">{t("createLetter.phone_number")}</label>
-              <input
-                id="receiver-phone"
-                type="text"
-                value={selectedReceivers.map((r) => r.phone_number).join(", ")}
-                onChange={(e) => {
-                  const phones = e.target.value.split(",").map((p) => p.trim());
-                  setSelectedReceivers(
-                    selectedReceivers.map((r, i) => ({ ...r, phone_number: phones[i] || "" }))
-                  );
-                }}
-                placeholder={t("createLetter.phone_placeholder") || "Phone 1, Phone 2, Phone 3"}
-                className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
-              />
-            </div>
-          </div>
-          <div className="w-full flex gap-4 flex-wrap">
-            <div className="flex flex-col flex-1">
-              <label htmlFor="receiver-idcard">{t("createLetter.id_card_number")}</label>
-              <input
-                id="receiver-idcard"
-                type="text"
-                value={selectedReceivers.map((r) => r.id_card_number).join(", ")}
-                onChange={(e) => {
-                  const idCards = e.target.value.split(",").map((i) => i.trim());
-                  setSelectedReceivers(
-                    selectedReceivers.map((r, i) => ({ ...r, id_card_number: idCards[i] || "" }))
-                  );
-                }}
-                placeholder={t("createLetter.idcard_placeholder") || "ID 1, ID 2, ID 3"}
-                className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
-              />
-            </div>
-            <div className="flex flex-col flex-1">
-              <label htmlFor="receiver-idtype">{t("createLetter.id_card_type")}</label>
-              <select
-                id="receiver-idtype"
-                value={selectedReceivers[0]?.id_card_type || "unknown"}
-                onChange={(e) => {
-                  setSelectedReceivers(
-                    selectedReceivers.map((r) => ({ ...r, id_card_type: e.target.value }))
-                  );
-                }}
-                className="bg-[#b4c8db] border-2 h-8 outline-none px-3 rounded-md border-gray-600"
-              >
-                {id_types.map((idType) => (
-                  <option key={idType.id} value={idType.value}>
-                    {idType.name}
+      {/* Receiver */}
+      {(() => {
+        const availableReceivers = Receivers;
+        return (
+          <div className="flex w-full flex-col gap-2">
+            {/* Dropdown to select receiver */}
+            <div className="w-full flex gap-4 flex-wrap">
+              <div className="flex flex-col flex-1">
+                <label htmlFor="receiverSelect">
+                  {t("createLetter.select_receiver")}
+                </label>
+                <select
+                  id="receiverSelect"
+                  onChange={(e) => handleReceiverChange(e.target.value)}
+                  disabled={!availableReceivers.length}
+                  className="bg-[#B5C9DC] border-2 h-8 outline-none px-3 rounded-md border-gray-600"
+                >
+                  <option value="" hidden>
+                    {availableReceivers.length
+                      ? t("createLetter.select_receiver")
+                      : t("createLetter.no_receiver_found")}
                   </option>
-                ))}
-              </select>
+                  {availableReceivers.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
-          <div className="flex gap-2 mt-2">
-            <button
-              type="button"
-              onClick={() => {
-                setSelectedReceivers([
-                  ...selectedReceivers,
-                  {
-                    id: `new-${Date.now()}`,
-                    name: "",
-                    post: "",
-                    id_card_number: "",
-                    id_card_type: "unknown",
-                    office_name: "",
-                    office_address: "",
-                    phone_number: "",
-                    vehicle_number: "",
-                    isManual: true,
-                  },
-                ]);
-              }}
-              className="bg-[#10172A] text-white px-4 py-2 rounded-md hover:bg-[#233058]"
-            >
-              + {t("createLetter.add_receiver") || "थप प्राप्तकर्ता"}
-            </button>
+
+            {/* Selected receivers list */}
             {selectedReceivers.length > 0 && (
+              <div className="flex flex-col gap-2 w-full">
+                <div className="bg-[#90a3c2] px-4 py-2 rounded-t-md font-semibold text-black">
+                  {t("createLetter.selected_receivers") || "चयनित प्राप्तकर्ताहरू"}{" "}
+                  ({selectedReceivers.length})
+                </div>
+                {selectedReceivers.map((receiver, index) => (
+                  <div
+                    key={receiver.id}
+                    className="bg-[#90a3c2] px-4 py-3 flex flex-col gap-2"
+                  >
+                    {editingReceiverId === receiver.id ? (
+                      /* Edit mode */
+                      <div className="flex flex-col gap-2 w-full">
+                        <div className="w-full flex gap-4 flex-wrap">
+                          <div className="flex flex-col flex-1">
+                            <label htmlFor="edit-name">
+                              {t("createLetter.manual_receiver_name")}
+                            </label>
+                            <input
+                              id="edit-name"
+                              type="text"
+                              value={manualReceiver.name}
+                              onChange={(e) =>
+                                setManualReceiver({
+                                  ...manualReceiver,
+                                  name: e.target.value,
+                                })
+                              }
+                              className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
+                            />
+                          </div>
+                          <div className="flex flex-col flex-1">
+                            <label htmlFor="edit-post">
+                              {t("createLetter.post")}
+                            </label>
+                            <input
+                              id="edit-post"
+                              type="text"
+                              value={manualReceiver.post}
+                              onChange={(e) =>
+                                setManualReceiver({
+                                  ...manualReceiver,
+                                  post: e.target.value,
+                                })
+                              }
+                              className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
+                            />
+                          </div>
+                          <div className="flex flex-col flex-1">
+                            <label htmlFor="edit-vehicle">
+                              {t("createLetter.vehiche_number")}
+                            </label>
+                            <input
+                              id="edit-vehicle"
+                              type="text"
+                              value={manualReceiver.vehicle_number}
+                              onChange={(e) =>
+                                setManualReceiver({
+                                  ...manualReceiver,
+                                  vehicle_number: e.target.value,
+                                })
+                              }
+                              className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
+                            />
+                          </div>
+                        </div>
+                        <div className="w-full flex gap-4 flex-wrap">
+                          <div className="flex flex-col flex-1">
+                            <label htmlFor="edit-office">
+                              {t("createLetter.office_name")}
+                            </label>
+                            <input
+                              id="edit-office"
+                              type="text"
+                              value={manualReceiver.office_name}
+                              onChange={(e) =>
+                                setManualReceiver({
+                                  ...manualReceiver,
+                                  office_name: e.target.value,
+                                })
+                              }
+                              className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
+                            />
+                          </div>
+                          <div className="flex flex-col flex-1">
+                            <label htmlFor="edit-address">
+                              {t("createLetter.receiver_office_address")}
+                            </label>
+                            <input
+                              id="edit-address"
+                              type="text"
+                              value={manualReceiver.office_address}
+                              onChange={(e) =>
+                                setManualReceiver({
+                                  ...manualReceiver,
+                                  office_address: e.target.value,
+                                })
+                              }
+                              className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
+                            />
+                          </div>
+                          <div className="flex flex-col flex-1">
+                            <label htmlFor="edit-phone">
+                              {t("createLetter.phone_number")}
+                            </label>
+                            <input
+                              id="edit-phone"
+                              type="text"
+                              value={manualReceiver.phone_number}
+                              onChange={(e) =>
+                                setManualReceiver({
+                                  ...manualReceiver,
+                                  phone_number: e.target.value,
+                                })
+                              }
+                              className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
+                            />
+                          </div>
+                        </div>
+                        <div className="w-full flex gap-4 flex-wrap">
+                          <div className="flex flex-col flex-1">
+                            <label htmlFor="edit-idcard">
+                              {t("createLetter.id_card_number")}
+                            </label>
+                            <input
+                              id="edit-idcard"
+                              type="text"
+                              value={manualReceiver.id_card_number}
+                              onChange={(e) =>
+                                setManualReceiver({
+                                  ...manualReceiver,
+                                  id_card_number: e.target.value,
+                                })
+                              }
+                              className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
+                            />
+                          </div>
+                          <div className="flex flex-col flex-1">
+                            <label htmlFor="edit-idtype">
+                              {t("createLetter.id_card_type")}
+                            </label>
+                            <select
+                              id="edit-idtype"
+                              value={manualReceiver.id_card_type}
+                              onChange={(e) =>
+                                setManualReceiver({
+                                  ...manualReceiver,
+                                  id_card_type: e.target.value,
+                                })
+                              }
+                              className="bg-[#b4c8db] border-2 h-8 outline-none px-3 rounded-md border-gray-600"
+                            >
+                              {id_types.map((idType) => (
+                                <option key={idType.id} value={idType.value}>
+                                  {idType.name}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="flex flex-1"></div>
+                        </div>
+                        <div className="flex gap-2 mt-2">
+                          <button
+                            type="button"
+                            onClick={handleSaveEditedReceiver}
+                            className="bg-[#10172A] text-white px-4 py-1.5 rounded-md hover:bg-[#233058] text-sm"
+                          >
+                            {t("createLetter.save")}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingReceiverId(null);
+                              setManualReceiver({
+                                id: "",
+                                name: "",
+                                post: "",
+                                id_card_number: "",
+                                id_card_type: "unknown",
+                                office_name: "",
+                                office_address: "",
+                                phone_number: "",
+                                vehicle_number: "",
+                                isManual: true,
+                              });
+                            }}
+                            className="bg-gray-500 text-white px-4 py-1.5 rounded-md hover:bg-gray-600 text-sm"
+                          >
+                            {t("createLetter.cancel")}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Display mode */
+                      <div className="flex flex-col gap-2">
+                        <div className="flex justify-between items-start">
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-[#10172A]">
+                              {index + 1}. {receiver.name} ({receiver.post})
+                            </span>
+                            <span className="text-sm text-[#10172A]">
+                              {receiver.office_name}, {receiver.office_address}
+                            </span>
+                            <span className="text-sm text-[#10172A]">
+                              {receiver.phone_number} |{" "}
+                              {receiver.vehicle_number}
+                            </span>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleEditReceiver(receiver.id)}
+                              className="bg-[#10172A] text-white px-3 py-1 rounded-md hover:bg-[#233058] text-sm"
+                            >
+                              {t("createLetter.edit")}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveReceiver(receiver.id)}
+                              className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 text-sm"
+                            >
+                              {t("createLetter.remove")}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Manual entry button */}
+            {!editingReceiverId && (
               <button
                 type="button"
-                onClick={() => setSelectedReceivers(selectedReceivers.slice(0, -1))}
-                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+                onClick={() => setShowManualEntry(true)}
+                className="bg-[#91a4c3] text-black px-4 py-2 rounded-md hover:bg-[#7a8dab] w-fit"
               >
-                - {t("createLetter.remove_last") || "हटाउनुहोस्"}
+                +{" "}
+                {t("createLetter.add_manual_receiver") ||
+                  "म्यानुअल प्राप्तकर्ता थप्नुहोस्"}
               </button>
             )}
+
+            {/* Manual entry form */}
+            {showManualEntry && !editingReceiverId && (
+              <div className="flex flex-col gap-2 w-full mt-2">
+                <div className="bg-[#91a4c3] px-4 py-2 rounded-t-md font-semibold text-black">
+                  {t("createLetter.add_manual_receiver") ||
+                    "म्यानुअल प्राप्तकर्ता थप्नुहोस्"}
+                </div>
+                <div className="bg-[#B5C9DC] px-4 py-3 rounded-b-md flex flex-col gap-2">
+                  <div className="w-full flex gap-4 flex-wrap">
+                    <div className="flex flex-col flex-1">
+                      <label htmlFor="manual-name">
+                        {t("createLetter.manual_receiver_name")}
+                      </label>
+                      <input
+                        id="manual-name"
+                        type="text"
+                        value={manualReceiver.name}
+                        onChange={(e) =>
+                          setManualReceiver({
+                            ...manualReceiver,
+                            name: e.target.value,
+                          })
+                        }
+                        className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
+                      />
+                    </div>
+                    <div className="flex flex-col flex-1">
+                      <label htmlFor="manual-post">
+                        {t("createLetter.post")}
+                      </label>
+                      <input
+                        id="manual-post"
+                        type="text"
+                        value={manualReceiver.post}
+                        onChange={(e) =>
+                          setManualReceiver({
+                            ...manualReceiver,
+                            post: e.target.value,
+                          })
+                        }
+                        className="bg-[#b4c8db] border-2 h-8 outline-none pl-3 rounded-md border-gray-600"
+                      />
+                    </div>
+                    <div className="flex flex-col flex-1">
+                      <label htmlFor="manual-vehicle">
+                        {t("createLetter.vehiche_number")}
+                      </label>
+                      <input
+                        id="manual-vehicle"
+                        type="text"
+                        value={manualReceiver.vehicle_number}
+                        onChange={(e) =>
+                          setManualReceiver({
+                            ...manualReceiver,
+                            vehicle_number: e.target.value,
+                          })
+                        }
+                        className="bg-[#b4c8db] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full flex gap-4 flex-wrap">
+                    <div className="flex flex-col flex-1">
+                      <label htmlFor="manual-office">
+                        {t("createLetter.office_name")}
+                      </label>
+                      <input
+                        id="manual-office"
+                        type="text"
+                        value={manualReceiver.office_name}
+                        onChange={(e) =>
+                          setManualReceiver({
+                            ...manualReceiver,
+                            office_name: e.target.value,
+                          })
+                        }
+                        className="bg-[#b4c8db] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+                      />
+                    </div>
+                    <div className="flex flex-col flex-1">
+                      <label htmlFor="manual-address">
+                        {t("createLetter.receiver_office_address")}
+                      </label>
+                      <input
+                        id="manual-address"
+                        type="text"
+                        value={manualReceiver.office_address}
+                        onChange={(e) =>
+                          setManualReceiver({
+                            ...manualReceiver,
+                            office_address: e.target.value,
+                          })
+                        }
+                        className="bg-[#b4c8db] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+                      />
+                    </div>
+                    <div className="flex flex-col flex-1">
+                      <label htmlFor="manual-phone">
+                        {t("createLetter.phone_number")}
+                      </label>
+                      <input
+                        id="manual-phone"
+                        type="text"
+                        value={manualReceiver.phone_number}
+                        onChange={(e) =>
+                          setManualReceiver({
+                            ...manualReceiver,
+                            phone_number: e.target.value,
+                          })
+                        }
+                        className="bg-[#b4c8db] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full flex gap-4 flex-wrap">
+                    <div className="flex flex-col flex-1">
+                      <label htmlFor="manual-idcard">
+                        {t("createLetter.id_card_number")}
+                      </label>
+                      <input
+                        id="manual-idcard"
+                        type="text"
+                        value={manualReceiver.id_card_number}
+                        onChange={(e) =>
+                          setManualReceiver({
+                            ...manualReceiver,
+                            id_card_number: e.target.value,
+                          })
+                        }
+                        className="bg-[#b4c8db] border-1 h-8 outline-none pl-3 rounded-md border-gray-600"
+                      />
+                    </div>
+                    <div className="flex flex-col flex-1">
+                      <label htmlFor="manual-idtype">
+                        {t("createLetter.id_card_type")}
+                      </label>
+                      <select
+                        id="manual-idtype"
+                        value={manualReceiver.id_card_type}
+                        onChange={(e) =>
+                          setManualReceiver({
+                            ...manualReceiver,
+                            id_card_type: e.target.value,
+                          })
+                        }
+                        className="bg-[#b4c8db] border-2 h-8 outline-none px-3 rounded-md border-gray-600"
+                      >
+                        {id_types.map((idType) => (
+                          <option key={idType.id} value={idType.value}>
+                            {idType.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex flex-1"></div>
+                  </div>
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleAddManualReceiver();
+                        setShowManualEntry(false);
+                      }}
+                      className="bg-[#10172A] text-white px-4 py-1.5 rounded-md hover:bg-[#233058] text-sm"
+                    >
+                      {t("createLetter.save")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowManualEntry(false);
+                        setManualReceiver({
+                          id: "",
+                          name: "",
+                          post: "",
+                          id_card_number: "",
+                          id_card_type: "unknown",
+                          office_name: "",
+                          office_address: "",
+                          phone_number: "",
+                          vehicle_number: "",
+                          isManual: true,
+                        });
+                      }}
+                      className="bg-gray-500 text-white px-4 py-1.5 rounded-md hover:bg-gray-600 text-sm"
+                    >
+                      {t("createLetter.cancel")}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      </div>
+        );
+      })()}
 
       {/* Submit */}
       <div className="flex mt-4">
